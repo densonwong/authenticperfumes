@@ -1,8 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Mail, Search, ShoppingBag } from "lucide-react";
+import { Heart, Search, ShoppingBag } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
+import { NotifyMeForm } from "@/components/storefront/notify-me-form";
+import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { calculateSavings, formatRupiah } from "@/lib/format";
 import { getProductBySlug, getProducts } from "@/lib/repositories/catalog";
 import type { ProductStatus, ProductVariant } from "@/lib/types";
@@ -71,6 +73,7 @@ export default async function ProductDetailPage({
   const variant = selectedVariant(product.variants, valueOf(resolvedSearchParams, "variant"));
   const savings = calculateSavings(variant.retailPrice, variant.authenticPrice);
   const savingsPercent = Math.round((savings / variant.retailPrice) * 100);
+  const shouldShowNotifyForm = variant.status === "out_of_stock" || variant.stock < 1;
   const canonicalUrl = `https://authenticperfumes.id/products/${product.slug}`;
   const whatsappUrl = buildWhatsAppUrl(
     buildProductWhatsAppMessage(`${product.brandName} ${product.name}`, canonicalUrl, variant.size)
@@ -225,13 +228,6 @@ export default async function ProductDetailPage({
               <Heart className="h-4 w-4" aria-hidden="true" />
               Wishlist
             </button>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 border border-ink/15 px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:border-ink"
-            >
-              <Mail className="h-4 w-4" aria-hidden="true" />
-              Notify me
-            </button>
           </div>
 
           <button
@@ -241,6 +237,17 @@ export default async function ProductDetailPage({
             <Search className="h-4 w-4" aria-hidden="true" />
             Request similar fragrance
           </button>
+
+          <div className="mt-5 grid gap-4">
+            {shouldShowNotifyForm ? <NotifyMeForm productId={product.id} variantId={variant.id} /> : null}
+            <RequestFragranceForm
+              defaultValues={{
+                brandName: product.brandName,
+                productName: product.name,
+                size: variant.size
+              }}
+            />
+          </div>
 
           <dl className="mt-7 grid gap-4 border-t border-ink/10 pt-5 text-sm sm:grid-cols-2">
             <div>

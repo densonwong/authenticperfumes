@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductRow } from "@/components/storefront/product-row";
+import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { getBestSellers, getNewArrivals } from "@/lib/repositories/catalog";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -58,23 +59,30 @@ export default async function SamplingPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <div className="mb-5 border-b border-ink/10 pb-4">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-            Good starting points
-          </p>
-          <h2 className="mt-2 font-serif text-3xl text-ink">Compare these first</h2>
+        <div className="grid gap-8 lg:grid-cols-[1fr_420px]">
+          <div>
+            <div className="mb-5 border-b border-ink/10 pb-4">
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+                Good starting points
+              </p>
+              <h2 className="mt-2 font-serif text-3xl text-ink">Compare these first</h2>
+            </div>
+            <div className="border border-ink/10 bg-paper px-4 sm:px-6">
+              {products.map((product) => (
+                <ProductRow key={product.id} product={product} />
+              ))}
+            </div>
+            <Link
+              href="/shop"
+              className="mt-6 inline-flex text-xs font-semibold uppercase tracking-[0.16em] text-ink hover:text-gold"
+            >
+              Browse full catalog
+            </Link>
+          </div>
+          <div className="lg:sticky lg:top-28 lg:self-start">
+            <RequestFragranceForm defaultValues={{ size: "Sample" }} />
+          </div>
         </div>
-        <div className="border border-ink/10 bg-paper px-4 sm:px-6">
-          {products.map((product) => (
-            <ProductRow key={product.id} product={product} />
-          ))}
-        </div>
-        <Link
-          href="/shop"
-          className="mt-6 inline-flex text-xs font-semibold uppercase tracking-[0.16em] text-ink hover:text-gold"
-        >
-          Browse full catalog
-        </Link>
       </section>
     </main>
   );
