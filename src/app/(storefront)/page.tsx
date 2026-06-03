@@ -86,8 +86,20 @@ export default async function HomePage() {
     getDiscoverPosts()
   ]);
 
-  const primaryBanner = banners.find((banner) => banner.position === "primary") ?? banners[0];
-  const secondaryBanners = banners.filter((banner) => banner.id !== primaryBanner?.id).slice(0, 2);
+  const normalizedBanners = banners.map((banner) => {
+    if (banner.id === "banner-ready-stock") {
+      return { ...banner, href: "/shop?readyStock=true" };
+    }
+
+    if (banner.id === "banner-niche-arrivals") {
+      return { ...banner, href: "/shop?newArrival=true" };
+    }
+
+    return banner;
+  });
+  const primaryBanner =
+    normalizedBanners.find((banner) => banner.position === "primary") ?? normalizedBanners[0];
+  const secondaryBanners = normalizedBanners.filter((banner) => banner.id !== primaryBanner?.id).slice(0, 2);
   const samplingProducts = [...newArrivals, ...bestSellers].slice(0, 4);
   const trustPreview = trustMedia.slice(0, 3);
   const testimonialPreview = testimonials.slice(0, 2);
@@ -127,7 +139,7 @@ export default async function HomePage() {
             <SectionHeader
               eyebrow="Fast dispatch"
               title="Ready Stock"
-              href="/products?availability=ready-stock"
+              href="/shop?readyStock=true"
             />
             <ProductGrid products={readyStock.slice(0, 4)} />
           </Reveal>
