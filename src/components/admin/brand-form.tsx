@@ -100,14 +100,11 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
         <div className="md:col-span-2">
           <CloudinaryUpload
             label="Brand logo"
+            helperText="Drop the brand logo or representative image here. It uploads to Cloudinary automatically."
             value={logoUrl ? { secure_url: logoUrl, public_id: "", resource_type: "image", width: 0, height: 0 } : null}
             onUploaded={handleUpload}
           />
         </div>
-        <label className="grid gap-1 text-sm md:col-span-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Logo URL</span>
-          <input value={logoUrl} onChange={(event) => setLogoUrl(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
         <label className="grid gap-1 text-sm md:col-span-2">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Description</span>
           <textarea

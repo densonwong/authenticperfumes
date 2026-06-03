@@ -157,6 +157,15 @@ export function ProductForm({ brands, product }: ProductFormProps) {
     );
   }
 
+  function handleGalleryUpload(upload: CloudinaryUploadValue) {
+    setGalleryUrls((current) =>
+      current.includes(upload.secure_url) ? current : [...current, upload.secure_url]
+    );
+    if (!imageUrl) {
+      setImageUrl(upload.secure_url);
+    }
+  }
+
   return (
     <form
       className="space-y-4"
@@ -273,31 +282,52 @@ export function ProductForm({ brands, product }: ProductFormProps) {
         </label>
       </section>
 
-      <section className="grid gap-3 border border-stone/30 bg-white p-4 md:grid-cols-[1fr_1fr]">
-        <CloudinaryUpload label="Primary image" value={imageUrl ? {
-          secure_url: imageUrl,
-          public_id: "",
-          resource_type: "image",
-          width: 0,
-          height: 0
-        } : null} onUploaded={handleUpload} />
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Image URL</span>
-          <input
-            value={imageUrl}
-            onChange={(event) => setImageUrl(event.target.value)}
-            className="border-stone/40 text-sm"
+      <section className="grid gap-4 border border-stone/30 bg-white p-4 lg:grid-cols-[360px_1fr]">
+        <CloudinaryUpload
+          label="Primary image"
+          helperText="Drop the main product photo here. It uploads to Cloudinary automatically."
+          value={imageUrl ? {
+            secure_url: imageUrl,
+            public_id: "",
+            resource_type: "image",
+            width: 0,
+            height: 0
+          } : null}
+          onUploaded={handleUpload}
+        />
+        <div className="space-y-3">
+          <CloudinaryUpload
+            label="Gallery image"
+            helperText="Drop another angle or packaging photo to add it to the gallery."
+            value={null}
+            onUploaded={handleGalleryUpload}
           />
-        </label>
-        <label className="grid gap-1 text-sm md:col-span-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Gallery URLs</span>
-          <textarea
-            value={galleryUrls.join("\n")}
-            onChange={(event) => setGalleryUrls(event.target.value.split("\n").filter(Boolean))}
-            rows={3}
-            className="border-stone/40 text-sm"
-          />
-        </label>
+          {galleryUrls.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 xl:grid-cols-4">
+              {galleryUrls.map((url) => (
+                <div key={url} className="group relative overflow-hidden border border-stone/30 bg-warm">
+                  <img src={url} alt="" className="aspect-square w-full object-cover" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setGalleryUrls((current) => current.filter((item) => item !== url));
+                      if (imageUrl === url) {
+                        setImageUrl(galleryUrls.find((item) => item !== url) ?? "");
+                      }
+                    }}
+                    className="absolute right-2 top-2 border border-white/70 bg-ink/75 px-2 py-1 text-[10px] font-semibold uppercase tracking-[0.1em] text-white opacity-0 transition group-hover:opacity-100"
+                  >
+                    Remove
+                  </button>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <div className="border border-stone/30 bg-warm/60 p-4 text-sm text-stone">
+              Uploaded product images will appear here as previews.
+            </div>
+          )}
+        </div>
       </section>
 
       <section className="border border-stone/30 bg-white">

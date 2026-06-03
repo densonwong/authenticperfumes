@@ -106,13 +106,10 @@ function BannerForm({
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Link</span>
           <input value={href} onChange={(event) => setHref(event.target.value)} className="border-stone/40 text-sm" />
         </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Image URL</span>
-          <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
         <div className="md:col-span-2">
           <CloudinaryUpload
             label="Banner image"
+            helperText="Drop a homepage banner image here. It uploads to Cloudinary automatically."
             folder="banners"
             value={imageUrl ? { secure_url: imageUrl, public_id: "", resource_type: "image", width: 0, height: 0 } : null}
             onUploaded={(upload: CloudinaryUploadValue) => setImageUrl(upload.secure_url)}
@@ -160,13 +157,10 @@ function TestimonialForm({
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Quote</span>
           <textarea value={quote} onChange={(event) => setQuote(event.target.value)} rows={4} className="border-stone/40 text-sm" />
         </label>
-        <label className="grid gap-1 text-sm md:col-span-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Image URL</span>
-          <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
         <div className="md:col-span-2">
           <CloudinaryUpload
             label="Customer image"
+            helperText="Drop a testimonial or chat screenshot here. It uploads to Cloudinary automatically."
             value={imageUrl ? { secure_url: imageUrl, public_id: "", resource_type: "image", width: 0, height: 0 } : null}
             onUploaded={(upload) => setImageUrl(upload.secure_url)}
           />
@@ -239,13 +233,10 @@ function DiscoverForm({
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Body</span>
           <textarea value={body} onChange={(event) => setBody(event.target.value)} rows={8} className="border-stone/40 text-sm" />
         </label>
-        <label className="grid gap-1 text-sm md:col-span-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Image URL</span>
-          <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
         <div className="md:col-span-2">
           <CloudinaryUpload
             label="Article image"
+            helperText="Drop the article thumbnail here. It uploads to Cloudinary automatically."
             value={imageUrl ? { secure_url: imageUrl, public_id: "", resource_type: "image", width: 0, height: 0 } : null}
             onUploaded={(upload) => setImageUrl(upload.secure_url)}
           />
@@ -299,13 +290,10 @@ function TrustMediaForm({
             <option value="video">video</option>
           </select>
         </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Media URL</span>
-          <input value={mediaUrl} onChange={(event) => setMediaUrl(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
         <div className="md:col-span-2">
           <CloudinaryUpload
             label="Trust media"
+            helperText="Drop proof media here. Images and videos upload to Cloudinary automatically."
             folder="trust-media"
             accept="image-video"
             value={mediaUrl ? { secure_url: mediaUrl, public_id: "", resource_type: mediaType, width: 0, height: 0 } : null}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { DragEvent, useRef, useState } from "react";
 import { ImagePlus, Loader2, Upload, Video } from "lucide-react";
 
 export type CloudinaryUploadValue = {
@@ -13,6 +13,7 @@ export type CloudinaryUploadValue = {
 
 type CloudinaryUploadProps = {
   label?: string;
+  helperText?: string;
   folder?: "catalog" | "trust-media" | "banners";
   accept?: "image" | "video" | "image-video";
   value?: CloudinaryUploadValue | null;
@@ -46,6 +47,7 @@ function isAllowedFile(file: File, accept: CloudinaryUploadProps["accept"]) {
 
 export function CloudinaryUpload({
   label = "Upload media",
+  helperText = "Drag and drop a file here, or choose from your device.",
   folder = "catalog",
   accept = "image",
   value,
@@ -56,6 +58,7 @@ export function CloudinaryUpload({
   const [status, setStatus] = useState<string>("");
   const [error, setError] = useState<string>("");
   const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
 
   async function upload(file: File) {
     setError("");
@@ -130,26 +133,80 @@ export function CloudinaryUpload({
     }
   }
 
+  function handleDragOver(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    if (!isUploading) {
+      setIsDragging(true);
+    }
+  }
+
+  function handleDrop(event: DragEvent<HTMLDivElement>) {
+    event.preventDefault();
+    setIsDragging(false);
+
+    const file = event.dataTransfer.files[0];
+    if (file) {
+      void upload(file);
+    }
+  }
+
   const Icon = accept === "video" ? Video : ImagePlus;
 
   return (
     <div className="border border-stone/30 bg-white p-3">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <div className="min-w-0">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">{label}</p>
-          <p className="mt-1 truncate text-sm text-ink">
-            {value?.secure_url ?? "No Cloudinary media selected"}
-          </p>
+      <div
+        role="button"
+        tabIndex={0}
+        onClick={() => inputRef.current?.click()}
+        onKeyDown={(event) => {
+          if (event.key === "Enter" || event.key === " ") {
+            event.preventDefault();
+            inputRef.current?.click();
+          }
+        }}
+        onDragOver={handleDragOver}
+        onDragLeave={() => setIsDragging(false)}
+        onDrop={handleDrop}
+        className={`grid gap-3 border border-dashed p-4 transition ${
+          isDragging ? "border-ink bg-warm" : "border-stone/40 bg-paper"
+        } ${isUploading ? "cursor-wait opacity-80" : "cursor-pointer hover:border-ink"}`}
+      >
+        {value?.secure_url ? (
+          <div className="overflow-hidden border border-stone/30 bg-white">
+            {value.resource_type === "video" ? (
+              <video src={value.secure_url} className="aspect-video w-full object-cover" controls muted />
+            ) : (
+              <img
+                src={value.secure_url}
+                alt=""
+                className="aspect-square w-full object-cover"
+              />
+            )}
+          </div>
+        ) : (
+          <div className="flex aspect-square items-center justify-center bg-warm text-stone">
+            <Icon className="h-8 w-8" aria-hidden="true" />
+          </div>
+        )}
+
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="min-w-0">
+            <p className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">{label}</p>
+            <p className="mt-1 text-sm text-ink">{helperText}</p>
+            {value?.secure_url ? (
+              <p className="mt-1 truncate text-xs text-stone">
+                Uploaded to Cloudinary
+              </p>
+            ) : null}
+          </div>
+          <div
+            className="inline-flex h-9 items-center justify-center gap-2 border border-ink px-3 text-xs font-semibold uppercase tracking-[0.12em] text-ink"
+            aria-hidden="true"
+          >
+            {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+            {value ? "Replace" : "Select"}
+          </div>
         </div>
-        <button
-          type="button"
-          className="inline-flex h-9 items-center justify-center gap-2 border border-ink px-3 text-xs font-semibold uppercase tracking-[0.12em] text-ink hover:bg-ink hover:text-white disabled:cursor-not-allowed disabled:opacity-60"
-          onClick={() => inputRef.current?.click()}
-          disabled={isUploading}
-        >
-          {isUploading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
-          Select
-        </button>
       </div>
       <input
         ref={inputRef}
