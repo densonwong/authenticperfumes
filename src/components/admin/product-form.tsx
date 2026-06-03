@@ -342,41 +342,66 @@ export function ProductForm({ brands, product }: ProductFormProps) {
             Add
           </button>
         </div>
+        <div className="hidden grid-cols-[1fr_1fr_1fr_1fr_1fr_40px] gap-3 border-b border-stone/20 bg-warm/60 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:grid">
+          <span>Size</span>
+          <span>Retail price</span>
+          <span>Authentic price</span>
+          <span>Stock</span>
+          <span>Status</span>
+          <span />
+        </div>
         <div className="divide-y divide-stone/20">
           {variants.map((variant, index) => (
-            <div key={variant.id} className="grid gap-3 p-4 md:grid-cols-5">
-              <input
-                value={variant.size}
-                onChange={(event) => updateVariant(index, { size: event.target.value })}
-                className="border-stone/40 text-sm"
-                aria-label="Variant size"
-              />
-              <input
-                type="number"
-                value={variant.retailPrice}
-                onChange={(event) => updateVariant(index, { retailPrice: Number(event.target.value) })}
-                className="border-stone/40 text-sm"
-                aria-label="Retail price"
-              />
-              <input
-                type="number"
-                value={variant.authenticPrice}
-                onChange={(event) => updateVariant(index, { authenticPrice: Number(event.target.value) })}
-                className="border-stone/40 text-sm"
-                aria-label="Authentic price"
-              />
-              <input
-                type="number"
-                value={variant.stock}
-                onChange={(event) => updateVariant(index, { stock: Number(event.target.value) })}
-                className="border-stone/40 text-sm"
-                aria-label="Stock"
-              />
-              <div className="flex gap-2">
+            <div key={variant.id} className="grid gap-3 p-4 md:grid-cols-[1fr_1fr_1fr_1fr_1fr_40px]">
+              <label className="grid gap-1 text-sm">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Size</span>
+                <input
+                  value={variant.size}
+                  onChange={(event) => updateVariant(index, { size: event.target.value })}
+                  className="border-stone/40 text-sm"
+                  aria-label="Variant size"
+                  placeholder="100ml"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Retail price</span>
+                <input
+                  type="number"
+                  value={variant.retailPrice}
+                  onChange={(event) => updateVariant(index, { retailPrice: Number(event.target.value) })}
+                  className="border-stone/40 text-sm"
+                  aria-label="Retail price"
+                  placeholder="4800000"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Authentic price</span>
+                <input
+                  type="number"
+                  value={variant.authenticPrice}
+                  onChange={(event) => updateVariant(index, { authenticPrice: Number(event.target.value) })}
+                  className="border-stone/40 text-sm"
+                  aria-label="Authentic price"
+                  placeholder="3950000"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Stock</span>
+                <input
+                  type="number"
+                  value={variant.stock}
+                  onChange={(event) => updateVariant(index, { stock: Number(event.target.value) })}
+                  className="border-stone/40 text-sm"
+                  aria-label="Stock"
+                  placeholder="4"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Status</span>
                 <select
                   value={variant.status}
                   onChange={(event) => updateVariant(index, { status: event.target.value as ProductStatus })}
-                  className="min-w-0 flex-1 border-stone/40 text-sm"
+                  className="min-w-0 border-stone/40 text-sm"
                   aria-label="Variant status"
                 >
                   {statuses.map((item) => (
@@ -385,6 +410,8 @@ export function ProductForm({ brands, product }: ProductFormProps) {
                     </option>
                   ))}
                 </select>
+              </label>
+              <div className="flex items-end">
                 <button
                   type="button"
                   className="h-10 w-10 border border-stone/40 text-stone hover:bg-warm hover:text-ink"
