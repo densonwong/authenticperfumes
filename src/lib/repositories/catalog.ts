@@ -1,21 +1,17 @@
 import {
   seedBanners,
   seedBrands,
-  seedDiscoverPosts,
   seedProducts,
-  seedTestimonials,
-  seedTrustMedia
+  seedTestimonials
 } from "../seed-data";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
 import type {
   Banner,
   Brand,
-  DiscoverPost,
   Product,
   ProductStatus,
   ProductVariant,
-  Testimonial,
-  TrustMedia
+  Testimonial
 } from "@/lib/types";
 
 type BrandRow = {
@@ -177,48 +173,6 @@ async function readLiveTestimonials() {
   })) as Testimonial[];
 }
 
-async function readLiveTrustMedia() {
-  const supabase = createSupabasePublicClient();
-  if (!supabase) return null;
-
-  const { data, error } = await supabase
-    .from("trust_media")
-    .select("id,title,category,media_type,media_url")
-    .eq("published", true);
-
-  if (error || !data?.length) return null;
-  return data.map((row) => ({
-    id: row.id,
-    title: row.title,
-    category: row.category,
-    mediaType: row.media_type,
-    mediaUrl: row.media_url
-  })) as TrustMedia[];
-}
-
-async function readLiveDiscoverPosts() {
-  const supabase = createSupabasePublicClient();
-  if (!supabase) return null;
-
-  const { data, error } = await supabase
-    .from("discover_posts")
-    .select("id,slug,title,excerpt,category,image_url,body,published_at")
-    .eq("published", true)
-    .order("published_at", { ascending: false });
-
-  if (error || !data?.length) return null;
-  return data.map((row) => ({
-    id: row.id,
-    slug: row.slug,
-    title: row.title,
-    excerpt: row.excerpt,
-    category: row.category,
-    imageUrl: row.image_url,
-    body: row.body,
-    publishedAt: row.published_at
-  })) as DiscoverPost[];
-}
-
 export async function getBrands() {
   return (await readLiveBrands()) ?? seedBrands;
 }
@@ -261,16 +215,4 @@ export async function getBanners() {
 
 export async function getTestimonials() {
   return (await readLiveTestimonials()) ?? seedTestimonials;
-}
-
-export async function getTrustMedia() {
-  return (await readLiveTrustMedia()) ?? seedTrustMedia;
-}
-
-export async function getDiscoverPosts() {
-  return (await readLiveDiscoverPosts()) ?? seedDiscoverPosts;
-}
-
-export async function getDiscoverPostBySlug(slug: string) {
-  return (await getDiscoverPosts()).find((post) => post.slug === slug) ?? null;
 }

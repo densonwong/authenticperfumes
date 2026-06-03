@@ -1,22 +1,17 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Reveal } from "@/components/motion/reveal";
 import { BrandCloud } from "@/components/storefront/brand-cloud";
 import { CollectionTile } from "@/components/storefront/collection-tile";
-import { DiscoverPreview } from "@/components/storefront/discover-preview";
 import { ProductCard } from "@/components/storefront/product-card";
 import { ProductRow } from "@/components/storefront/product-row";
 import { TrustStrip } from "@/components/storefront/trust-strip";
 import {
   getBanners,
   getBestSellers,
-  getDiscoverPosts,
   getFeaturedBrands,
   getNewArrivals,
   getPreOrderProducts,
-  getReadyStockProducts,
-  getTestimonials,
-  getTrustMedia
+  getReadyStockProducts
 } from "@/lib/repositories/catalog";
 import type { Product } from "@/lib/types";
 
@@ -70,20 +65,14 @@ export default async function HomePage() {
     bestSellers,
     readyStock,
     preOrders,
-    featuredBrands,
-    testimonials,
-    trustMedia,
-    discoverPosts
+    featuredBrands
   ] = await Promise.all([
     getBanners(),
     getNewArrivals(),
     getBestSellers(),
     getReadyStockProducts(),
     getPreOrderProducts(),
-    getFeaturedBrands(),
-    getTestimonials(),
-    getTrustMedia(),
-    getDiscoverPosts()
+    getFeaturedBrands()
   ]);
 
   const normalizedBanners = banners.map((banner) => {
@@ -101,8 +90,6 @@ export default async function HomePage() {
     normalizedBanners.find((banner) => banner.position === "primary") ?? normalizedBanners[0];
   const secondaryBanners = normalizedBanners.filter((banner) => banner.id !== primaryBanner?.id).slice(0, 2);
   const samplingProducts = [...newArrivals, ...bestSellers].slice(0, 4);
-  const trustPreview = trustMedia.slice(0, 3);
-  const testimonialPreview = testimonials.slice(0, 2);
 
   return (
     <main className="bg-paper">
@@ -158,7 +145,7 @@ export default async function HomePage() {
           <Reveal>
             <div className="max-w-xl">
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-                Discovery/Sampling
+                Sampling
               </p>
               <h2 className="mt-3 font-serif text-3xl leading-tight">Test the story before the bottle</h2>
               <p className="mt-4 text-sm leading-6 text-paper/70">
@@ -178,64 +165,6 @@ export default async function HomePage() {
               {samplingProducts.map((product) => (
                 <ProductRow key={product.id} product={product} />
               ))}
-            </div>
-          </Reveal>
-        </div>
-      </section>
-
-      <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <Reveal>
-          <SectionHeader
-            eyebrow="Discover"
-            title="Fragrance education"
-            href="/discover"
-            linkLabel="Read more"
-          />
-          <DiscoverPreview posts={discoverPosts.slice(0, 3)} />
-        </Reveal>
-      </section>
-
-      <section className="bg-warm/60 py-10">
-        <div className="mx-auto max-w-7xl px-4 lg:px-8">
-          <Reveal>
-            <SectionHeader
-              eyebrow="Trust Center"
-              title="Proof before purchase"
-              href="/testimonials"
-              linkLabel="See proof"
-            />
-            <div className="grid gap-4 lg:grid-cols-[1.2fr_0.8fr]">
-              <div className="grid gap-4 sm:grid-cols-3">
-                {trustPreview.map((item) => (
-                  <article key={item.id} className="border border-ink/10 bg-paper">
-                    <div className="relative aspect-square overflow-hidden bg-clay">
-                      <Image
-                        src={item.mediaUrl}
-                        alt=""
-                        fill
-                        sizes="(min-width: 1024px) 20vw, 33vw"
-                        className="object-cover"
-                      />
-                    </div>
-                    <div className="p-4">
-                      <p className="text-[11px] font-semibold uppercase tracking-[0.14em] text-gold">
-                        {item.category.replaceAll("_", " ")}
-                      </p>
-                      <h3 className="mt-2 text-sm font-semibold text-ink">{item.title}</h3>
-                    </div>
-                  </article>
-                ))}
-              </div>
-              <div className="grid gap-4">
-                {testimonialPreview.map((testimonial) => (
-                  <blockquote key={testimonial.id} className="border border-ink/10 bg-paper p-5">
-                    <p className="text-sm leading-6 text-ink/75">"{testimonial.quote}"</p>
-                    <footer className="mt-4 text-xs font-semibold uppercase tracking-[0.14em] text-ink">
-                      {testimonial.customerName} / {testimonial.productName}
-                    </footer>
-                  </blockquote>
-                ))}
-              </div>
             </div>
           </Reveal>
         </div>

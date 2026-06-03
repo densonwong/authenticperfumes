@@ -1,4 +1,4 @@
-import type { Banner, Brand, DiscoverPost, Product, Testimonial, TrustMedia } from "./types";
+import type { Banner, Brand, Product, Testimonial } from "./types";
 
 const image = (id: string, width = 1200, height = 1500) =>
   `https://images.unsplash.com/${id}?auto=format&fit=crop&w=${width}&h=${height}&q=80`;
@@ -511,7 +511,7 @@ export const seedBanners: Banner[] = [
     title: "Find your next signature",
     subtitle: "Tell us your taste profile and occasion, then get a short-list via WhatsApp.",
     imageUrl: image("photo-1608528577891-eb055944f2e7", 1400, 800),
-    href: "/discover/fragrance-consultation",
+    href: "/sampling",
     position: "tertiary"
   }
 ];
@@ -544,93 +544,5 @@ export const seedTestimonials: Testimonial[] = [
     quote: "The recommendation was accurate. Halfeti feels formal, warm, and exactly right for evening wear.",
     productName: "Penhaligon's Halfeti",
     imageUrl: image("photo-1506794778202-cad84cf45f1d", 600, 600)
-  }
-];
-
-export const seedTrustMedia: TrustMedia[] = [
-  {
-    id: "trust-packing-video",
-    title: "Same-day packing video",
-    category: "packing_video",
-    mediaType: "video",
-    mediaUrl: "https://images.unsplash.com/photo-1607344645866-009c320b63e0?auto=format&fit=crop&w=1200&h=1200&q=80"
-  },
-  {
-    id: "trust-shipping-proof",
-    title: "Tracked shipping receipt",
-    category: "shipping_proof",
-    mediaType: "image",
-    mediaUrl: image("photo-1589556264800-08ae9e129a2a", 1200, 1200)
-  },
-  {
-    id: "trust-chat-review",
-    title: "Consultation chat review",
-    category: "chat_review",
-    mediaType: "image",
-    mediaUrl: image("photo-1516321318423-f06f85e504b3", 1200, 1200)
-  },
-  {
-    id: "trust-story-repost",
-    title: "Customer story repost",
-    category: "story_repost",
-    mediaType: "image",
-    mediaUrl: image("photo-1515886657613-9f3515b0c78f", 1200, 1200)
-  },
-  {
-    id: "trust-unboxing",
-    title: "Bottle unboxing proof",
-    category: "unboxing",
-    mediaType: "video",
-    mediaUrl: "https://images.unsplash.com/photo-1581467655410-0c2bf55d9d6c?auto=format&fit=crop&w=1200&h=1200&q=80"
-  },
-  {
-    id: "trust-repeat-customer",
-    title: "Repeat customer haul",
-    category: "repeat_customer",
-    mediaType: "image",
-    mediaUrl: image("photo-1608571423902-eed4a5ad8108", 1200, 1200)
-  }
-];
-
-export const seedDiscoverPosts: DiscoverPost[] = [
-  {
-    id: "discover-niche-perfume-guide",
-    slug: "how-to-start-with-niche-perfumes",
-    title: "How to start with niche perfumes",
-    excerpt: "A simple way to move from designer favorites into niche fragrance without blind-buy regret.",
-    category: "guide",
-    imageUrl: image("photo-1547887537-6158d64c35b3", 1400, 900),
-    body: "Start with the notes you already enjoy, then test one fresh, one amber, and one woody option before committing to a full bottle.",
-    publishedAt: "2026-05-06T09:00:00.000Z"
-  },
-  {
-    id: "discover-naxos-review",
-    slug: "xerjoff-naxos-review",
-    title: "Xerjoff Naxos review",
-    excerpt: "Why Naxos remains one of the easiest niche honey tobacco fragrances to recommend.",
-    category: "review",
-    imageUrl: image("photo-1595425970377-c9703cf48b6d", 1400, 900),
-    body: "Naxos balances citrus, lavender, honey, and tobacco in a way that feels luxurious without becoming heavy too early.",
-    publishedAt: "2026-05-13T09:00:00.000Z"
-  },
-  {
-    id: "discover-concentration-glossary",
-    slug: "extrait-vs-edp-vs-edt",
-    title: "Extrait vs EDP vs EDT",
-    excerpt: "A practical glossary for concentration labels, longevity expectations, and projection.",
-    category: "glossary",
-    imageUrl: image("photo-1600612253971-422e7f7faeb6", 1400, 900),
-    body: "Concentration names are useful, but material quality, composition, skin, and weather matter just as much as the label.",
-    publishedAt: "2026-05-20T09:00:00.000Z"
-  },
-  {
-    id: "discover-signature-consultation",
-    slug: "signature-scent-consultation",
-    title: "Signature scent consultation",
-    excerpt: "What to share with us so we can shortlist fragrances that fit your lifestyle and budget.",
-    category: "consultation",
-    imageUrl: image("photo-1608528577891-eb055944f2e7", 1400, 900),
-    body: "Tell us your usual scents, climate, budget, occasions, and whether you prefer compliments or a closer personal aura.",
-    publishedAt: "2026-05-27T09:00:00.000Z"
   }
 ];

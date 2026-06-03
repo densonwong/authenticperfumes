@@ -1,10 +1,9 @@
 import crypto from "node:crypto";
 
-export type CloudinaryFolderKey = "catalog" | "trust-media" | "banners";
+export type CloudinaryFolderKey = "catalog" | "banners";
 
 const folderMap: Record<CloudinaryFolderKey, string> = {
   catalog: "authenticperfumes/catalog",
-  "trust-media": "authenticperfumes/trust-media",
   banners: "authenticperfumes/banners"
 };
 
@@ -23,7 +22,7 @@ export function hasCloudinaryConfig() {
 }
 
 export function resolveCloudinaryFolder(value: string | null) {
-  if (value === "trust-media" || value === "banners") {
+  if (value === "banners") {
     return folderMap[value];
   }
 

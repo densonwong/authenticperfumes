@@ -4,16 +4,6 @@ create type public.profile_role as enum ('admin', 'customer');
 create type public.product_status as enum ('ready_stock', 'pre_order', 'limited_stock', 'out_of_stock');
 create type public.gender as enum ('men', 'women', 'unisex');
 create type public.banner_position as enum ('primary', 'secondary', 'tertiary');
-create type public.trust_media_category as enum (
-  'packing_video',
-  'shipping_proof',
-  'chat_review',
-  'story_repost',
-  'unboxing',
-  'repeat_customer'
-);
-create type public.media_type as enum ('image', 'video');
-create type public.discover_post_category as enum ('guide', 'review', 'glossary', 'consultation');
 create type public.request_status as enum ('new', 'in_review', 'sourced', 'closed');
 create type public.notification_status as enum ('pending', 'notified', 'closed');
 
@@ -108,31 +98,6 @@ create table public.testimonials (
   updated_at timestamptz not null default now()
 );
 
-create table public.discover_posts (
-  id uuid primary key default gen_random_uuid(),
-  slug text not null unique,
-  title text not null,
-  excerpt text not null,
-  category public.discover_post_category not null,
-  image_url text not null,
-  body text not null,
-  published_at timestamptz,
-  published boolean not null default true,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
-create table public.trust_media (
-  id uuid primary key default gen_random_uuid(),
-  title text not null,
-  category public.trust_media_category not null,
-  media_type public.media_type not null,
-  media_url text not null,
-  published boolean not null default true,
-  created_at timestamptz not null default now(),
-  updated_at timestamptz not null default now()
-);
-
 create table public.fragrance_requests (
   id uuid primary key default gen_random_uuid(),
   customer_name text not null,
@@ -176,7 +141,6 @@ create index products_best_seller_idx on public.products(best_seller);
 create index products_new_arrival_idx on public.products(new_arrival);
 create index products_ready_stock_idx on public.products(ready_stock);
 create index products_pre_order_idx on public.products(pre_order);
-create index discover_posts_slug_idx on public.discover_posts(slug);
 create index fragrance_requests_status_idx on public.fragrance_requests(status);
 create index stock_notifications_status_idx on public.stock_notifications(status);
 
@@ -204,14 +168,6 @@ create trigger testimonials_set_updated_at
 before update on public.testimonials
 for each row execute function public.set_updated_at();
 
-create trigger discover_posts_set_updated_at
-before update on public.discover_posts
-for each row execute function public.set_updated_at();
-
-create trigger trust_media_set_updated_at
-before update on public.trust_media
-for each row execute function public.set_updated_at();
-
 create trigger fragrance_requests_set_updated_at
 before update on public.fragrance_requests
 for each row execute function public.set_updated_at();
@@ -230,8 +186,6 @@ alter table public.products enable row level security;
 alter table public.product_variants enable row level security;
 alter table public.banners enable row level security;
 alter table public.testimonials enable row level security;
-alter table public.discover_posts enable row level security;
-alter table public.trust_media enable row level security;
 alter table public.fragrance_requests enable row level security;
 alter table public.stock_notifications enable row level security;
 alter table public.admin_audit_logs enable row level security;
@@ -294,16 +248,6 @@ on public.testimonials for select
 to anon, authenticated
 using (published);
 
-create policy "Public can read published discover posts"
-on public.discover_posts for select
-to anon, authenticated
-using (published and published_at is not null and published_at <= now());
-
-create policy "Public can read published trust media"
-on public.trust_media for select
-to anon, authenticated
-using (published);
-
 create policy "Admins can manage brands"
 on public.brands for all
 to authenticated
@@ -330,18 +274,6 @@ with check (public.is_admin());
 
 create policy "Admins can manage testimonials"
 on public.testimonials for all
-to authenticated
-using (public.is_admin())
-with check (public.is_admin());
-
-create policy "Admins can manage discover posts"
-on public.discover_posts for all
-to authenticated
-using (public.is_admin())
-with check (public.is_admin());
-
-create policy "Admins can manage trust media"
-on public.trust_media for all
 to authenticated
 using (public.is_admin())
 with check (public.is_admin());

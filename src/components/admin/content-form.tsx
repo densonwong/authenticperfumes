@@ -3,25 +3,11 @@
 import { useState } from "react";
 import { Save } from "lucide-react";
 import { CloudinaryUpload, type CloudinaryUploadValue } from "@/components/admin/cloudinary-upload";
-import { slugify } from "@/lib/slugs";
-import type { Banner, DiscoverPost, Testimonial, TrustMedia } from "@/lib/types";
+import type { Banner, Testimonial } from "@/lib/types";
 
 type ContentFormProps =
   | { type: "banner"; item?: Banner | null }
-  | { type: "testimonial"; item?: Testimonial | null }
-  | { type: "discover"; item?: DiscoverPost | null }
-  | { type: "trust-media"; item?: TrustMedia | null };
-
-const trustCategories: TrustMedia["category"][] = [
-  "packing_video",
-  "shipping_proof",
-  "chat_review",
-  "story_repost",
-  "unboxing",
-  "repeat_customer"
-];
-
-const discoverCategories: DiscoverPost["category"][] = ["guide", "review", "glossary", "consultation"];
+  | { type: "testimonial"; item?: Testimonial | null };
 
 export function ContentForm(props: ContentFormProps) {
   const [message, setMessage] = useState("");
@@ -30,15 +16,7 @@ export function ContentForm(props: ContentFormProps) {
     return <BannerForm item={props.item} message={message} setMessage={setMessage} />;
   }
 
-  if (props.type === "testimonial") {
-    return <TestimonialForm item={props.item} message={message} setMessage={setMessage} />;
-  }
-
-  if (props.type === "discover") {
-    return <DiscoverForm item={props.item} message={message} setMessage={setMessage} />;
-  }
-
-  return <TrustMediaForm item={props.item} message={message} setMessage={setMessage} />;
+  return <TestimonialForm item={props.item} message={message} setMessage={setMessage} />;
 }
 
 function Message({ value }: { value: string }) {
@@ -163,144 +141,6 @@ function TestimonialForm({
             helperText="Drop a testimonial or chat screenshot here. It uploads to Cloudinary automatically."
             value={imageUrl ? { secure_url: imageUrl, public_id: "", resource_type: "image", width: 0, height: 0 } : null}
             onUploaded={(upload) => setImageUrl(upload.secure_url)}
-          />
-        </div>
-      </section>
-      <SaveButton />
-    </form>
-  );
-}
-
-function DiscoverForm({
-  item,
-  message,
-  setMessage
-}: {
-  item?: DiscoverPost | null;
-  message: string;
-  setMessage: (message: string) => void;
-}) {
-  const [title, setTitle] = useState(item?.title ?? "");
-  const [slug, setSlug] = useState(item?.slug ?? "");
-  const [excerpt, setExcerpt] = useState(item?.excerpt ?? "");
-  const [category, setCategory] = useState<DiscoverPost["category"]>(item?.category ?? "guide");
-  const [imageUrl, setImageUrl] = useState(item?.imageUrl ?? "");
-  const [body, setBody] = useState(item?.body ?? "");
-  const [publishedAt, setPublishedAt] = useState(item?.publishedAt.slice(0, 10) ?? new Date().toISOString().slice(0, 10));
-
-  return (
-    <form
-      className="space-y-4"
-      onSubmit={(event) => {
-        event.preventDefault();
-        setMessage(`Preview saved for article: ${title || "Untitled"}.`);
-      }}
-    >
-      <Message value={message} />
-      <section className="grid gap-3 border border-stone/30 bg-white p-4 md:grid-cols-2">
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Title</span>
-          <input
-            value={title}
-            onChange={(event) => {
-              setTitle(event.target.value);
-              if (!slug) setSlug(slugify(event.target.value));
-            }}
-            className="border-stone/40 text-sm"
-          />
-        </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Slug</span>
-          <input value={slug} onChange={(event) => setSlug(slugify(event.target.value))} className="border-stone/40 text-sm" />
-        </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Category</span>
-          <select value={category} onChange={(event) => setCategory(event.target.value as DiscoverPost["category"])} className="border-stone/40 text-sm">
-            {discoverCategories.map((item) => (
-              <option key={item} value={item}>{item}</option>
-            ))}
-          </select>
-        </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Published</span>
-          <input type="date" value={publishedAt} onChange={(event) => setPublishedAt(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
-        <label className="grid gap-1 text-sm md:col-span-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Excerpt</span>
-          <textarea value={excerpt} onChange={(event) => setExcerpt(event.target.value)} rows={3} className="border-stone/40 text-sm" />
-        </label>
-        <label className="grid gap-1 text-sm md:col-span-2">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Body</span>
-          <textarea value={body} onChange={(event) => setBody(event.target.value)} rows={8} className="border-stone/40 text-sm" />
-        </label>
-        <div className="md:col-span-2">
-          <CloudinaryUpload
-            label="Article image"
-            helperText="Drop the article thumbnail here. It uploads to Cloudinary automatically."
-            value={imageUrl ? { secure_url: imageUrl, public_id: "", resource_type: "image", width: 0, height: 0 } : null}
-            onUploaded={(upload) => setImageUrl(upload.secure_url)}
-          />
-        </div>
-      </section>
-      <SaveButton />
-    </form>
-  );
-}
-
-function TrustMediaForm({
-  item,
-  message,
-  setMessage
-}: {
-  item?: TrustMedia | null;
-  message: string;
-  setMessage: (message: string) => void;
-}) {
-  const [title, setTitle] = useState(item?.title ?? "");
-  const [category, setCategory] = useState<TrustMedia["category"]>(item?.category ?? "packing_video");
-  const [mediaType, setMediaType] = useState<TrustMedia["mediaType"]>(item?.mediaType ?? "image");
-  const [mediaUrl, setMediaUrl] = useState(item?.mediaUrl ?? "");
-
-  return (
-    <form
-      className="space-y-4"
-      onSubmit={(event) => {
-        event.preventDefault();
-        setMessage(`Preview saved for trust media: ${title || "Untitled"}.`);
-      }}
-    >
-      <Message value={message} />
-      <section className="grid gap-3 border border-stone/30 bg-white p-4 md:grid-cols-2">
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Title</span>
-          <input value={title} onChange={(event) => setTitle(event.target.value)} className="border-stone/40 text-sm" />
-        </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Category</span>
-          <select value={category} onChange={(event) => setCategory(event.target.value as TrustMedia["category"])} className="border-stone/40 text-sm">
-            {trustCategories.map((item) => (
-              <option key={item} value={item}>{item.replaceAll("_", " ")}</option>
-            ))}
-          </select>
-        </label>
-        <label className="grid gap-1 text-sm">
-          <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Media type</span>
-          <select value={mediaType} onChange={(event) => setMediaType(event.target.value as TrustMedia["mediaType"])} className="border-stone/40 text-sm">
-            <option value="image">image</option>
-            <option value="video">video</option>
-          </select>
-        </label>
-        <div className="md:col-span-2">
-          <CloudinaryUpload
-            label="Trust media"
-            helperText="Drop proof media here. Images and videos upload to Cloudinary automatically."
-            folder="trust-media"
-            accept="image-video"
-            value={mediaUrl ? { secure_url: mediaUrl, public_id: "", resource_type: mediaType, width: 0, height: 0 } : null}
-            onUploaded={(upload) => {
-              setMediaUrl(upload.secure_url);
-              setMediaType(upload.resource_type);
-            }}
           />
         </div>
       </section>

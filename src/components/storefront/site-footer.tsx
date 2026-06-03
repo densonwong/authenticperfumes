@@ -45,8 +45,8 @@ export function SiteFooter() {
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-ink/65 sm:flex-row sm:items-center sm:justify-between lg:px-8">
           <p>&copy; 2026 Authentic Perfumes. Original fragrances for Indonesia.</p>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
-            <Link href="/trust-center" className="hover:text-ink">
-              Trust Center
+            <Link href="/testimonials" className="hover:text-ink">
+              Testimonials
             </Link>
             <Link href="/pre-order" className="hover:text-ink">
               Pre Order

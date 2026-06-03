@@ -2,7 +2,7 @@
 
 Next.js storefront and admin MVP for Authentic Perfumes, an Indonesian reseller of original niche and designer fragrances.
 
-The public site follows a Luckyscent-like boutique catalog direction: compact masthead, wide category navigation, featured collection tiles, dense product rows, sampling/discovery, trust center, and brand directory. The admin panel supports local preview data and is prepared for Supabase Auth/database plus Cloudinary media uploads.
+The public site follows a Luckyscent-like boutique catalog direction: compact masthead, focused category navigation, featured collection tiles, dense product rows, sampling, testimonials, and brand directory. The admin panel supports local preview data and is prepared for Supabase Auth/database plus Cloudinary media uploads.
 
 ## Stack
 
@@ -57,8 +57,6 @@ The schema includes:
 - `product_variants`
 - `banners`
 - `testimonials`
-- `discover_posts`
-- `trust_media`
 - `fragrance_requests`
 - `stock_notifications`
 - `admin_audit_logs`
@@ -99,7 +97,6 @@ Supported folder query values:
 
 - default: `authenticperfumes/catalog`
 - `?folder=banners`: `authenticperfumes/banners`
-- `?folder=trust-media`: `authenticperfumes/trust-media`
 
 ## Verification
 
@@ -118,7 +115,6 @@ Useful manual routes:
 - `/sampling`
 - `/pre-order`
 - `/testimonials`
-- `/discover`
 - `/contact`
 - `/admin/login`
 - `/admin/products`

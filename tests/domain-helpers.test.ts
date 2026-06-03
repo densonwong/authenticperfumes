@@ -3,10 +3,8 @@ import { calculateSavings, formatRupiah } from "../src/lib/format";
 import {
   seedBanners,
   seedBrands,
-  seedDiscoverPosts,
   seedProducts,
-  seedTestimonials,
-  seedTrustMedia
+  seedTestimonials
 } from "../src/lib/seed-data";
 import { slugify } from "../src/lib/slugs";
 import { buildProductWhatsAppMessage, buildWhatsAppUrl } from "../src/lib/whatsapp";
@@ -46,8 +44,6 @@ describe("seed data", () => {
     expect(seedProducts).toHaveLength(12);
     expect(seedBanners).toHaveLength(3);
     expect(seedTestimonials).toHaveLength(4);
-    expect(seedTrustMedia).toHaveLength(6);
-    expect(seedDiscoverPosts).toHaveLength(4);
   });
 
   it("includes required Xerjoff catalog records", () => {
@@ -60,9 +56,7 @@ describe("seed data", () => {
       ...seedBrands.map((brand) => brand.logoUrl),
       ...seedProducts.flatMap((product) => [product.imageUrl, ...product.galleryUrls]),
       ...seedBanners.map((banner) => banner.imageUrl),
-      ...seedTestimonials.map((testimonial) => testimonial.imageUrl),
-      ...seedTrustMedia.map((media) => media.mediaUrl),
-      ...seedDiscoverPosts.map((post) => post.imageUrl)
+      ...seedTestimonials.map((testimonial) => testimonial.imageUrl)
     ];
 
     expect(urls.every((url) => url.startsWith("https://images.unsplash.com/"))).toBe(true);

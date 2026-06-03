@@ -14,7 +14,7 @@ export type CloudinaryUploadValue = {
 type CloudinaryUploadProps = {
   label?: string;
   helperText?: string;
-  folder?: "catalog" | "trust-media" | "banners";
+  folder?: "catalog" | "banners";
   accept?: "image" | "video" | "image-video";
   value?: CloudinaryUploadValue | null;
   onUploaded: (value: CloudinaryUploadValue) => void;

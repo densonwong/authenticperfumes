@@ -7,7 +7,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Sampling",
-  description: "Request fragrance samples and discovery guidance before buying a full bottle."
+  description: "Request fragrance samples and fitting guidance before buying a full bottle."
 };
 
 const steps = [
@@ -26,7 +26,7 @@ export default async function SamplingPage() {
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-              Discovery/Sampling
+              Sampling
             </p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
               Try the direction before the bottle

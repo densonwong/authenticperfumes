@@ -1,6 +1,5 @@
 export type ProductStatus = "ready_stock" | "pre_order" | "limited_stock" | "out_of_stock";
 export type Gender = "men" | "women" | "unisex";
-export type MediaType = "image" | "video";
 
 export type Brand = {
   id: string;
@@ -59,29 +58,4 @@ export type Testimonial = {
   quote: string;
   productName: string;
   imageUrl: string;
-};
-
-export type TrustMedia = {
-  id: string;
-  title: string;
-  category:
-    | "packing_video"
-    | "shipping_proof"
-    | "chat_review"
-    | "story_repost"
-    | "unboxing"
-    | "repeat_customer";
-  mediaType: MediaType;
-  mediaUrl: string;
-};
-
-export type DiscoverPost = {
-  id: string;
-  slug: string;
-  title: string;
-  excerpt: string;
-  category: "guide" | "review" | "glossary" | "consultation";
-  imageUrl: string;
-  body: string;
-  publishedAt: string;
 };
