@@ -7,7 +7,7 @@ import {
   seedTestimonials
 } from "../src/lib/seed-data";
 import { slugify } from "../src/lib/slugs";
-import { buildProductWhatsAppMessage, buildWhatsAppUrl } from "../src/lib/whatsapp";
+import { buildProductWhatsAppMessage, buildWhatsAppUrl, normalizeWhatsAppPhone } from "../src/lib/whatsapp";
 
 describe("domain helpers", () => {
   it("formats IDR prices", () => {
@@ -35,6 +35,13 @@ describe("domain helpers", () => {
     expect(message).toContain("Xerjoff Naxos");
     expect(message).toContain("100ml");
     expect(buildWhatsAppUrl(message, "628111111111")).toContain("https://wa.me/628111111111");
+  });
+
+  it("normalizes WhatsApp phone numbers for wa.me links", () => {
+    expect(normalizeWhatsAppPhone("+62 812-2899-9598")).toBe("6281228999598");
+    expect(buildWhatsAppUrl("Halo", "+62 812-2899-9598")).toContain(
+      "https://wa.me/6281228999598"
+    );
   });
 });
 

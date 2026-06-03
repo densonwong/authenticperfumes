@@ -1,9 +1,9 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Search } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { NotifyMeForm } from "@/components/storefront/notify-me-form";
+import { ProductGalleryCarousel } from "@/components/storefront/product-gallery-carousel";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { calculateSavings, formatRupiah } from "@/lib/format";
 import { getProductBySlug, getProducts } from "@/lib/repositories/catalog";
@@ -12,6 +12,8 @@ import { buildProductWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
+
+export const dynamic = "force-dynamic";
 
 const statusLabels: Record<ProductStatus, string> = {
   ready_stock: "Ready stock",
@@ -105,37 +107,11 @@ export default async function ProductDetailPage({
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
       <section className="mx-auto grid max-w-7xl gap-8 px-4 py-8 lg:grid-cols-[1.05fr_0.95fr] lg:px-8">
-        <div className="grid gap-3 lg:grid-cols-[92px_1fr]">
-          <div className="order-2 flex gap-2 overflow-x-auto lg:order-1 lg:block lg:space-y-3">
-            {product.galleryUrls.map((url, index) => (
-              <a
-                key={url}
-                href={`#gallery-${index}`}
-                className="relative block h-20 w-20 shrink-0 overflow-hidden border border-ink/10 bg-warm lg:h-24 lg:w-full"
-                aria-label={`View image ${index + 1}`}
-              >
-                <Image src={url} alt="" fill sizes="92px" className="object-cover" />
-              </a>
-            ))}
-          </div>
-          <div className="order-1 space-y-3 lg:order-2">
-            {product.galleryUrls.map((url, index) => (
-              <div
-                key={url}
-                id={`gallery-${index}`}
-                className="relative aspect-[4/5] overflow-hidden border border-ink/10 bg-warm"
-              >
-                <Image
-                  src={url}
-                  alt={`${product.brandName} ${product.name} bottle ${index + 1}`}
-                  fill
-                  sizes="(min-width: 1024px) 52vw, 100vw"
-                  className="object-cover"
-                  priority={index === 0}
-                />
-              </div>
-            ))}
-          </div>
+        <div>
+          <ProductGalleryCarousel
+            images={[product.imageUrl, ...product.galleryUrls]}
+            productName={`${product.brandName} ${product.name}`}
+          />
         </div>
 
         <div className="lg:sticky lg:top-32 lg:self-start">
