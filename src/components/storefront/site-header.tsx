@@ -41,25 +41,25 @@ const navItems: NavItem[] = [
       }
     ]
   },
-  { label: "New", href: "/new" },
+  { label: "New", href: "/new-arrivals" },
   {
     label: "Fragrances",
-    href: "/fragrances",
+    href: "/shop",
     groups: [
       {
         title: "Families",
         links: [
-          { label: "Woody", href: "/fragrances?family=woody" },
-          { label: "Floral", href: "/fragrances?family=floral" },
-          { label: "Amber", href: "/fragrances?family=amber" }
+          { label: "Woody", href: "/shop?note=Woody" },
+          { label: "Floral", href: "/shop?note=Floral" },
+          { label: "Amber", href: "/shop?note=Amber" }
         ]
       },
       {
         title: "Occasion",
         links: [
-          { label: "Office Friendly", href: "/fragrances?occasion=office" },
-          { label: "Evening", href: "/fragrances?occasion=evening" },
-          { label: "Tropical Weather", href: "/fragrances?occasion=tropical" }
+          { label: "Office Friendly", href: "/shop?q=office" },
+          { label: "Evening", href: "/shop?q=evening" },
+          { label: "Tropical Weather", href: "/shop?q=tropical" }
         ]
       }
     ]
@@ -67,7 +67,7 @@ const navItems: NavItem[] = [
   { label: "Sampling", href: "/sampling" },
   { label: "Pre Order", href: "/pre-order" },
   { label: "Best Sellers", href: "/best-sellers" },
-  { label: "Trust Center", href: "/trust-center" },
+  { label: "Trust Center", href: "/testimonials" },
   {
     label: "Discover",
     href: "/discover",
@@ -84,7 +84,7 @@ const navItems: NavItem[] = [
         title: "Concierge",
         links: [
           { label: "Scent Consultation", href: "/discover/consultation" },
-          { label: "Authenticity Process", href: "/trust-center" },
+          { label: "Authenticity Process", href: "/testimonials" },
           { label: "Pre Order Guide", href: "/pre-order" }
         ]
       }
