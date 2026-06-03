@@ -10,40 +10,51 @@ The first release includes the public website, catalog, brand directory, product
 
 ## Design Direction
 
-The site is a brand authority and editorial motion experience, not a simple product showcase.
+The UI direction is inspired by Luckyscent: a boutique niche-fragrance storefront with strong navigation, curated collection modules, product discovery, editorial fragrance content, and brand depth. Authentic Perfumes should feel established and useful, not like a cinematic landing page or a generic product showcase.
 
-The first impression should feel like a premium fragrance journal plus a concierge sourcing service. Product grids exist, but they appear after the brand has established credibility. The homepage is structured as chapters:
+The homepage should be browseable from the first screen. Brand authority comes from breadth, curation, clear service policies, fragrance education, and trust proof. The structure is:
 
-1. Hero brand statement
-2. Authenticity standard
-3. Sourcing and pre-order process
-4. Fragrance consultation
-5. Trust archive
-6. Curated best sellers and new arrivals
-7. Brand universe
-8. WhatsApp and request fragrance calls to action
+1. Compact announcement bar
+2. Centered brand masthead
+3. Wide category navigation with dropdown groups
+4. Featured collection banners
+5. New and Noteworthy product grid
+6. Consultation, trust proof, and pre-order service modules
+7. Discovery sets, samples, or split-size offerings
+8. Featured brands
+9. About/service footer with trust copy, WhatsApp, shipping, and policy links
 
 Visual tone:
 
-- Premium, editorial, refined, warm, and confident
+- Premium, niche-boutique, refined, warm, and easy to browse
 - Soft neutral palette based on `#F2F2F0`, `#EEEAE3`, `#DDD6CE`, `#B0A99F`
 - Black for typography and structure
 - Restrained gold accent for authenticity, proof, and high-value actions
-- Generous whitespace with a few dense commerce surfaces where filtering is needed
+- Comfortable whitespace with dense product and brand surfaces where browsing requires it
 - Typography with a distinctive serif display face and a precise sans-serif body face
-- No generic gradient-orb backgrounds, oversized SaaS cards, purple palettes, or templated hero layouts
+- No generic gradient-orb backgrounds, oversized SaaS cards, purple palettes, cinematic empty hero sections, or templated landing-page layouts
+
+Important reference traits from Luckyscent to adapt, not copy:
+
+- A top announcement message
+- Logo/masthead as a clear central brand anchor
+- Main navigation organized by shopping intent: Brands, New, Fragrances, Sampling, Discover, Pre Order, Best Sellers, Contact
+- Featured collection tiles near the top
+- Product sections with many visible items, small product imagery, brand, product name, concentration, and price range
+- Editorial/support content such as video reviews, fragrance guides, glossary, or consultation content
+- Featured brand tiles
+- Footer copy that explains the brand's authority and service model
 
 ## Motion Direction
 
-Use motion as part of the brand experience, not decoration.
+Use motion to make browsing feel polished, not theatrical.
 
 Implementation will use Framer Motion in Next.js for:
 
-- Page entrance and route transitions
-- Staggered text reveals
-- Scroll-triggered chapter reveals
-- Slow image parallax on editorial sections
-- Sticky storytelling sections
+- Subtle page entrance and route transitions
+- Light staggered reveals for collection tiles and product rows
+- Smooth dropdown and mobile navigation transitions
+- Small hover transitions for products, brand tiles, and featured collections
 - Product and brand hover states
 - Cart drawer, filter drawer, admin modals, and media previews
 
@@ -57,7 +68,7 @@ Use Transitions.dev-style product motion patterns for UI interactions:
 - Success check: submitted request, saved product, uploaded media
 - Error shake: invalid admin forms
 
-All motion must respect `prefers-reduced-motion`.
+All motion must respect `prefers-reduced-motion`. The site should never feel like a demo of animation; motion supports navigation, feedback, and polish.
 
 ## Architecture
 
@@ -80,8 +91,11 @@ Public routes:
 - `/products/[slug]`
 - `/new-arrivals`
 - `/best-sellers`
+- `/sampling`
 - `/pre-order`
 - `/testimonials`
+- `/discover`
+- `/discover/[slug]`
 - `/about`
 - `/contact`
 
@@ -99,6 +113,7 @@ Admin routes:
 - `/admin/brands/[id]`
 - `/admin/banners`
 - `/admin/testimonials`
+- `/admin/discover`
 - `/admin/trust-media`
 - `/admin/requests`
 - `/admin/stock-notifications`
@@ -109,6 +124,7 @@ API route groups:
 - `/api/brands`
 - `/api/banners`
 - `/api/testimonials`
+- `/api/discover`
 - `/api/trust-media`
 - `/api/fragrance-requests`
 - `/api/stock-notifications`
@@ -124,6 +140,7 @@ Supabase tables:
 - `product_variants`: product reference, size, retail price, authentic price, stock, status
 - `banners`: homepage hero and promo banners
 - `testimonials`: customer reviews and chat review metadata
+- `discover_posts`: fragrance guides, video review entries, glossary posts, consultation content, and brand authority articles
 - `trust_media`: packing videos, shipping proof, unboxing, story reposts, repeat customer proof
 - `fragrance_requests`: requested brand, product name, size, customer contact, status
 - `stock_notifications`: product variant reference, customer contact, status
@@ -135,31 +152,46 @@ Cloudinary stores all product images, gallery images, brand logos, banners, trus
 
 ### Homepage
 
-The homepage must establish authority before commerce.
+The homepage follows a Luckyscent-like boutique storefront rhythm. It should expose categories, collections, products, content, and brands quickly.
 
-Hero:
+Header and navigation:
 
-- Editorial brand statement about original niche and designer fragrance sourcing in Indonesia
-- Slow-moving layered imagery or video-like composition
-- Calls to action: `Explore Collection`, `Our Authenticity Standard`, `Consult via WhatsApp`
-- Trust signals visible in the first viewport without looking like badges pasted on top
+- Top announcement bar for promo, free sample offer, PO update, or shipping message
+- Centered Authentic Perfumes masthead
+- Primary navigation: `Brands`, `New`, `Fragrances`, `Sampling`, `Pre Order`, `Best Sellers`, `Trust Center`, `Discover`, `Contact`
+- Dropdown groups for high-volume categories
+- Search, wishlist, cart/intent, and WhatsApp access
 
-Authority chapters:
+Top content:
 
-- Authenticity standard
-- Sourcing and supplier process
-- Ready Stock vs Pre Order
-- Split payment and refund policy
-- Fragrance consultation
+- Featured collection tiles for promo, brand highlight, new arrivals, best sellers, PO, or discovery sets
+- A compact trust strip: authentic guarantee, Indonesia shipping, split payment, fragrance consultation
+
+Product/content modules:
+
+- New and Noteworthy
+- Best Sellers
+- Ready Stock
+- Pre Order Picks
+- Discovery Sets / Samples / Decants
+- Fragrance consultation or finder entry
+- Video reviews, guides, or fragrance education
 - Trust Center preview
-
-Commerce chapters:
-
-- Best sellers
-- New arrivals
 - Brand universe preview
-- Fragrance Finder notes
 - Request a fragrance
+
+### Sampling / Discovery
+
+The site includes a sampling-oriented route because niche fragrance buyers often want low-risk discovery before committing to a full bottle.
+
+This route can show:
+
+- Sample packs
+- Discovery sets
+- Decants or split sizes where available
+- Essential note families
+- Staff picks
+- Fragrance finder results
 
 ### Shop
 
@@ -233,6 +265,7 @@ Admin users can:
 - Upload brand logos
 - Manage homepage banners
 - Manage testimonials
+- Manage discovery/editorial posts
 - Upload packing videos, shipping proof, unboxing media, and chat review screenshots
 - Review and update fragrance requests
 - Review stock notification requests
