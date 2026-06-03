@@ -1,8 +1,17 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n";
 import type { Banner } from "@/lib/types";
 
-export function CollectionTile({ banner, priority = false }: { banner: Banner; priority?: boolean }) {
+export function CollectionTile({
+  banner,
+  priority = false,
+  dictionary
+}: {
+  banner: Banner;
+  priority?: boolean;
+  dictionary: Dictionary["tile"];
+}) {
   return (
     <Link
       href={banner.href}
@@ -19,12 +28,12 @@ export function CollectionTile({ banner, priority = false }: { banner: Banner; p
       <div className="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/20 to-transparent" />
       <div className="relative mt-auto max-w-xl p-5 sm:p-7">
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/75">
-          Featured edit
+          {dictionary.featured}
         </p>
         <h2 className="font-serif text-2xl leading-tight sm:text-3xl">{banner.title}</h2>
         <p className="mt-3 text-sm leading-6 text-paper/80">{banner.subtitle}</p>
         <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-paper">
-          Shop collection
+          {dictionary.shop}
         </p>
       </div>
     </Link>

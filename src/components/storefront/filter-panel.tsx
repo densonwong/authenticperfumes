@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n";
 import type { Brand, Gender, Product } from "@/lib/types";
 
 type FilterPanelProps = {
@@ -16,6 +17,7 @@ type FilterPanelProps = {
     bestSeller?: string;
     newArrival?: string;
   };
+  dictionary: Dictionary["shop"] & Dictionary["common"];
 };
 
 const priceBands = [
@@ -42,43 +44,43 @@ function uniqueSorted(values: string[]) {
   return [...new Set(values)].sort((a, b) => a.localeCompare(b));
 }
 
-export function FilterPanel({ brands, products, selected }: FilterPanelProps) {
+export function FilterPanel({ brands, products, selected, dictionary }: FilterPanelProps) {
   const notes = uniqueSorted(products.flatMap((product) => product.notes));
   const sizes = uniqueSorted(products.flatMap((product) => product.variants.map((variant) => variant.size)));
 
   return (
     <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:self-start">
       <div className="mb-5 flex items-center justify-between gap-4 border-b border-ink/10 pb-4">
-        <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">Refine</h2>
+        <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">{dictionary.refine}</h2>
         <Link href="/shop" className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
-          Clear
+          {dictionary.clear}
         </Link>
       </div>
 
       <form action="/shop" className="space-y-5">
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            Search
+            {dictionary.search}
           </span>
           <input
             type="search"
             name="q"
             defaultValue={selected.q}
-            placeholder="Brand, note, perfume"
+            placeholder={dictionary.searchPlaceholder}
             className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
           />
         </label>
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            Brand
+            {dictionary.brand}
           </span>
           <select
             name="brand"
             defaultValue={selected.brand ?? ""}
             className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
           >
-            <option value="">All brands</option>
+            <option value="">{dictionary.allBrands}</option>
             {brands.map((brand) => (
               <option key={brand.id} value={brand.slug}>
                 {brand.name}
@@ -89,7 +91,7 @@ export function FilterPanel({ brands, products, selected }: FilterPanelProps) {
 
         <div>
           <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            Gender
+            {dictionary.gender}
           </p>
           <div className="mt-2 grid grid-cols-3 gap-2">
             {genders.map((gender) => (
@@ -112,14 +114,14 @@ export function FilterPanel({ brands, products, selected }: FilterPanelProps) {
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            Note
+            {dictionary.note}
           </span>
           <select
             name="note"
             defaultValue={selected.note ?? ""}
             className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
           >
-            <option value="">Any note</option>
+            <option value="">{dictionary.anyNote}</option>
             {notes.map((note) => (
               <option key={note} value={note}>
                 {note}
@@ -130,14 +132,14 @@ export function FilterPanel({ brands, products, selected }: FilterPanelProps) {
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            Price
+            {dictionary.price}
           </span>
           <select
             name="price"
             defaultValue={selected.price ?? ""}
             className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
           >
-            <option value="">Any price</option>
+            <option value="">{dictionary.anyPrice}</option>
             {priceBands.map((band) => (
               <option key={band.value} value={band.value}>
                 {band.label}
@@ -148,14 +150,14 @@ export function FilterPanel({ brands, products, selected }: FilterPanelProps) {
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            Size
+            {dictionary.size}
           </span>
           <select
             name="size"
             defaultValue={selected.size ?? ""}
             className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
           >
-            <option value="">Any size</option>
+            <option value="">{dictionary.anySize}</option>
             {sizes.map((size) => (
               <option key={size} value={size}>
                 {size}
@@ -183,7 +185,7 @@ export function FilterPanel({ brands, products, selected }: FilterPanelProps) {
           type="submit"
           className="w-full border border-ink bg-ink px-4 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-ink"
         >
-          Apply filters
+          {dictionary.applyFilters}
         </button>
       </form>
     </aside>

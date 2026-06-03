@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
+import { getDictionary, getLocale } from "@/lib/i18n";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
 import type { Product } from "@/lib/types";
 
@@ -75,6 +76,8 @@ function filterProducts(products: Product[], selected: ReturnType<typeof selecte
 }
 
 export default async function ShopPage({ searchParams }: { searchParams: SearchParams }) {
+  const locale = await getLocale();
+  const dictionary = getDictionary(locale);
   const resolvedSearchParams = await searchParams;
   const [brands, products] = await Promise.all([getBrands(), getProducts()]);
   const selected = selectedFrom(resolvedSearchParams);
@@ -85,35 +88,40 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
       <section className="border-b border-ink/10 px-4 py-8 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-            Catalog
+            {dictionary.shop.catalog}
           </p>
           <div className="mt-3 grid gap-4 lg:grid-cols-[1fr_auto] lg:items-end">
             <div>
-              <h1 className="font-serif text-4xl leading-tight text-ink">Shop fragrances</h1>
+              <h1 className="font-serif text-4xl leading-tight text-ink">{dictionary.shop.title}</h1>
               <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
-                Filter curated bottles by house, note, price, size, and fulfillment status.
+                {dictionary.shop.body}
               </p>
             </div>
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-ink/55">
-              {filteredProducts.length} of {products.length} bottles
+              {filteredProducts.length} {dictionary.shop.of} {products.length} {dictionary.common.bottles}
             </p>
           </div>
         </div>
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[280px_1fr] lg:px-8">
-        <FilterPanel brands={brands} products={products} selected={selected} />
+        <FilterPanel
+          brands={brands}
+          products={products}
+          selected={selected}
+          dictionary={{ ...dictionary.shop, ...dictionary.common }}
+        />
         {filteredProducts.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
             {filteredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} priority={index < 4} />
+              <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} />
             ))}
           </div>
         ) : (
           <div className="border border-ink/10 bg-warm/45 p-8">
-            <h2 className="font-serif text-2xl text-ink">No matching bottles</h2>
+            <h2 className="font-serif text-2xl text-ink">{dictionary.shop.noTitle}</h2>
             <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65">
-              Try removing a status toggle or broadening the note and price filters.
+              {dictionary.shop.noBody}
             </p>
           </div>
         )}

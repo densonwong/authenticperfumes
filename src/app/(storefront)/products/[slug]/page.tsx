@@ -6,6 +6,7 @@ import { NotifyMeForm } from "@/components/storefront/notify-me-form";
 import { ProductGalleryCarousel } from "@/components/storefront/product-gallery-carousel";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { calculateSavings, formatRupiah } from "@/lib/format";
+import { getDictionary, getLocale } from "@/lib/i18n";
 import { getProductBySlug, getProducts } from "@/lib/repositories/catalog";
 import type { ProductStatus, ProductVariant } from "@/lib/types";
 import { buildProductWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -14,13 +15,6 @@ type Params = Promise<{ slug: string }>;
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 export const dynamic = "force-dynamic";
-
-const statusLabels: Record<ProductStatus, string> = {
-  ready_stock: "Ready stock",
-  pre_order: "Pre order",
-  limited_stock: "Limited stock",
-  out_of_stock: "Out of stock"
-};
 
 const schemaAvailability: Record<ProductStatus, string> = {
   ready_stock: "https://schema.org/InStock",
@@ -68,6 +62,8 @@ export default async function ProductDetailPage({
   searchParams: SearchParams;
 }) {
   const [{ slug }, resolvedSearchParams] = await Promise.all([params, searchParams]);
+  const locale = await getLocale();
+  const dictionary = getDictionary(locale);
   const product = await getProductBySlug(slug);
 
   if (!product) notFound();
@@ -111,6 +107,7 @@ export default async function ProductDetailPage({
           <ProductGalleryCarousel
             images={[product.imageUrl, ...product.galleryUrls]}
             productName={`${product.brandName} ${product.name}`}
+            labels={dictionary.product}
           />
         </div>
 
@@ -126,7 +123,7 @@ export default async function ProductDetailPage({
 
           <div className="mt-6 border-y border-ink/10 py-5">
             <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
-              Selected size
+              {dictionary.product.selectedSize}
             </p>
             <div className="mt-3 grid gap-2 sm:grid-cols-2">
               {product.variants.map((item) => (
@@ -141,7 +138,7 @@ export default async function ProductDetailPage({
                 >
                   <span className="block text-sm font-semibold">{item.size}</span>
                   <span className="mt-1 block text-xs uppercase tracking-[0.12em] opacity-70">
-                    {statusLabels[item.status]} / stock {item.stock}
+                    {dictionary.status[item.status]} / {dictionary.product.stock} {item.stock}
                   </span>
                 </Link>
               ))}
@@ -151,19 +148,19 @@ export default async function ProductDetailPage({
           <div className="mt-5 grid gap-3 border-b border-ink/10 pb-5 sm:grid-cols-3">
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
-                Retail
+                {dictionary.product.retail}
               </p>
               <p className="mt-1 text-sm text-ink/55 line-through">{formatRupiah(variant.retailPrice)}</p>
             </div>
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
-                Authentic
+                {dictionary.product.authentic}
               </p>
               <p className="mt-1 text-lg font-semibold text-ink">{formatRupiah(variant.authenticPrice)}</p>
             </div>
             <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
-                Savings
+                {dictionary.product.savings}
               </p>
               <p className="mt-1 text-sm font-semibold text-gold">
                 {formatRupiah(savings)} ({savingsPercent}%)
@@ -173,13 +170,13 @@ export default async function ProductDetailPage({
 
           <div className="mt-5 rounded-none border border-ink/10 bg-warm/45 p-4">
             <div className="flex items-center justify-between gap-3">
-              <p className="text-sm font-semibold text-ink">Status</p>
+              <p className="text-sm font-semibold text-ink">{dictionary.product.status}</p>
               <p className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
-                {statusLabels[variant.status]}
+                {dictionary.status[variant.status]}
               </p>
             </div>
             <p className="mt-2 text-sm leading-6 text-ink/65">
-              Final stock and dispatch timing are confirmed before payment through WhatsApp.
+              {dictionary.product.statusBody}
             </p>
           </div>
 
@@ -188,7 +185,7 @@ export default async function ProductDetailPage({
               href={whatsappUrl}
               className="inline-flex items-center justify-center border border-gold bg-gold px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition hover:bg-paper hover:text-ink"
             >
-              Buy via WhatsApp
+              {dictionary.product.buyWhatsapp}
             </a>
           </div>
 
@@ -197,12 +194,17 @@ export default async function ProductDetailPage({
             className="mt-2 inline-flex w-full items-center justify-center gap-2 border border-ink/15 bg-warm/45 px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:border-ink"
           >
             <Search className="h-4 w-4" aria-hidden="true" />
-            Request similar fragrance
+            {dictionary.product.requestSimilar}
           </button>
 
           <div className="mt-5 grid gap-4">
             {shouldShowNotifyForm ? (
-              <NotifyMeForm productId={product.id} productSlug={product.slug} variantId={variant.id} />
+              <NotifyMeForm
+                productId={product.id}
+                productSlug={product.slug}
+                variantId={variant.id}
+                dictionary={dictionary.forms}
+              />
             ) : null}
             <RequestFragranceForm
               defaultValues={{
@@ -210,25 +212,26 @@ export default async function ProductDetailPage({
                 productName: product.name,
                 size: variant.size
               }}
+              dictionary={dictionary.forms}
             />
           </div>
 
           <dl className="mt-7 grid gap-4 border-t border-ink/10 pt-5 text-sm sm:grid-cols-2">
             <div>
-              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">Origin</dt>
+              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.origin}</dt>
               <dd className="mt-1 text-ink">{product.countryOfOrigin}</dd>
             </div>
             <div>
-              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">Notes</dt>
+              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.notes}</dt>
               <dd className="mt-1 text-ink">{product.notes.join(", ")}</dd>
             </div>
             <div>
-              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">SKU</dt>
+              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.sku}</dt>
               <dd className="mt-1 text-ink">{product.id}</dd>
             </div>
             <div>
-              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">Fulfillment</dt>
-              <dd className="mt-1 text-ink">{product.preOrder ? "Pre order available" : "Ready stock focused"}</dd>
+              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.fulfillment}</dt>
+              <dd className="mt-1 text-ink">{product.preOrder ? dictionary.product.preOrderAvailable : dictionary.product.readyStockFocused}</dd>
             </div>
           </dl>
         </div>

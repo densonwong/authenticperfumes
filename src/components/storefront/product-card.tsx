@@ -1,14 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
-
-const statusLabels: Record<ProductStatus, string> = {
-  ready_stock: "Ready stock",
-  pre_order: "Pre order",
-  limited_stock: "Limited stock",
-  out_of_stock: "Out of stock"
-};
 
 function getPriceRange(product: Product) {
   const prices = product.variants.map((variant) => variant.authenticPrice);
@@ -18,7 +12,15 @@ function getPriceRange(product: Product) {
   return min === max ? formatRupiah(min) : `${formatRupiah(min)} - ${formatRupiah(max)}`;
 }
 
-export function ProductCard({ product, priority = false }: { product: Product; priority?: boolean }) {
+export function ProductCard({
+  product,
+  priority = false,
+  dictionary
+}: {
+  product: Product;
+  priority?: boolean;
+  dictionary: Pick<Dictionary, "status">;
+}) {
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -40,7 +42,7 @@ export function ProductCard({ product, priority = false }: { product: Product; p
             {product.brandName}
           </p>
           <p className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/55">
-            {statusLabels[product.status]}
+            {dictionary.status[product.status as ProductStatus]}
           </p>
         </div>
         <div>

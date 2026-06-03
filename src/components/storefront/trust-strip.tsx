@@ -1,34 +1,33 @@
 import { CreditCard, MessageCircle, PackageCheck, ShieldCheck } from "lucide-react";
+import type { Dictionary } from "@/lib/i18n";
 
-const items = [
+const icons = [ShieldCheck, PackageCheck, CreditCard, MessageCircle];
+
+export function TrustStrip({ dictionary }: { dictionary: Dictionary["trust"] }) {
+  const items = [
   {
-    label: "100% Authentic",
-    detail: "Verified sourcing",
-    icon: ShieldCheck
+      label: dictionary.authentic,
+      detail: dictionary.sourcing
   },
   {
-    label: "Indonesia Shipping",
-    detail: "Tracked dispatch",
-    icon: PackageCheck
+      label: dictionary.shipping,
+      detail: dictionary.dispatch
   },
   {
-    label: "Split Payment",
-    detail: "Flexible checkout",
-    icon: CreditCard
+      label: dictionary.split,
+      detail: dictionary.flexible
   },
   {
-    label: "Fragrance Consultation",
-    detail: "WhatsApp guidance",
-    icon: MessageCircle
+      label: dictionary.consultation,
+      detail: dictionary.guidance
   }
-];
+  ];
 
-export function TrustStrip() {
   return (
     <section className="border-y border-ink/10 bg-warm/70" aria-label="Store guarantees">
       <div className="mx-auto grid max-w-7xl grid-cols-2 divide-x divide-y divide-ink/10 px-4 sm:grid-cols-4 sm:divide-y-0 lg:px-8">
-        {items.map((item) => {
-          const Icon = item.icon;
+        {items.map((item, index) => {
+          const Icon = icons[index];
 
           return (
             <div key={item.label} className="flex min-w-0 items-center gap-3 px-2 py-4 sm:px-4">

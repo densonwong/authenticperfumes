@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
+import { getDictionary, getLocale } from "@/lib/i18n";
 import { getBrands } from "@/lib/repositories/catalog";
 
 export const metadata: Metadata = {
@@ -16,6 +17,8 @@ function valueOf(searchParams: Awaited<SearchParams>, key: string) {
 }
 
 export default async function BrandsPage({ searchParams }: { searchParams: SearchParams }) {
+  const locale = await getLocale();
+  const dictionary = getDictionary(locale);
   const q = valueOf(await searchParams, "q")?.trim().toLowerCase() ?? "";
   const brands = await getBrands();
   const filteredBrands = brands.filter((brand) =>
@@ -34,12 +37,15 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
         <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1fr_420px] lg:items-end">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-              Brand universe
+              {dictionary.home.brandUniverse}
             </p>
-            <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">A-Z fragrance houses</h1>
+            <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
+              {locale === "id" ? "Rumah parfum A-Z" : "A-Z fragrance houses"}
+            </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
-              A dense directory built to scale across hundreds of houses while keeping featured
-              logos and quick alphabet jumps visible.
+              {locale === "id"
+                ? "Direktori padat yang siap menampung ratusan brand, dengan logo dan navigasi alfabet yang mudah dipindai."
+                : "A dense directory built to scale across hundreds of houses while keeping featured logos and quick alphabet jumps visible."}
             </p>
           </div>
           <form action="/brands" className="flex gap-2">
@@ -47,14 +53,14 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
               type="search"
               name="q"
               defaultValue={q}
-              placeholder="Search brands"
+              placeholder={locale === "id" ? "Cari brand" : "Search brands"}
               className="min-w-0 flex-1 border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
             />
             <button
               type="submit"
               className="border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.14em] text-paper"
             >
-              Search
+              {dictionary.common.search}
             </button>
           </form>
         </div>
@@ -76,11 +82,13 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
         <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
           <aside className="hidden border border-ink/10 bg-warm/45 p-4 lg:block">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">
-              Directory count
+              {locale === "id" ? "Jumlah direktori" : "Directory count"}
             </p>
             <p className="mt-3 font-serif text-4xl text-ink">{filteredBrands.length}</p>
             <p className="mt-3 text-sm leading-6 text-ink/65">
-              Compact rows keep the list scannable as the catalog grows beyond 300 brands.
+              {locale === "id"
+                ? "Baris ringkas menjaga katalog tetap mudah dipindai saat daftar brand melewati 300."
+                : "Compact rows keep the list scannable as the catalog grows beyond 300 brands."}
             </p>
           </aside>
 
@@ -116,14 +124,16 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
                           <div className="min-w-0">
                             <h3 className="truncate text-sm font-semibold text-ink">{brand.name}</h3>
                             <p className="mt-1 truncate text-xs text-ink/55">
-                              {brand.country} / {brand.productCount} listed
+                              {brand.country} / {brand.productCount} {dictionary.common.listed}
                             </p>
                           </div>
                         </Link>
                       ))}
                     </div>
                   ) : (
-                    <p className="text-sm text-ink/45">No brands listed under {letter} yet.</p>
+                    <p className="text-sm text-ink/45">
+                      {dictionary.common.noBrandsUnder} {letter} {dictionary.common.yet}.
+                    </p>
                   )}
                 </section>
               );

@@ -1,16 +1,18 @@
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-const WHATSAPP_MESSAGE =
-  "Halo Authentic Perfumes, saya ingin konsultasi parfum dan cek stok terbaru.";
+type WhatsAppFloatingButtonProps = {
+  label: string;
+  message: string;
+};
 
-export function WhatsAppFloatingButton() {
+export function WhatsAppFloatingButton({ label, message }: WhatsAppFloatingButtonProps) {
   return (
     <a
-      href={buildWhatsAppUrl(WHATSAPP_MESSAGE)}
+      href={buildWhatsAppUrl(message)}
       className="fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-ink/20 transition hover:bg-[#1ebe5d] focus:outline-none focus:ring-2 focus:ring-[#25D366]/70 focus:ring-offset-2 focus:ring-offset-paper"
       target="_blank"
       rel="noreferrer"
-      aria-label="Chat with Authentic Perfumes on WhatsApp"
+      aria-label={label}
     >
       <svg
         className="h-6 w-6"

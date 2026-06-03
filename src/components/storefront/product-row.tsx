@@ -1,14 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
-
-const statusLabels: Record<ProductStatus, string> = {
-  ready_stock: "Ready stock",
-  pre_order: "Pre order",
-  limited_stock: "Limited stock",
-  out_of_stock: "Out of stock"
-};
 
 function getStartingPrice(product: Product) {
   const price = Math.min(...product.variants.map((variant) => variant.authenticPrice));
@@ -16,7 +10,13 @@ function getStartingPrice(product: Product) {
   return formatRupiah(price);
 }
 
-export function ProductRow({ product }: { product: Product }) {
+export function ProductRow({
+  product,
+  dictionary
+}: {
+  product: Product;
+  dictionary: Pick<Dictionary, "common" | "status">;
+}) {
   return (
     <Link
       href={`/products/${product.slug}`}
@@ -42,9 +42,11 @@ export function ProductRow({ product }: { product: Product }) {
       </div>
       <div className="col-start-2 flex flex-wrap items-center gap-x-4 gap-y-1 self-center text-xs sm:col-start-auto sm:block sm:text-right">
         <p className="font-semibold uppercase tracking-[0.12em] text-ink/55">
-          {statusLabels[product.status]}
+          {dictionary.status[product.status as ProductStatus]}
         </p>
-        <p className="mt-0 font-semibold text-ink sm:mt-2">From {getStartingPrice(product)}</p>
+        <p className="mt-0 font-semibold text-ink sm:mt-2">
+          {dictionary.common.from} {getStartingPrice(product)}
+        </p>
       </div>
     </Link>
   );

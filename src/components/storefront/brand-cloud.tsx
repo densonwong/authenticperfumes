@@ -1,7 +1,14 @@
 import Link from "next/link";
+import type { Dictionary } from "@/lib/i18n";
 import type { Brand } from "@/lib/types";
 
-export function BrandCloud({ brands }: { brands: Brand[] }) {
+export function BrandCloud({
+  brands,
+  dictionary
+}: {
+  brands: Brand[];
+  dictionary: Dictionary["common"];
+}) {
   return (
     <div className="grid grid-cols-2 border border-ink/10 bg-paper sm:grid-cols-3 lg:grid-cols-4">
       {brands.map((brand) => (
@@ -12,7 +19,7 @@ export function BrandCloud({ brands }: { brands: Brand[] }) {
         >
           <p className="truncate font-serif text-lg text-ink">{brand.name}</p>
           <p className="mt-2 text-xs uppercase tracking-[0.14em] text-ink/55">
-            {brand.productCount} {brand.productCount === 1 ? "fragrance" : "fragrances"}
+            {brand.productCount} {brand.productCount === 1 ? dictionary.fragrance : dictionary.fragrances}
           </p>
         </Link>
       ))}
