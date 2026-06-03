@@ -1,44 +1,20 @@
+import Link from "next/link";
+import { StatusSelect } from "@/components/admin/status-select";
 import { requireAdmin } from "@/lib/admin-auth";
+import { getAdminFragranceRequests } from "@/lib/repositories/admin-cms";
+import type { RequestStatus } from "@/lib/types";
 
-type WorkflowStatus = "new" | "in_progress" | "fulfilled" | "closed";
-
-const statuses: WorkflowStatus[] = ["new", "in_progress", "fulfilled", "closed"];
-
-const requests = [
-  {
-    id: "request-naxos-1861",
-    customer: "Aditya P.",
-    contact: "+62 812 3300 1861",
-    fragrance: "Xerjoff Naxos 100ml",
-    budget: "IDR3.8m - IDR4.2m",
-    status: "new" as WorkflowStatus
-  },
-  {
-    id: "request-ganymede",
-    customer: "Mira K.",
-    contact: "+62 811 4400 221",
-    fragrance: "Marc-Antoine Barrois Ganymede",
-    budget: "Open",
-    status: "in_progress" as WorkflowStatus
-  },
-  {
-    id: "request-grand-soir",
-    customer: "Felix T.",
-    contact: "+62 878 1200 908",
-    fragrance: "MFK Grand Soir",
-    budget: "Below IDR4m",
-    status: "fulfilled" as WorkflowStatus
-  }
-];
+const statuses: RequestStatus[] = ["new", "in_review", "sourced", "closed"];
 
 export default async function AdminRequestsPage() {
   await requireAdmin();
+  const requests = await getAdminFragranceRequests();
 
   return (
     <main className="min-h-screen bg-paper px-4 py-6 text-ink lg:px-8">
       <section className="mx-auto max-w-7xl space-y-4">
         <div className="border border-stone/30 bg-white p-4">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Admin</p>
+          <Link href="/admin" className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Admin</Link>
           <h1 className="mt-1 text-xl font-semibold">Fragrance requests</h1>
         </div>
         <div className="overflow-x-auto border border-stone/30 bg-white">
@@ -48,30 +24,45 @@ export default async function AdminRequestsPage() {
                 <th className="px-3 py-3">Customer</th>
                 <th className="px-3 py-3">Contact</th>
                 <th className="px-3 py-3">Fragrance</th>
-                <th className="px-3 py-3">Budget</th>
+                <th className="px-3 py-3">Notes</th>
+                <th className="px-3 py-3">Created</th>
                 <th className="px-3 py-3">Status</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-stone/20">
-              {requests.map((request) => (
-                <tr key={request.id}>
-                  <td className="px-3 py-3 font-semibold">{request.customer}</td>
-                  <td className="px-3 py-3 text-stone">{request.contact}</td>
-                  <td className="px-3 py-3">{request.fragrance}</td>
-                  <td className="px-3 py-3">{request.budget}</td>
-                  <td className="px-3 py-3">
-                    <select defaultValue={request.status} className="min-w-36 border-stone/40 text-sm">
-                      {statuses.map((status) => (
-                        <option key={status} value={status}>
-                          {status.replaceAll("_", " ")}
-                        </option>
-                      ))}
-                    </select>
-                  </td>
-                </tr>
-              ))}
+              {requests.map((request) => {
+                const contact = request.email ?? request.phone;
+
+                return (
+                  <tr key={request.id} className="align-top">
+                    <td className="px-3 py-3 font-semibold">{request.customerName}</td>
+                    <td className="px-3 py-3 text-stone">{contact}</td>
+                    <td className="px-3 py-3">{request.requestedFragrance}</td>
+                    <td className="max-w-xs px-3 py-3 text-stone">{request.notes ?? "-"}</td>
+                    <td className="px-3 py-3 text-stone">
+                      {new Intl.DateTimeFormat("id-ID", {
+                        dateStyle: "medium",
+                        timeStyle: "short"
+                      }).format(new Date(request.createdAt))}
+                    </td>
+                    <td className="px-3 py-3">
+                      <StatusSelect
+                        id={request.id}
+                        endpoint="/api/fragrance-requests"
+                        value={request.status}
+                        options={statuses}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
+          {requests.length === 0 ? (
+            <div className="border-t border-stone/20 p-6 text-sm text-stone">
+              No fragrance requests yet.
+            </div>
+          ) : null}
         </div>
       </section>
     </main>

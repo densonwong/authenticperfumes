@@ -1,5 +1,7 @@
 export type ProductStatus = "ready_stock" | "pre_order" | "limited_stock" | "out_of_stock";
 export type Gender = "men" | "women" | "unisex";
+export type RequestStatus = "new" | "in_review" | "sourced" | "closed";
+export type NotificationStatus = "pending" | "notified" | "closed";
 
 export type Brand = {
   id: string;
@@ -58,4 +60,25 @@ export type Testimonial = {
   quote: string;
   productName: string;
   imageUrl: string;
+};
+
+export type FragranceRequest = {
+  id: string;
+  customerName: string;
+  email: string | null;
+  phone: string;
+  requestedFragrance: string;
+  notes: string | null;
+  status: RequestStatus;
+  createdAt: string;
+};
+
+export type StockNotification = {
+  id: string;
+  productId: string | null;
+  productSlug: string;
+  email: string | null;
+  phone: string | null;
+  status: NotificationStatus;
+  createdAt: string;
 };

@@ -13,10 +13,11 @@ type StockNotificationValues = z.infer<typeof stockNotificationSchema>;
 
 type NotifyMeFormProps = {
   productId: string;
+  productSlug: string;
   variantId?: string;
 };
 
-export function NotifyMeForm({ productId, variantId }: NotifyMeFormProps) {
+export function NotifyMeForm({ productId, productSlug, variantId }: NotifyMeFormProps) {
   const [message, setMessage] = useState<string | null>(null);
   const [messageType, setMessageType] = useState<"success" | "error">("success");
   const {
@@ -28,6 +29,7 @@ export function NotifyMeForm({ productId, variantId }: NotifyMeFormProps) {
     resolver: zodResolver(stockNotificationSchema),
     defaultValues: {
       productId,
+      productSlug,
       variantId,
       customerName: "",
       contact: ""
@@ -50,7 +52,7 @@ export function NotifyMeForm({ productId, variantId }: NotifyMeFormProps) {
 
       setMessageType("success");
       setMessage(successMessage);
-      reset({ productId, variantId, customerName: "", contact: "" });
+      reset({ productId, productSlug, variantId, customerName: "", contact: "" });
     } catch {
       setMessageType("error");
       setMessage(failureMessage);
@@ -60,6 +62,7 @@ export function NotifyMeForm({ productId, variantId }: NotifyMeFormProps) {
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="border border-ink/10 bg-warm/45 p-4">
       <input type="hidden" {...register("productId")} />
+      <input type="hidden" {...register("productSlug")} />
       <input type="hidden" {...register("variantId")} />
       <div>
         <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">

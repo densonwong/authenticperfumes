@@ -201,7 +201,9 @@ export default async function ProductDetailPage({
           </button>
 
           <div className="mt-5 grid gap-4">
-            {shouldShowNotifyForm ? <NotifyMeForm productId={product.id} variantId={variant.id} /> : null}
+            {shouldShowNotifyForm ? (
+              <NotifyMeForm productId={product.id} productSlug={product.slug} variantId={variant.id} />
+            ) : null}
             <RequestFragranceForm
               defaultValues={{
                 brandName: product.brandName,

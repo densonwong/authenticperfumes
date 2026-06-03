@@ -16,12 +16,16 @@ export async function POST(request: Request) {
   }
 
   const supabase = await createSupabaseServerClient();
-  const { productId, customerName, contact } = parsed.data;
+  const { productId, productSlug, customerName, contact } = parsed.data;
   const isEmail = contact.includes("@");
+  const productUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId)
+    ? productId
+    : null;
   const { error } = await supabase!
     .from("stock_notifications")
     .insert({
-      product_slug: productId,
+      product_id: productUuid,
+      product_slug: productSlug ?? productId,
       email: isEmail ? contact : null,
       phone: isEmail ? null : contact,
       status: "pending"

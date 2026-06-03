@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getTestimonials } from "@/lib/repositories/catalog";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export async function GET() {
-  const testimonials = await getTestimonials();
-
-  return NextResponse.json(testimonials);
-}
+type Params = Promise<{ id: string }>;
 
 function validateTestimonialPayload(body: any) {
   const errors: string[] = [];
@@ -20,8 +15,9 @@ function validateTestimonialPayload(body: any) {
   return errors;
 }
 
-export async function POST(request: Request) {
+export async function PATCH(request: Request, { params }: { params: Params }) {
   await requireAdmin();
+  const { id } = await params;
   const body = await request.json().catch(() => null);
   const errors = validateTestimonialPayload(body);
 
@@ -34,21 +30,38 @@ export async function POST(request: Request) {
     return NextResponse.json({ mode: "local", status: "not_saved" }, { status: 503 });
   }
 
-  const { data, error } = await supabase
+  const { error } = await supabase
     .from("testimonials")
-    .insert({
+    .update({
       customer_name: body.customerName,
       product_name: body.productName,
       quote: body.quote,
       image_url: body.imageUrl,
       published: body.published ?? true
     })
-    .select("id")
-    .single();
+    .eq("id", id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ id: data.id, status: "saved" }, { status: 201 });
+  return NextResponse.json({ status: "saved" });
+}
+
+export async function DELETE(_request: Request, { params }: { params: Params }) {
+  await requireAdmin();
+  const { id } = await params;
+  const supabase = await createSupabaseServerClient();
+
+  if (!supabase) {
+    return NextResponse.json({ mode: "local", status: "not_deleted" }, { status: 503 });
+  }
+
+  const { error } = await supabase.from("testimonials").delete().eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ status: "deleted" });
 }
