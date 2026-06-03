@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { Plus, Save, Trash2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { CloudinaryUpload, type CloudinaryUploadValue } from "@/components/admin/cloudinary-upload";
 import { slugify } from "@/lib/slugs";
 import type { Brand, Gender, Product, ProductStatus, ProductVariant } from "@/lib/types";
@@ -26,6 +27,7 @@ function emptyVariant(): ProductVariant {
 }
 
 export function ProductForm({ brands, product }: ProductFormProps) {
+  const router = useRouter();
   const [brandId, setBrandId] = useState(product?.brandId ?? "");
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
@@ -44,6 +46,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
   const [variants, setVariants] = useState<ProductVariant[]>(product?.variants ?? [emptyVariant()]);
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
+  const [isSaving, setIsSaving] = useState(false);
 
   const selectedBrand = useMemo(
     () => brands.find((brand) => brand.id === brandId) ?? null,
@@ -63,7 +66,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
     return nextErrors.length === 0;
   }
 
-  function savePreview() {
+  async function saveProduct() {
     setMessage("");
 
     if (!validateForPublish()) {
@@ -71,9 +74,72 @@ export function ProductForm({ brands, product }: ProductFormProps) {
       return;
     }
 
-    setMessage(
-      `Preview saved for ${selectedBrand?.name ?? "selected brand"} ${name}. API persistence can be wired when the data store is enabled.`
-    );
+    setIsSaving(true);
+
+    try {
+      const response = await fetch(product ? `/api/products/${product.id}` : "/api/products", {
+        method: product ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          brandId,
+          name,
+          slug,
+          imageUrl,
+          galleryUrls,
+          gender,
+          concentration,
+          notes: notes
+            .split(",")
+            .map((note) => note.trim())
+            .filter(Boolean),
+          countryOfOrigin,
+          description,
+          status,
+          bestSeller,
+          newArrival,
+          readyStock,
+          preOrder,
+          variants
+        })
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Product save failed.");
+      }
+
+      setMessage(`Saved ${selectedBrand?.name ?? "selected brand"} ${name}.`);
+      router.refresh();
+      if (!product && payload.id) {
+        router.push(`/admin/products/${payload.id}`);
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Product save failed.");
+    } finally {
+      setIsSaving(false);
+    }
+  }
+
+  async function deleteProduct() {
+    if (!product) return;
+    setMessage("");
+    setIsSaving(true);
+
+    try {
+      const response = await fetch(`/api/products/${product.id}`, { method: "DELETE" });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Product delete failed.");
+      }
+
+      router.push("/admin/products");
+      router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Product delete failed.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   function updateVariant(index: number, updates: Partial<ProductVariant>) {
@@ -96,7 +162,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
-        savePreview();
+        void saveProduct();
       }}
     >
       {errors.length > 0 ? (
@@ -322,13 +388,27 @@ export function ProductForm({ brands, product }: ProductFormProps) {
         ))}
       </section>
 
-      <button
-        type="submit"
-        className="inline-flex h-10 items-center gap-2 border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-white hover:text-ink"
-      >
-        <Save className="h-4 w-4" />
-        Save preview
-      </button>
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="submit"
+          disabled={isSaving}
+          className="inline-flex h-10 items-center gap-2 border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Save className="h-4 w-4" />
+          {isSaving ? "Saving" : "Save product"}
+        </button>
+        {product ? (
+          <button
+            type="button"
+            disabled={isSaving}
+            onClick={() => void deleteProduct()}
+            className="inline-flex h-10 items-center gap-2 border border-red-300 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Trash2 className="h-4 w-4" />
+            Delete product
+          </button>
+        ) : null}
+      </div>
     </form>
   );
 }

@@ -1,13 +1,8 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getProducts } from "@/lib/repositories/catalog";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
-export async function GET() {
-  const products = await getProducts();
-
-  return NextResponse.json(products);
-}
+type Params = Promise<{ id: string }>;
 
 function validateProductPayload(body: any) {
   const errors: string[] = [];
@@ -23,8 +18,9 @@ function validateProductPayload(body: any) {
   return errors;
 }
 
-export async function POST(request: Request) {
+export async function PATCH(request: Request, { params }: { params: Params }) {
   await requireAdmin();
+  const { id } = await params;
   const body = await request.json().catch(() => null);
   const errors = validateProductPayload(body);
 
@@ -34,12 +30,12 @@ export async function POST(request: Request) {
 
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
-    return NextResponse.json({ mode: "seed", status: "received" }, { status: 201 });
+    return NextResponse.json({ mode: "seed", status: "received" });
   }
 
-  const { data: product, error: productError } = await supabase
+  const { error: productError } = await supabase
     .from("products")
-    .insert({
+    .update({
       brand_id: body.brandId,
       slug: body.slug,
       name: body.name,
@@ -54,18 +50,21 @@ export async function POST(request: Request) {
       best_seller: Boolean(body.bestSeller),
       new_arrival: Boolean(body.newArrival),
       ready_stock: Boolean(body.readyStock),
-      pre_order: Boolean(body.preOrder),
-      published: true
+      pre_order: Boolean(body.preOrder)
     })
-    .select("id")
-    .single();
+    .eq("id", id);
 
   if (productError) {
     return NextResponse.json({ error: productError.message }, { status: 500 });
   }
 
+  const { error: deleteError } = await supabase.from("product_variants").delete().eq("product_id", id);
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
   const variants = body.variants.map((variant: any) => ({
-    product_id: product.id,
+    product_id: id,
     size: variant.size,
     retail_price: Number(variant.retailPrice ?? 0),
     authentic_price: Number(variant.authenticPrice ?? 0),
@@ -78,5 +77,23 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: variantsError.message }, { status: 500 });
   }
 
-  return NextResponse.json({ id: product.id, status: "saved" }, { status: 201 });
+  return NextResponse.json({ status: "saved" });
+}
+
+export async function DELETE(_request: Request, { params }: { params: Params }) {
+  await requireAdmin();
+  const { id } = await params;
+  const supabase = await createSupabaseServerClient();
+
+  if (!supabase) {
+    return NextResponse.json({ mode: "seed", status: "deleted" });
+  }
+
+  const { error } = await supabase.from("products").delete().eq("id", id);
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ status: "deleted" });
 }

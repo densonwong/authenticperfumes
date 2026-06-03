@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Heart, Search, ShoppingBag } from "lucide-react";
+import { Search } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { NotifyMeForm } from "@/components/storefront/notify-me-form";
@@ -207,27 +207,13 @@ export default async function ProductDetailPage({
             </p>
           </div>
 
-          <div className="mt-5 grid gap-2 sm:grid-cols-2">
-            <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 border border-ink bg-ink px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition hover:bg-paper hover:text-ink"
-            >
-              <ShoppingBag className="h-4 w-4" aria-hidden="true" />
-              Add to cart
-            </button>
+          <div className="mt-5 grid gap-2">
             <a
               href={whatsappUrl}
               className="inline-flex items-center justify-center border border-gold bg-gold px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-paper transition hover:bg-paper hover:text-ink"
             >
               Buy via WhatsApp
             </a>
-            <button
-              type="button"
-              className="inline-flex items-center justify-center gap-2 border border-ink/15 px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:border-ink"
-            >
-              <Heart className="h-4 w-4" aria-hidden="true" />
-              Wishlist
-            </button>
           </div>
 
           <button

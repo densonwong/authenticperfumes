@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasSupabaseConfig } from "@/lib/env";
+import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { stockNotificationSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
@@ -14,5 +15,21 @@ export async function POST(request: Request) {
     return NextResponse.json({ mode: "seed", status: "received" }, { status: 201 });
   }
 
-  return NextResponse.json({ mode: "seed", status: "received" }, { status: 201 });
+  const supabase = await createSupabaseServerClient();
+  const { productId, customerName, contact } = parsed.data;
+  const isEmail = contact.includes("@");
+  const { error } = await supabase!
+    .from("stock_notifications")
+    .insert({
+      product_slug: productId,
+      email: isEmail ? contact : null,
+      phone: isEmail ? null : contact,
+      status: "pending"
+    });
+
+  if (error) {
+    return NextResponse.json({ error: error.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ status: "received", customerName }, { status: 201 });
 }

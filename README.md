@@ -36,6 +36,7 @@ NEXT_PUBLIC_WHATSAPP_NUMBER=6281234567890
 
 NEXT_PUBLIC_SUPABASE_URL=
 NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
@@ -63,6 +64,26 @@ The schema includes:
 - `admin_audit_logs`
 
 RLS is enabled for all tables. Public read policies are defined for published catalog/content tables, and authenticated admin mutation policies are defined for admin-managed tables.
+
+## Brand Import
+
+The brand workbook can be imported after the Supabase schema exists.
+
+1. Run [supabase/schema.sql](/Users/tsth/Coding/denson/supabase/schema.sql) in Supabase.
+2. Add `SUPABASE_SERVICE_ROLE_KEY` to `.env.local`.
+3. Run:
+
+```bash
+npm run import:brands -- "/Users/tsth/Downloads/Brand parfum a-z final.xlsx"
+```
+
+To verify parsing without writing to Supabase:
+
+```bash
+npm run import:brands -- "/Users/tsth/Downloads/Brand parfum a-z final.xlsx" --dry-run
+```
+
+The importer reads the first sheet, removes A-Z divider rows, slugifies names, and upserts brands by slug. Product count defaults to `0`, country defaults to `Unknown`, and logo uses a placeholder image until real brand logos are uploaded from admin.
 
 ## Cloudinary Setup
 

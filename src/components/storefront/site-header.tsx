@@ -2,11 +2,8 @@
 
 import Link from "next/link";
 import {
-  Heart,
   Menu,
-  Search,
-  ShoppingBag,
-  User
+  Search
 } from "lucide-react";
 
 type NavItem = {
@@ -93,13 +90,6 @@ const navItems: NavItem[] = [
   { label: "Contact", href: "/contact" }
 ];
 
-const headerActions = [
-  { label: "Search", icon: Search, href: "/search" },
-  { label: "Account", icon: User, href: "/account" },
-  { label: "Wishlist", icon: Heart, href: "/wishlist" },
-  { label: "Bag", icon: ShoppingBag, href: "/bag" }
-];
-
 export function SiteHeader() {
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
@@ -122,20 +112,13 @@ export function SiteHeader() {
         <div className="hidden flex-1 lg:block" />
 
         <div className="flex items-center gap-1">
-          {headerActions.map((action) => {
-            const Icon = action.icon;
-
-            return (
-              <Link
-                key={action.label}
-                href={action.href}
-                className="inline-flex h-10 w-10 items-center justify-center text-ink transition hover:bg-warm focus:outline-none focus:ring-2 focus:ring-gold/60"
-                aria-label={action.label}
-              >
-                <Icon className="h-5 w-5" aria-hidden="true" />
-              </Link>
-            );
-          })}
+          <Link
+            href="/shop"
+            className="inline-flex h-10 w-10 items-center justify-center text-ink transition hover:bg-warm focus:outline-none focus:ring-2 focus:ring-gold/60"
+            aria-label="Search catalog"
+          >
+            <Search className="h-5 w-5" aria-hidden="true" />
+          </Link>
         </div>
       </div>
 

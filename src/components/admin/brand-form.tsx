@@ -2,11 +2,13 @@
 
 import { useState } from "react";
 import { Save } from "lucide-react";
+import { useRouter } from "next/navigation";
 import { CloudinaryUpload, type CloudinaryUploadValue } from "@/components/admin/cloudinary-upload";
 import { slugify } from "@/lib/slugs";
 import type { Brand } from "@/lib/types";
 
 export function BrandForm({ brand }: { brand?: Brand | null }) {
+  const router = useRouter();
   const [name, setName] = useState(brand?.name ?? "");
   const [slug, setSlug] = useState(brand?.slug ?? "");
   const [logoUrl, setLogoUrl] = useState(brand?.logoUrl ?? "");
@@ -15,9 +17,46 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
   const [description, setDescription] = useState(brand?.description ?? "");
   const [featured, setFeatured] = useState(brand?.featured ?? false);
   const [message, setMessage] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
 
   function handleUpload(upload: CloudinaryUploadValue) {
     setLogoUrl(upload.secure_url);
+  }
+
+  async function saveBrand() {
+    setMessage("");
+    setIsSaving(true);
+
+    try {
+      const response = await fetch(brand ? `/api/brands/${brand.id}` : "/api/brands", {
+        method: brand ? "PATCH" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name,
+          slug,
+          logoUrl,
+          country,
+          foundedYear: foundedYear ? Number(foundedYear) : null,
+          description,
+          featured
+        })
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Brand save failed.");
+      }
+
+      setMessage(`Saved ${name || "brand"}.`);
+      router.refresh();
+      if (!brand && payload.id) {
+        router.push(`/admin/brands/${payload.id}`);
+      }
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Brand save failed.");
+    } finally {
+      setIsSaving(false);
+    }
   }
 
   return (
@@ -25,7 +64,7 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
       className="space-y-4"
       onSubmit={(event) => {
         event.preventDefault();
-        setMessage(`Preview saved for ${name || "brand"}.`);
+        void saveBrand();
       }}
     >
       {message ? <div className="border border-stone/30 bg-warm p-3 text-sm">{message}</div> : null}
@@ -90,10 +129,11 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
       </section>
       <button
         type="submit"
+        disabled={isSaving}
         className="inline-flex h-10 items-center gap-2 border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-white hover:text-ink"
       >
         <Save className="h-4 w-4" />
-        Save preview
+        {isSaving ? "Saving" : "Save brand"}
       </button>
     </form>
   );
