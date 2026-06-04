@@ -4,7 +4,10 @@ import { getDictionary, getLocale } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia."
+  description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia.",
+  alternates: {
+    canonical: "/about"
+  }
 };
 
 const values = [

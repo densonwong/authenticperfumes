@@ -2,11 +2,15 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/storefront/product-card";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getPreOrderProducts } from "@/lib/repositories/catalog";
+import { siteUrl } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Pre Order",
-  description: "Understand Authentic Perfumes 8 pre-order process, sourcing updates, and refund policy."
+  description: "Understand Authentic Perfumes 8 pre-order process, sourcing updates, and refund policy.",
+  alternates: {
+    canonical: "/pre-order"
+  }
 };
 
 const process = [
@@ -42,9 +46,36 @@ export default async function PreOrderPage() {
   const isId = locale === "id";
   const processItems = isId ? processId : process;
   const refundItems = isId ? refundPolicyId : refundPolicy;
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    url: siteUrl("/pre-order"),
+    mainEntity: [
+      {
+        "@type": "Question",
+        name: isId ? "Bagaimana proses pre-order?" : "How does pre-order work?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: processItems.join(" ")
+        }
+      },
+      {
+        "@type": "Question",
+        name: isId ? "Bagaimana kebijakan refund pre-order?" : "What is the pre-order refund policy?",
+        acceptedAnswer: {
+          "@type": "Answer",
+          text: refundItems.join(" ")
+        }
+      }
+    ]
+  };
 
   return (
     <main className="bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="border-b border-ink/10 px-4 py-10 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>

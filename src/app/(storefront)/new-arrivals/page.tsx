@@ -6,7 +6,10 @@ import { getNewArrivals } from "@/lib/repositories/catalog";
 
 export const metadata: Metadata = {
   title: "New Arrivals",
-  description: "Fresh authentic perfume arrivals curated by Authentic Perfumes 8."
+  description: "Fresh authentic perfume arrivals curated by Authentic Perfumes 8.",
+  alternates: {
+    canonical: "/new-arrivals"
+  }
 };
 
 export default async function NewArrivalsPage() {

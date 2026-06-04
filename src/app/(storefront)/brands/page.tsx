@@ -3,10 +3,14 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getBrands } from "@/lib/repositories/catalog";
+import { siteUrl } from "@/lib/seo";
 
 export const metadata: Metadata = {
   title: "Brands",
-  description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet."
+  description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet.",
+  alternates: {
+    canonical: "/brands"
+  }
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -30,9 +34,20 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
     return groups;
   }, {});
   const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "CollectionPage",
+    name: "Brands",
+    url: siteUrl("/brands"),
+    numberOfItems: filteredBrands.length
+  };
 
   return (
     <main className="bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="border-b border-ink/10 px-4 py-8 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[1fr_420px] lg:items-end">
           <div>

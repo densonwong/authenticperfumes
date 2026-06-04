@@ -5,6 +5,7 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/storefront/product-card";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getBrandBySlug, getBrands, getProducts } from "@/lib/repositories/catalog";
+import { breadcrumbJsonLd, siteUrl, SITE_NAME } from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
 
@@ -21,7 +22,18 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 
   return {
     title: brand ? brand.name : "Brand",
-    description: brand?.description
+    description: brand?.description,
+    alternates: {
+      canonical: brand ? `/brands/${brand.slug}` : "/brands"
+    },
+    openGraph: brand
+      ? {
+          title: `${brand.name} | ${SITE_NAME}`,
+          description: brand.description,
+          url: siteUrl(`/brands/${brand.slug}`),
+          images: [brand.logoUrl]
+        }
+      : undefined
   };
 }
 
@@ -34,9 +46,28 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
   if (!brand) notFound();
 
   const brandProducts = products.filter((product) => product.brandId === brand.id);
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Brand",
+      name: brand.name,
+      url: siteUrl(`/brands/${brand.slug}`),
+      logo: brand.logoUrl,
+      description: brand.description
+    },
+    breadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Brands", path: "/brands" },
+      { name: brand.name, path: `/brands/${brand.slug}` }
+    ])
+  ];
 
   return (
     <main className="bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="border-b border-ink/10 px-4 py-8 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-6 lg:grid-cols-[220px_1fr] lg:items-end">
           <div className="relative aspect-square overflow-hidden border border-ink/10 bg-warm">

@@ -6,12 +6,16 @@ import type { Banner } from "@/lib/types";
 export function CollectionTile({
   banner,
   priority = false,
-  dictionary
+  dictionary,
+  headingLevel = 2
 }: {
   banner: Banner;
   priority?: boolean;
   dictionary: Dictionary["tile"];
+  headingLevel?: 1 | 2;
 }) {
+  const Heading = headingLevel === 1 ? "h1" : "h2";
+
   return (
     <Link
       href={banner.href}
@@ -30,7 +34,7 @@ export function CollectionTile({
         <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.18em] text-paper/75">
           {dictionary.featured}
         </p>
-        <h2 className="font-serif text-2xl leading-tight sm:text-3xl">{banner.title}</h2>
+        <Heading className="font-serif text-2xl leading-tight sm:text-3xl">{banner.title}</Heading>
         <p className="mt-3 text-sm leading-6 text-paper/80">{banner.subtitle}</p>
         <p className="mt-5 text-xs font-semibold uppercase tracking-[0.16em] text-paper">
           {dictionary.shop}

@@ -2,13 +2,17 @@ import type { Metadata } from "next";
 import { Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { getDictionary, getLocale } from "@/lib/i18n";
+import { siteUrl, SITE_NAME } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZWVxa3loeGd1eQ==";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation."
+  description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation.",
+  alternates: {
+    canonical: "/contact"
+  }
 };
 
 export default async function ContactPage() {
@@ -68,9 +72,25 @@ export default async function ContactPage() {
           href: "/testimonials"
         }
       ];
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "ContactPage",
+    name: `${SITE_NAME} Contact`,
+    url: siteUrl("/contact"),
+    mainEntity: {
+      "@type": "Organization",
+      name: SITE_NAME,
+      telephone: "+62 823-1000-1899",
+      sameAs: [INSTAGRAM_URL]
+    }
+  };
 
   return (
     <main className="bg-paper">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <section className="border-b border-ink/10 px-4 py-10 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">

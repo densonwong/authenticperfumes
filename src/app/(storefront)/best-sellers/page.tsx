@@ -6,7 +6,10 @@ import { getBestSellers } from "@/lib/repositories/catalog";
 
 export const metadata: Metadata = {
   title: "Best Sellers",
-  description: "Customer favorite authentic perfumes and repeat-request bottles."
+  description: "Customer favorite authentic perfumes and repeat-request bottles.",
+  alternates: {
+    canonical: "/best-sellers"
+  }
 };
 
 export default async function BestSellersPage() {

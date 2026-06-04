@@ -8,7 +8,10 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Sampling",
-  description: "Request fragrance samples and fitting guidance before buying a full bottle."
+  description: "Request fragrance samples and fitting guidance before buying a full bottle.",
+  alternates: {
+    canonical: "/sampling"
+  }
 };
 
 const steps = [

@@ -5,7 +5,10 @@ import { getTestimonials } from "@/lib/repositories/catalog";
 
 export const metadata: Metadata = {
   title: "Testimonials",
-  description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers."
+  description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers.",
+  alternates: {
+    canonical: "/testimonials"
+  }
 };
 
 export default async function TestimonialsPage() {

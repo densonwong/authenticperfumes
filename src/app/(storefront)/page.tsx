@@ -1,4 +1,5 @@
 import Link from "next/link";
+import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/reveal";
 import { BrandCloud } from "@/components/storefront/brand-cloud";
 import { CollectionTile } from "@/components/storefront/collection-tile";
@@ -15,6 +16,12 @@ import {
 } from "@/lib/repositories/catalog";
 import { getDictionary, getLocale, type Dictionary } from "@/lib/i18n";
 import type { Banner, Product } from "@/lib/types";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/"
+  }
+};
 
 function SectionHeader({
   eyebrow,
@@ -135,7 +142,7 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           {primaryBanner ? (
-            <CollectionTile banner={primaryBanner} priority dictionary={dictionary.tile} />
+            <CollectionTile banner={primaryBanner} priority dictionary={dictionary.tile} headingLevel={1} />
           ) : null}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
             {secondaryBanners.map((banner) => (

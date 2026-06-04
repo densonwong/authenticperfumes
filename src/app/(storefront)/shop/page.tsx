@@ -7,7 +7,10 @@ import type { Product } from "@/lib/types";
 
 export const metadata: Metadata = {
   title: "Shop Fragrances",
-  description: "Browse authentic niche and designer perfumes with ready stock, pre-order, and price filters."
+  description: "Browse authentic niche and designer perfumes with ready stock, pre-order, and price filters.",
+  alternates: {
+    canonical: "/shop"
+  }
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

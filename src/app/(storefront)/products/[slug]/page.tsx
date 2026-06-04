@@ -8,6 +8,7 @@ import { RequestFragranceForm } from "@/components/storefront/request-fragrance-
 import { calculateSavings, formatRupiah } from "@/lib/format";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getProductBySlug, getProducts } from "@/lib/repositories/catalog";
+import { breadcrumbJsonLd, siteUrl, SITE_NAME } from "@/lib/seo";
 import type { ProductStatus, ProductVariant } from "@/lib/types";
 import { buildProductWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -32,6 +33,12 @@ function selectedVariant(variants: ProductVariant[], variantId?: string) {
   return variants.find((variant) => variant.id === variantId) ?? variants[0];
 }
 
+function priceValidUntil() {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + 1);
+  return date.toISOString().slice(0, 10);
+}
+
 export async function generateStaticParams() {
   const products = await getProducts();
   return products.map((product) => ({ slug: product.slug }));
@@ -40,14 +47,19 @@ export async function generateStaticParams() {
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
   const product = await getProductBySlug(slug);
+  const title = product ? `${product.brandName} ${product.name} Original` : "Product";
 
   return {
-    title: product ? `${product.brandName} ${product.name}` : "Product",
+    title,
     description: product?.description,
+    alternates: {
+      canonical: product ? `/products/${product.slug}` : "/shop"
+    },
     openGraph: product
       ? {
-          title: `${product.brandName} ${product.name}`,
+          title: `${title} | ${SITE_NAME}`,
           description: product.description,
+          url: siteUrl(`/products/${product.slug}`),
           images: [product.imageUrl]
         }
       : undefined
@@ -70,31 +82,45 @@ export default async function ProductDetailPage({
 
   const variant = selectedVariant(product.variants, valueOf(resolvedSearchParams, "variant"));
   const savings = calculateSavings(variant.retailPrice, variant.authenticPrice);
-  const savingsPercent = Math.round((savings / variant.retailPrice) * 100);
+  const savingsPercent = variant.retailPrice > 0 ? Math.round((savings / variant.retailPrice) * 100) : 0;
   const shouldShowNotifyForm = variant.status === "out_of_stock" || variant.stock < 1;
-  const canonicalUrl = `https://authenticperfumes.id/products/${product.slug}`;
+  const canonicalUrl = siteUrl(`/products/${product.slug}`);
   const whatsappUrl = buildWhatsAppUrl(
     buildProductWhatsAppMessage(`${product.brandName} ${product.name}`, canonicalUrl, variant.size)
   );
-  const jsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Product",
-    name: `${product.brandName} ${product.name}`,
-    image: product.galleryUrls,
-    description: product.description,
-    brand: {
-      "@type": "Brand",
-      name: product.brandName
+  const jsonLd = [
+    {
+      "@context": "https://schema.org",
+      "@type": "Product",
+      name: `${product.brandName} ${product.name}`,
+      sku: product.id,
+      image: [product.imageUrl, ...product.galleryUrls],
+      description: product.description,
+      category: "Fragrance",
+      brand: {
+        "@type": "Brand",
+        name: product.brandName
+      },
+      offers: product.variants.map((item) => ({
+        "@type": "Offer",
+        priceCurrency: "IDR",
+        price: item.authenticPrice,
+        availability: schemaAvailability[item.status],
+        itemCondition: "https://schema.org/NewCondition",
+        priceValidUntil: priceValidUntil(),
+        url: `${canonicalUrl}?variant=${item.id}`,
+        seller: {
+          "@type": "Organization",
+          name: SITE_NAME
+        }
+      }))
     },
-    offers: product.variants.map((item) => ({
-      "@type": "Offer",
-      priceCurrency: "IDR",
-      price: item.authenticPrice,
-      availability: schemaAvailability[item.status],
-      itemCondition: "https://schema.org/NewCondition",
-      url: `${canonicalUrl}?variant=${item.id}`
-    }))
-  };
+    breadcrumbJsonLd([
+      { name: "Home", path: "/" },
+      { name: "Shop", path: "/shop" },
+      { name: product.name, path: `/products/${product.slug}` }
+    ])
+  ];
 
   return (
     <main className="bg-paper">

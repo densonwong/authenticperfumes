@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Montserrat, Open_Sans } from "next/font/google";
 import { getLocale } from "@/lib/i18n";
+import { siteUrl, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
 
 const montserrat = Montserrat({
@@ -16,12 +17,32 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL(siteUrl()),
   title: {
-    default: "Authentic Perfumes 8",
-    template: "%s | Authentic Perfumes 8"
+    default: SITE_NAME,
+    template: `%s | ${SITE_NAME}`
   },
   description:
-    "Original niche and designer fragrances in Indonesia with ready stock, pre-order, split payment, and fragrance consultation."
+    "Original niche and designer fragrances with ready stock, pre-order, split payment, and fragrance consultation.",
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    url: siteUrl(),
+    title: SITE_NAME,
+    description:
+      "Original niche and designer fragrances with ready stock, pre-order, split payment, and fragrance consultation."
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: SITE_NAME,
+    description:
+      "Original niche and designer fragrances with ready stock, pre-order, split payment, and fragrance consultation."
+  },
+  robots: {
+    index: true,
+    follow: true
+  }
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

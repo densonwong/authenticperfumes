@@ -4,6 +4,7 @@ import { SiteFooter } from "@/components/storefront/site-footer";
 import { SiteHeader } from "@/components/storefront/site-header";
 import { WhatsAppFloatingButton } from "@/components/storefront/whatsapp-floating-button";
 import { getDictionary, getLocale } from "@/lib/i18n";
+import { organizationJsonLd } from "@/lib/seo";
 
 export default async function StorefrontLayout({ children }: { children: ReactNode }) {
   const locale = await getLocale();
@@ -12,6 +13,10 @@ export default async function StorefrontLayout({ children }: { children: ReactNo
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd()) }}
+      />
       <AnnouncementBar text={dictionary.announcement} />
       <SiteHeader locale={locale} dictionary={dictionary.nav} />
       {children}
