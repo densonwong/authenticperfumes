@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Instagram } from "lucide-react";
 import type { Dictionary } from "@/lib/i18n";
 
 const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZWVxa3loeGd1eQ==";
@@ -49,8 +50,15 @@ export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
             <Link href="/contact" className="hover:text-ink">
               {dictionary.nav.contact}
             </Link>
-            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="hover:text-ink">
-              Instagram
+            <a
+              href={INSTAGRAM_URL}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex h-6 w-6 items-center justify-center text-ink/65 transition hover:text-ink"
+              aria-label="Instagram Authentic Perfumes"
+              title="Instagram"
+            >
+              <Instagram className="h-4 w-4" aria-hidden="true" />
             </a>
           </div>
         </div>
