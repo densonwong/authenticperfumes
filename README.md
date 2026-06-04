@@ -1,6 +1,6 @@
-# Authentic Perfumes
+# Authentic Perfumes 8
 
-Next.js storefront and admin MVP for Authentic Perfumes, an Indonesian reseller of original niche and designer fragrances.
+Next.js storefront and admin MVP for Authentic Perfumes 8, an Indonesian reseller of original niche and designer fragrances.
 
 The public site follows a Luckyscent-like boutique catalog direction: compact masthead, focused category navigation, featured collection tiles, dense product rows, sampling, testimonials, and brand directory. The admin panel supports local preview data and is prepared for Supabase Auth/database plus Cloudinary media uploads.
 

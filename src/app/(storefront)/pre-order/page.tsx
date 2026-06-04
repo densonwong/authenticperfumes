@@ -6,7 +6,7 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   title: "Pre Order",
-  description: "Understand Authentic Perfumes pre-order process, sourcing updates, and refund policy."
+  description: "Understand Authentic Perfumes 8 pre-order process, sourcing updates, and refund policy."
 };
 
 const process = [
@@ -60,7 +60,7 @@ export default async function PreOrderPage() {
                 : "Pre-order is for bottles that are not currently ready stock. We confirm availability, price, ETA, and authenticity expectations before you commit."}
             </p>
             <a
-              href={buildWhatsAppUrl("Halo Authentic Perfumes, saya ingin menanyakan pre-order parfum.")}
+              href={buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin menanyakan pre-order parfum.")}
               className="mt-6 inline-flex border border-ink bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-ink"
             >
               {isId ? "Mulai pre-order" : "Start pre-order"}

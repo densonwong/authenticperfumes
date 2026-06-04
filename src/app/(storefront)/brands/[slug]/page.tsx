@@ -81,7 +81,7 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
             {locale === "id" ? "Pilihan saat ini" : "Current edit"}
           </p>
           <h2 className="mt-2 font-serif text-3xl text-ink">
-            {locale === "id" ? `${brand.name} di Authentic Perfumes` : `${brand.name} at Authentic Perfumes`}
+            {locale === "id" ? `${brand.name} di Authentic Perfumes 8` : `${brand.name} at Authentic Perfumes 8`}
           </h2>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">

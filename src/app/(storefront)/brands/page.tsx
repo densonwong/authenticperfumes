@@ -6,7 +6,7 @@ import { getBrands } from "@/lib/repositories/catalog";
 
 export const metadata: Metadata = {
   title: "Brands",
-  description: "Explore Authentic Perfumes brand directory by fragrance house, country, and alphabet."
+  description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet."
 };
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;

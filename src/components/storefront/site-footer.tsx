@@ -39,7 +39,7 @@ export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
 
       <div className="border-t border-ink/10">
         <div className="mx-auto flex max-w-7xl flex-col gap-4 px-4 py-6 text-sm text-ink/65 sm:flex-row sm:items-center sm:justify-between lg:px-8">
-          <p>&copy; 2026 Authentic Perfumes. {isId ? "Parfum original untuk Indonesia." : "Original fragrances for Indonesia."}</p>
+          <p>&copy; 2026 Authentic Perfumes 8. {isId ? "Parfum original untuk Indonesia." : "Original fragrances for Indonesia."}</p>
           <div className="flex flex-wrap gap-x-5 gap-y-2">
             <Link href="/testimonials" className="hover:text-ink">
               {dictionary.nav.testimonials}
@@ -55,7 +55,7 @@ export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
               target="_blank"
               rel="noreferrer"
               className="inline-flex h-6 w-6 items-center justify-center text-ink/65 transition hover:text-ink"
-              aria-label="Instagram Authentic Perfumes"
+              aria-label="Instagram Authentic Perfumes 8"
               title="Instagram"
             >
               <Instagram className="h-4 w-4" aria-hidden="true" />

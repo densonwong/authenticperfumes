@@ -8,7 +8,7 @@ const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZW
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Contact Authentic Perfumes for stock checks, pre-orders, fragrance requests, and consultation."
+  description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation."
 };
 
 export default async function ContactPage() {
@@ -21,7 +21,7 @@ export default async function ContactPage() {
           title: "Concierge WhatsApp",
           body: "Paling cepat untuk cek stok, invoice, update pre-order, dan matching aroma: +62 823-1000-1899.",
           icon: MessageCircle,
-          href: buildWhatsAppUrl("Halo Authentic Perfumes, saya ingin bertanya tentang parfum.")
+          href: buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin bertanya tentang parfum.")
         },
         {
           title: "Email",
@@ -47,7 +47,7 @@ export default async function ContactPage() {
           title: "WhatsApp concierge",
           body: "Fastest for stock checks, invoices, pre-order updates, and scent matching: +62 823-1000-1899.",
           icon: MessageCircle,
-          href: buildWhatsAppUrl("Halo Authentic Perfumes, saya ingin bertanya tentang parfum.")
+          href: buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin bertanya tentang parfum.")
         },
         {
           title: "Email",

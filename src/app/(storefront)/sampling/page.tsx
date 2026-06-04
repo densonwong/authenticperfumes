@@ -48,7 +48,7 @@ export default async function SamplingPage() {
                 : "Sampling keeps niche fragrance buying practical. Use it to compare projection, sweetness, and weather fit before committing to a sealed bottle."}
             </p>
             <a
-              href={buildWhatsAppUrl("Halo Authentic Perfumes, saya ingin konsultasi sampling parfum.")}
+              href={buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin konsultasi sampling parfum.")}
               className="mt-6 inline-flex border border-ink bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-ink"
             >
               {isId ? "Tanya sample" : "Ask for samples"}

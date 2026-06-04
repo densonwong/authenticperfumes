@@ -17,11 +17,11 @@ export default async function StorefrontLayout({ children }: { children: ReactNo
       {children}
       <SiteFooter dictionary={dictionary} />
       <WhatsAppFloatingButton
-        label={isId ? "Chat dengan Authentic Perfumes di WhatsApp" : "Chat with Authentic Perfumes on WhatsApp"}
+        label={isId ? "Chat dengan Authentic Perfumes 8 di WhatsApp" : "Chat with Authentic Perfumes 8 on WhatsApp"}
         message={
           isId
-            ? "Halo Authentic Perfumes, saya ingin konsultasi parfum dan cek stok terbaru."
-            : "Hello Authentic Perfumes, I would like fragrance consultation and the latest stock information."
+            ? "Halo Authentic Perfumes 8, saya ingin konsultasi parfum dan cek stok terbaru."
+            : "Hello Authentic Perfumes 8, I would like fragrance consultation and the latest stock information."
         }
       />
     </>

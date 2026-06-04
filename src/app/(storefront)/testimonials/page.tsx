@@ -5,7 +5,7 @@ import { getTestimonials } from "@/lib/repositories/catalog";
 
 export const metadata: Metadata = {
   title: "Testimonials",
-  description: "Customer reviews and purchase experiences from Authentic Perfumes buyers."
+  description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers."
 };
 
 export default async function TestimonialsPage() {
@@ -26,8 +26,8 @@ export default async function TestimonialsPage() {
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
             {isId
-              ? "Catatan dari customer yang mempercayai Authentic Perfumes untuk parfum niche dan designer original, dari konsultasi sampai pengiriman."
-              : "Notes from customers who trusted Authentic Perfumes for original niche and designer fragrances, from consultation to delivery."}
+              ? "Catatan dari customer yang mempercayai Authentic Perfumes 8 untuk parfum niche dan designer original, dari konsultasi sampai pengiriman."
+              : "Notes from customers who trusted Authentic Perfumes 8 for original niche and designer fragrances, from consultation to delivery."}
           </p>
         </div>
       </section>

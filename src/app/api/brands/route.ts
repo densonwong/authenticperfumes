@@ -30,7 +30,7 @@ export async function POST(request: Request) {
       logo_url: body.logoUrl || body.logo_url || "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=800&h=800&q=80",
       country: body.country || "Unknown",
       founded_year: body.foundedYear ? Number(body.foundedYear) : null,
-      description: body.description || `${body.name} fragrances available through Authentic Perfumes.`,
+      description: body.description || `${body.name} fragrances available through Authentic Perfumes 8.`,
       product_count: Number(body.productCount ?? 0),
       featured: Boolean(body.featured),
       published: body.published ?? true

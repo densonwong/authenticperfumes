@@ -4,7 +4,7 @@ import { getDictionary, getLocale } from "@/lib/i18n";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "Authentic Perfumes is a boutique catalog for verified authentic fragrances in Indonesia."
+  description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia."
 };
 
 const values = [
@@ -39,7 +39,7 @@ export default async function AboutPage() {
       <section className="border-b border-ink/10 px-4 py-10 lg:px-8">
         <div className="mx-auto max-w-7xl">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-            {isId ? "Tentang Authentic Perfumes" : "About Authentic Perfumes"}
+            {isId ? "Tentang Authentic Perfumes 8" : "About Authentic Perfumes 8"}
           </p>
           <h1 className="mt-3 max-w-4xl font-serif text-4xl leading-tight text-ink">
             {isId
@@ -48,8 +48,8 @@ export default async function AboutPage() {
           </h1>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-ink/68">
             {isId
-              ? "Authentic Perfumes membantu pembeli parfum Indonesia menemukan botol original dari niche, designer, dan house yang sulit dicari. Pengalaman dibuat catalog-first: status jelas, harga realistis, dan konsultasi langsung saat sebuah botol butuh konteks lebih."
-              : "Authentic Perfumes helps Indonesian fragrance buyers discover original bottles across niche, designer, and hard-to-source houses. The experience is catalog-first: clear status, realistic pricing, and direct consultation when a bottle needs more context."}
+              ? "Authentic Perfumes 8 membantu pembeli parfum Indonesia menemukan botol original dari niche, designer, dan house yang sulit dicari. Pengalaman dibuat catalog-first: status jelas, harga realistis, dan konsultasi langsung saat sebuah botol butuh konteks lebih."
+              : "Authentic Perfumes 8 helps Indonesian fragrance buyers discover original bottles across niche, designer, and hard-to-source houses. The experience is catalog-first: clear status, realistic pricing, and direct consultation when a bottle needs more context."}
           </p>
         </div>
       </section>

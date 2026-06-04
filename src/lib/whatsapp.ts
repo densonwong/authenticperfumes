@@ -11,5 +11,5 @@ export function buildWhatsAppUrl(message: string, phone = DEFAULT_PHONE) {
 
 export function buildProductWhatsAppMessage(productName: string, url: string, size?: string) {
   const sizeText = size ? ` ukuran ${size}` : "";
-  return `Halo Authentic Perfumes, saya tertarik dengan produk ${productName}${sizeText}. Mohon informasi stok dan harga terbaru. ${url}`;
+  return `Halo Authentic Perfumes 8, saya tertarik dengan produk ${productName}${sizeText}. Mohon informasi stok dan harga terbaru. ${url}`;
 }

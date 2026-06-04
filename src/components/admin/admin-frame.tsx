@@ -44,7 +44,7 @@ export function AdminFrame({ children }: { children: React.ReactNode }) {
       <aside className="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-ink/10 bg-warm">
         <div className="flex h-[72px] items-center border-b border-ink/10 px-6">
           <Link href="/admin" className="font-logo text-2xl text-ink">
-            Authentic Perfumes
+            Authentic Perfumes 8
           </Link>
         </div>
 

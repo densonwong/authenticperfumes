@@ -17,8 +17,8 @@ const openSans = Open_Sans({
 
 export const metadata: Metadata = {
   title: {
-    default: "Authentic Perfumes",
-    template: "%s | Authentic Perfumes"
+    default: "Authentic Perfumes 8",
+    template: "%s | Authentic Perfumes 8"
   },
   description:
     "Original niche and designer fragrances in Indonesia with ready stock, pre-order, split payment, and fragrance consultation."

@@ -26,7 +26,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
       logo_url: body.logoUrl || body.logo_url || "",
       country: body.country || "Unknown",
       founded_year: body.foundedYear ? Number(body.foundedYear) : null,
-      description: body.description || `${body.name} fragrances available through Authentic Perfumes.`,
+      description: body.description || `${body.name} fragrances available through Authentic Perfumes 8.`,
       featured: Boolean(body.featured)
     })
     .eq("id", id);

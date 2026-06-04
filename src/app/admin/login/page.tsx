@@ -7,7 +7,7 @@ export default function AdminLoginPage() {
         <div>
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Admin</p>
           <h1 className="mt-2 text-2xl font-semibold">Sign in</h1>
-          <p className="mt-2 text-sm text-stone">Access the Authentic Perfumes operations console.</p>
+          <p className="mt-2 text-sm text-stone">Access the Authentic Perfumes 8 operations console.</p>
         </div>
         <AdminLoginForm />
       </div>
