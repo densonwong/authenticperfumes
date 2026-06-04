@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { hasSupabaseConfig } from "@/lib/env";
 import { isUuid } from "@/lib/ids";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { stockNotificationSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
@@ -16,11 +16,15 @@ export async function POST(request: Request) {
     return NextResponse.json({ mode: "seed", status: "received" }, { status: 201 });
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   const { productId, productSlug, customerName, contact } = parsed.data;
   const isEmail = contact.includes("@");
   const productUuid = isUuid(productId) ? productId : null;
-  const { error } = await supabase!
+  if (!supabase) {
+    return NextResponse.json({ error: "Supabase admin key is not configured." }, { status: 503 });
+  }
+
+  const { error } = await supabase
     .from("stock_notifications")
     .insert({
       product_id: productUuid,

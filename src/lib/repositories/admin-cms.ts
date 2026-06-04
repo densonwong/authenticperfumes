@@ -1,4 +1,4 @@
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import type {
   Banner,
   Brand,
@@ -187,7 +187,7 @@ function mapProduct(row: ProductRow): Product {
 }
 
 export async function getAdminBrands() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -200,7 +200,7 @@ export async function getAdminBrands() {
 }
 
 export async function getAdminProducts() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -215,7 +215,7 @@ export async function getAdminProducts() {
 }
 
 export async function getAdminBanners() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -228,7 +228,7 @@ export async function getAdminBanners() {
 }
 
 export async function getAdminTestimonials() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -241,7 +241,7 @@ export async function getAdminTestimonials() {
 }
 
 export async function getAdminFragranceRequests() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase
@@ -254,7 +254,7 @@ export async function getAdminFragranceRequests() {
 }
 
 export async function getAdminStockNotifications() {
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
   const { data, error } = await supabase

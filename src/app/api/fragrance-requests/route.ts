@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasSupabaseConfig } from "@/lib/env";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 import { fragranceRequestSchema } from "@/lib/validation";
 
 export async function POST(request: Request) {
@@ -15,9 +15,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ mode: "seed", status: "received" }, { status: 201 });
   }
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   const { productName, brandName, size, customerName, contact } = parsed.data;
-  const { error } = await supabase!
+  if (!supabase) {
+    return NextResponse.json({ error: "Supabase admin key is not configured." }, { status: 503 });
+  }
+
+  const { error } = await supabase
     .from("fragrance_requests")
     .insert({
       customer_name: customerName,

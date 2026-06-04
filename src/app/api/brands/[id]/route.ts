@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { isUuid } from "@/lib/ids";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type Params = Promise<{ id: string }>;
 
@@ -10,7 +10,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   const { id } = await params;
   const body = await request.json().catch(() => null);
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "received" });
   }
@@ -49,7 +49,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
 export async function DELETE(_request: Request, { params }: { params: Params }) {
   await requireAdmin();
   const { id } = await params;
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "deleted" });
@@ -59,6 +59,22 @@ export async function DELETE(_request: Request, { params }: { params: Params }) 
     return NextResponse.json(
       { error: "This brand is demo/seed data and cannot be deleted. Create it in Supabase first." },
       { status: 400 }
+    );
+  }
+
+  const { count, error: countError } = await supabase
+    .from("products")
+    .select("id", { count: "exact", head: true })
+    .eq("brand_id", id);
+
+  if (countError) {
+    return NextResponse.json({ error: countError.message }, { status: 500 });
+  }
+
+  if (count && count > 0) {
+    return NextResponse.json(
+      { error: `This brand has ${count} product${count === 1 ? "" : "s"}. Delete or reassign them first.` },
+      { status: 409 }
     );
   }
 

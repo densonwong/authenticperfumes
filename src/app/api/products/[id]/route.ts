@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { isUuid } from "@/lib/ids";
-import { createSupabaseServerClient } from "@/lib/supabase/server";
+import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type Params = Promise<{ id: string }>;
 
@@ -25,7 +25,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   const body = await request.json().catch(() => null);
   const errors = validateProductPayload(body);
 
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "received" });
   }
@@ -91,7 +91,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
 export async function DELETE(_request: Request, { params }: { params: Params }) {
   await requireAdmin();
   const { id } = await params;
-  const supabase = await createSupabaseServerClient();
+  const supabase = createSupabaseAdminClient();
 
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "deleted" });
