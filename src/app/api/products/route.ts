@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
 import { getProducts } from "@/lib/repositories/catalog";
+import { isUuid } from "@/lib/ids";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 export async function GET() {
@@ -35,6 +36,13 @@ export async function POST(request: Request) {
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "received" }, { status: 201 });
+  }
+
+  if (!isUuid(body.brandId)) {
+    return NextResponse.json(
+      { error: "Selected brand is demo/seed data. Create or select a Supabase brand before saving products." },
+      { status: 400 }
+    );
   }
 
   const { data: product, error: productError } = await supabase

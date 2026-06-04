@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ProductForm } from "@/components/admin/product-form";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getBrands, getProducts } from "@/lib/repositories/catalog";
+import { getAdminBrands, getAdminProducts } from "@/lib/repositories/admin-cms";
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
-  const [{ id }, brands, products] = await Promise.all([params, getBrands(), getProducts()]);
+  const [{ id }, brands, products] = await Promise.all([params, getAdminBrands(), getAdminProducts()]);
   const product = products.find((item) => item.id === id || item.slug === id);
 
   if (!product) {

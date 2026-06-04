@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getBrands } from "@/lib/repositories/catalog";
+import { getAdminBrands } from "@/lib/repositories/admin-cms";
 
 export default async function AdminBrandsPage() {
   await requireAdmin();
-  const brands = await getBrands();
+  const brands = await getAdminBrands();
 
   return (
     <main className="min-h-screen bg-paper px-4 py-6 text-ink lg:px-8">
@@ -21,7 +21,7 @@ export default async function AdminBrandsPage() {
           </Link>
         </div>
         <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-3">
-          {brands.map((brand) => (
+          {brands.length > 0 ? brands.map((brand) => (
             <article key={brand.id} className="border border-stone/30 bg-white p-4">
               <div className="flex items-start justify-between gap-3">
                 <div>
@@ -37,7 +37,11 @@ export default async function AdminBrandsPage() {
               </div>
               <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink/70">{brand.description}</p>
             </article>
-          ))}
+          )) : (
+            <div className="border border-stone/30 bg-white p-6 text-sm text-stone md:col-span-2 xl:col-span-3">
+              No database brands yet. Add a brand before creating products.
+            </div>
+          )}
         </div>
       </section>
     </main>

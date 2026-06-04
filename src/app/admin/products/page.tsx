@@ -2,11 +2,11 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { requireAdmin } from "@/lib/admin-auth";
 import { formatRupiah } from "@/lib/format";
-import { getProducts } from "@/lib/repositories/catalog";
+import { getAdminProducts } from "@/lib/repositories/admin-cms";
 
 export default async function AdminProductsPage() {
   await requireAdmin();
-  const products = await getProducts();
+  const products = await getAdminProducts();
 
   return (
     <main className="min-h-screen bg-paper px-4 py-6 text-ink lg:px-8">
@@ -39,7 +39,7 @@ export default async function AdminProductsPage() {
               </tr>
             </thead>
             <tbody className="divide-y divide-stone/20">
-              {products.map((product) => (
+              {products.length > 0 ? products.map((product) => (
                 <tr key={product.id} className="align-top">
                   <td className="px-3 py-3 font-semibold">{product.name}</td>
                   <td className="px-3 py-3 text-stone">{product.brandName}</td>
@@ -52,7 +52,13 @@ export default async function AdminProductsPage() {
                     </Link>
                   </td>
                 </tr>
-              ))}
+              )) : (
+                <tr>
+                  <td colSpan={6} className="px-3 py-8 text-center text-stone">
+                    No database products yet. Add your first product to manage it from this dashboard.
+                  </td>
+                </tr>
+              )}
             </tbody>
           </table>
         </div>

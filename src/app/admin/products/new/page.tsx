@@ -1,11 +1,11 @@
 import Link from "next/link";
 import { ProductForm } from "@/components/admin/product-form";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getBrands } from "@/lib/repositories/catalog";
+import { getAdminBrands } from "@/lib/repositories/admin-cms";
 
 export default async function NewProductPage() {
   await requireAdmin();
-  const brands = await getBrands();
+  const brands = await getAdminBrands();
 
   return (
     <main className="min-h-screen bg-paper px-4 py-6 text-ink lg:px-8">

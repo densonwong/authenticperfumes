@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
+import { isUuid } from "@/lib/ids";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 
 type Params = Promise<{ id: string }>;
@@ -9,13 +10,20 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   const { id } = await params;
   const body = await request.json().catch(() => null);
 
-  if (!body?.name || !body?.slug) {
-    return NextResponse.json({ error: "Brand name and slug are required." }, { status: 400 });
-  }
-
   const supabase = await createSupabaseServerClient();
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "received" });
+  }
+
+  if (!isUuid(id)) {
+    return NextResponse.json(
+      { error: "This brand is demo/seed data and cannot be edited. Create it in Supabase first." },
+      { status: 400 }
+    );
+  }
+
+  if (!body?.name || !body?.slug) {
+    return NextResponse.json({ error: "Brand name and slug are required." }, { status: 400 });
   }
 
   const { error } = await supabase
@@ -45,6 +53,13 @@ export async function DELETE(_request: Request, { params }: { params: Params }) 
 
   if (!supabase) {
     return NextResponse.json({ mode: "seed", status: "deleted" });
+  }
+
+  if (!isUuid(id)) {
+    return NextResponse.json(
+      { error: "This brand is demo/seed data and cannot be deleted. Create it in Supabase first." },
+      { status: 400 }
+    );
   }
 
   const { error } = await supabase.from("brands").delete().eq("id", id);

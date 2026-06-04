@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { hasSupabaseConfig } from "@/lib/env";
+import { isUuid } from "@/lib/ids";
 import { createSupabaseServerClient } from "@/lib/supabase/server";
 import { stockNotificationSchema } from "@/lib/validation";
 
@@ -18,9 +19,7 @@ export async function POST(request: Request) {
   const supabase = await createSupabaseServerClient();
   const { productId, productSlug, customerName, contact } = parsed.data;
   const isEmail = contact.includes("@");
-  const productUuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(productId)
-    ? productId
-    : null;
+  const productUuid = isUuid(productId) ? productId : null;
   const { error } = await supabase!
     .from("stock_notifications")
     .insert({

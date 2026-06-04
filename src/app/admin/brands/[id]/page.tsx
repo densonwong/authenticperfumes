@@ -2,11 +2,11 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { BrandForm } from "@/components/admin/brand-form";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getBrands } from "@/lib/repositories/catalog";
+import { getAdminBrands } from "@/lib/repositories/admin-cms";
 
 export default async function EditBrandPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
-  const [{ id }, brands] = await Promise.all([params, getBrands()]);
+  const [{ id }, brands] = await Promise.all([params, getAdminBrands()]);
   const brand = brands.find((item) => item.id === id || item.slug === id);
 
   if (!brand) {
