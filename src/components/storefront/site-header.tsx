@@ -44,7 +44,7 @@ export function SiteHeader({
 
         <Link
           href="/"
-          className="absolute left-1/2 -translate-x-1/2 font-serif text-2xl tracking-[0.16em] text-ink sm:text-3xl"
+          className="absolute left-1/2 -translate-x-1/2 font-logo text-2xl tracking-[0.16em] text-ink sm:text-3xl"
         >
           Authentic Perfumes
         </Link>

@@ -145,27 +145,30 @@ export default async function ProductDetailPage({
             </div>
           </div>
 
-          <div className="mt-5 grid gap-3 border-b border-ink/10 pb-5 sm:grid-cols-3">
-            <div>
+          <div className="mt-5 border border-ink/10 bg-warm/45 p-4">
+            <div className="flex items-center justify-between gap-4 border-b border-ink/10 pb-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
                 {dictionary.product.retail}
               </p>
-              <p className="mt-1 text-sm text-ink/55 line-through">{formatRupiah(variant.retailPrice)}</p>
+              <p className="text-sm text-ink/55 line-through">{formatRupiah(variant.retailPrice)}</p>
             </div>
-            <div>
+            <div className="flex items-center justify-between gap-4 border-b border-ink/10 py-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
                 {dictionary.product.authentic}
               </p>
-              <p className="mt-1 text-lg font-semibold text-ink">{formatRupiah(variant.authenticPrice)}</p>
+              <p className="text-xl font-semibold text-ink">{formatRupiah(variant.authenticPrice)}</p>
             </div>
-            <div>
+            <div className="flex items-center justify-between gap-4 pt-3">
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
                 {dictionary.product.savings}
               </p>
-              <p className="mt-1 text-sm font-semibold text-gold">
+              <p className="text-sm font-semibold text-gold">
                 {formatRupiah(savings)} ({savingsPercent}%)
               </p>
             </div>
+            <p className="mt-4 border-t border-ink/10 pt-3 text-sm leading-6 text-ink/68">
+              {dictionary.product.installment}
+            </p>
           </div>
 
           <div className="mt-5 rounded-none border border-ink/10 bg-warm/45 p-4">

@@ -3,7 +3,10 @@
 @tailwind utilities;
 
 :root {
-  --font-sans: "Helvetica Neue", Arial, sans-serif;
+  --font-serif-bold: Georgia, "Times New Roman", serif;
+  --font-caps: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  --font-logo: Montserrat, "Helvetica Neue", Arial, sans-serif;
+  --font-sans: var(--font-serif-bold);
   background: #f2f2f0;
   color: #111111;
 }
@@ -21,6 +24,16 @@ body {
   background: #f2f2f0;
   color: #111111;
   font-family: var(--font-sans);
+  font-weight: 700;
+}
+
+.uppercase {
+  font-family: var(--font-caps);
+}
+
+.font-logo {
+  font-family: var(--font-logo);
+  font-weight: 300;
 }
 
 button,

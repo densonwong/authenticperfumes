@@ -15,6 +15,8 @@ const config: Config = {
       },
       fontFamily: {
         serif: ["Georgia", "Times New Roman", "serif"],
+        caps: ["var(--font-caps)", "Open Sans", "Helvetica Neue", "Arial", "sans-serif"],
+        logo: ["var(--font-logo)", "Montserrat", "Helvetica Neue", "Arial", "sans-serif"],
         sans: ["var(--font-sans)", "Helvetica Neue", "Arial", "sans-serif"]
       },
       borderRadius: {

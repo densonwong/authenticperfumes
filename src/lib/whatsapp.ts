@@ -1,4 +1,4 @@
-const DEFAULT_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6281234567890";
+const DEFAULT_PHONE = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "6282310001899";
 
 export function normalizeWhatsAppPhone(phone: string) {
   return phone.replace(/\D/g, "");

@@ -4,8 +4,8 @@ import type { Dictionary } from "@/lib/i18n";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
-function getStartingPrice(product: Product) {
-  const price = Math.min(...product.variants.map((variant) => variant.authenticPrice));
+function getStartingPrice(product: Product, key: "retailPrice" | "authenticPrice") {
+  const price = Math.min(...product.variants.map((variant) => variant[key]));
 
   return formatRupiah(price);
 }
@@ -15,7 +15,7 @@ export function ProductRow({
   dictionary
 }: {
   product: Product;
-  dictionary: Pick<Dictionary, "common" | "status">;
+  dictionary: Pick<Dictionary, "common" | "status" | "product">;
 }) {
   return (
     <Link
@@ -44,8 +44,11 @@ export function ProductRow({
         <p className="font-semibold uppercase tracking-[0.12em] text-ink/55">
           {dictionary.status[product.status as ProductStatus]}
         </p>
-        <p className="mt-0 font-semibold text-ink sm:mt-2">
-          {dictionary.common.from} {getStartingPrice(product)}
+        <p className="mt-0 text-ink/55 line-through sm:mt-2">
+          {dictionary.product.retail}: {getStartingPrice(product, "retailPrice")}
+        </p>
+        <p className="mt-0 font-semibold text-ink sm:mt-1">
+          {dictionary.product.authentic}: {getStartingPrice(product, "authenticPrice")}
         </p>
       </div>
     </Link>

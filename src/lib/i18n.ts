@@ -121,6 +121,7 @@ export type Dictionary = {
     | "savings"
     | "status"
     | "statusBody"
+    | "installment"
     | "buyWhatsapp"
     | "requestSimilar"
     | "origin"
@@ -259,6 +260,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       savings: "Savings",
       status: "Status",
       statusBody: "Final stock and dispatch timing are confirmed before payment through WhatsApp.",
+      installment: "Split payment is available in 2-3 installments for selected bottles. Terms are confirmed through WhatsApp before payment.",
       buyWhatsapp: "Buy via WhatsApp",
       requestSimilar: "Request similar fragrance",
       origin: "Origin",
@@ -394,6 +396,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       savings: "Hemat",
       status: "Status",
       statusBody: "Stok final dan waktu pengiriman dikonfirmasi sebelum pembayaran via WhatsApp.",
+      installment: "Cicilan 2-3x tersedia untuk botol tertentu. Ketentuan dikonfirmasi via WhatsApp sebelum pembayaran.",
       buyWhatsapp: "Beli via WhatsApp",
       requestSimilar: "Request parfum serupa",
       origin: "Asal",

@@ -28,7 +28,12 @@ export default async function AdminBrandsPage() {
                   <h2 className="text-sm font-semibold">{brand.name}</h2>
                   <p className="mt-1 text-xs text-stone">{brand.country} / {brand.productCount} products</p>
                 </div>
-                <Link href={`/admin/brands/${brand.id}`} className="text-xs font-semibold uppercase tracking-[0.12em] underline underline-offset-4">Edit</Link>
+                <Link
+                  href={`/admin/brands/${brand.id}`}
+                  className="text-xs font-semibold uppercase tracking-[0.12em] underline underline-offset-4"
+                >
+                  Update
+                </Link>
               </div>
               <p className="mt-3 line-clamp-3 text-sm leading-6 text-ink/70">{brand.description}</p>
             </article>

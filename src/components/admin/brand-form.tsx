@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { Save } from "lucide-react";
+import { Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CloudinaryUpload, type CloudinaryUploadValue } from "@/components/admin/cloudinary-upload";
 import { slugify } from "@/lib/slugs";
@@ -18,6 +18,7 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
   const [featured, setFeatured] = useState(brand?.featured ?? false);
   const [message, setMessage] = useState("");
   const [isSaving, setIsSaving] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   function handleUpload(upload: CloudinaryUploadValue) {
     setLogoUrl(upload.secure_url);
@@ -56,6 +57,34 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
       setMessage(error instanceof Error ? error.message : "Brand save failed.");
     } finally {
       setIsSaving(false);
+    }
+  }
+
+  async function deleteBrand() {
+    if (!brand) return;
+
+    const confirmed = window.confirm(`Delete ${brand.name}? This cannot be undone.`);
+    if (!confirmed) return;
+
+    setMessage("");
+    setIsDeleting(true);
+
+    try {
+      const response = await fetch(`/api/brands/${brand.id}`, {
+        method: "DELETE"
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload.error ?? "Brand delete failed.");
+      }
+
+      router.push("/admin/brands");
+      router.refresh();
+    } catch (error) {
+      setMessage(error instanceof Error ? error.message : "Brand delete failed.");
+    } finally {
+      setIsDeleting(false);
     }
   }
 
@@ -124,14 +153,27 @@ export function BrandForm({ brand }: { brand?: Brand | null }) {
           Featured brand
         </label>
       </section>
-      <button
-        type="submit"
-        disabled={isSaving}
-        className="inline-flex h-10 items-center gap-2 border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-white hover:text-ink"
-      >
-        <Save className="h-4 w-4" />
-        {isSaving ? "Saving" : "Save brand"}
-      </button>
+      <div className="flex flex-wrap items-center gap-3">
+        <button
+          type="submit"
+          disabled={isSaving || isDeleting}
+          className="inline-flex h-10 items-center gap-2 border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.12em] text-white hover:bg-white hover:text-ink disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          <Save className="h-4 w-4" />
+          {isSaving ? "Saving" : brand ? "Update brand" : "Save brand"}
+        </button>
+        {brand ? (
+          <button
+            type="button"
+            onClick={() => void deleteBrand()}
+            disabled={isSaving || isDeleting}
+            className="inline-flex h-10 items-center gap-2 border border-red-300 px-4 text-xs font-semibold uppercase tracking-[0.12em] text-red-700 hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          >
+            <Trash2 className="h-4 w-4" />
+            {isDeleting ? "Deleting" : "Delete brand"}
+          </button>
+        ) : null}
+      </div>
     </form>
   );
 }

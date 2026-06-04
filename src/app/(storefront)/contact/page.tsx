@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
-import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
+
+const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZWVxa3loeGd1eQ==";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -17,7 +19,7 @@ export default async function ContactPage() {
     ? [
         {
           title: "Concierge WhatsApp",
-          body: "Paling cepat untuk cek stok, invoice, update pre-order, dan matching aroma.",
+          body: "Paling cepat untuk cek stok, invoice, update pre-order, dan matching aroma: +62 823-1000-1899.",
           icon: MessageCircle,
           href: buildWhatsAppUrl("Halo Authentic Perfumes, saya ingin bertanya tentang parfum.")
         },
@@ -26,6 +28,12 @@ export default async function ContactPage() {
           body: "Untuk kolaborasi, wholesale, atau request yang membutuhkan detail lebih panjang.",
           icon: Mail,
           href: "mailto:hello@authenticperfumes.id"
+        },
+        {
+          title: "Instagram",
+          body: "Follow update arrival, story customer, dan katalog singkat di @authenticperfumes8_.",
+          icon: Instagram,
+          href: INSTAGRAM_URL
         },
         {
           title: "Pengiriman Indonesia",
@@ -37,7 +45,7 @@ export default async function ContactPage() {
     : [
         {
           title: "WhatsApp concierge",
-          body: "Fastest for stock checks, invoices, pre-order updates, and scent matching.",
+          body: "Fastest for stock checks, invoices, pre-order updates, and scent matching: +62 823-1000-1899.",
           icon: MessageCircle,
           href: buildWhatsAppUrl("Halo Authentic Perfumes, saya ingin bertanya tentang parfum.")
         },
@@ -46,6 +54,12 @@ export default async function ContactPage() {
           body: "Best for collaboration, wholesale inquiries, and longer requests.",
           icon: Mail,
           href: "mailto:hello@authenticperfumes.id"
+        },
+        {
+          title: "Instagram",
+          body: "Follow arrivals, customer stories, and short catalog updates at @authenticperfumes8_.",
+          icon: Instagram,
+          href: INSTAGRAM_URL
         },
         {
           title: "Indonesia delivery",
@@ -73,7 +87,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-3 lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
         {contactOptions.map((option) => {
           const Icon = option.icon;
 
@@ -81,6 +95,8 @@ export default async function ContactPage() {
             <a
               key={option.title}
               href={option.href}
+              target={option.href.startsWith("http") ? "_blank" : undefined}
+              rel={option.href.startsWith("http") ? "noreferrer" : undefined}
               className="border border-ink/10 bg-warm/45 p-5 transition hover:border-ink/35 hover:bg-white"
             >
               <Icon className="h-5 w-5 text-gold" aria-hidden="true" />

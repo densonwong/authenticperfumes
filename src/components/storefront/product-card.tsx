@@ -4,8 +4,8 @@ import type { Dictionary } from "@/lib/i18n";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
-function getPriceRange(product: Product) {
-  const prices = product.variants.map((variant) => variant.authenticPrice);
+function getPriceRange(product: Product, key: "retailPrice" | "authenticPrice") {
+  const prices = product.variants.map((variant) => variant[key]);
   const min = Math.min(...prices);
   const max = Math.max(...prices);
 
@@ -19,7 +19,7 @@ export function ProductCard({
 }: {
   product: Product;
   priority?: boolean;
-  dictionary: Pick<Dictionary, "status">;
+  dictionary: Pick<Dictionary, "status" | "product">;
 }) {
   return (
     <Link
@@ -51,7 +51,20 @@ export function ProductCard({
           </h3>
           <p className="mt-1 truncate text-xs text-ink/60">{product.concentration}</p>
         </div>
-        <p className="text-sm font-semibold text-ink">{getPriceRange(product)}</p>
+        <div className="border-t border-ink/10 pt-2 text-sm text-ink">
+          <div className="flex items-center justify-between gap-3">
+            <span className="text-[11px] uppercase tracking-[0.12em] text-ink/45">
+              {dictionary.product.retail}
+            </span>
+            <span className="text-xs text-ink/55 line-through">{getPriceRange(product, "retailPrice")}</span>
+          </div>
+          <div className="mt-1 flex items-center justify-between gap-3">
+            <span className="text-[11px] uppercase tracking-[0.12em] text-ink/45">
+              {dictionary.product.authentic}
+            </span>
+            <span>{getPriceRange(product, "authenticPrice")}</span>
+          </div>
+        </div>
       </div>
     </Link>
   );
