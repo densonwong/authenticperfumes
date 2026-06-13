@@ -22,7 +22,6 @@ const process = [
 
 const refundPolicy = [
   "If we cannot source or verify the promised bottle, your paid amount is refunded.",
-  "If supplier pricing changes before payment confirmation, you can approve the new quote or cancel.",
   "Refunds do not apply after a confirmed special order is successfully sourced as agreed, unless the item cannot be fulfilled or verified."
 ];
 
@@ -35,7 +34,6 @@ const processId = [
 
 const refundPolicyId = [
   "Jika kami tidak bisa sourcing atau verifikasi botol sesuai janji, nominal yang sudah dibayar akan di-refund.",
-  "Jika harga supplier berubah sebelum pembayaran dikonfirmasi, Anda bisa approve quote baru atau cancel.",
   "Refund tidak berlaku setelah special order yang sudah dikonfirmasi berhasil di-source sesuai kesepakatan, kecuali item tidak dapat dipenuhi atau diverifikasi."
 ];
 

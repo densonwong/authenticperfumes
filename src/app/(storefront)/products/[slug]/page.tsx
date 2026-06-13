@@ -1,5 +1,4 @@
 import Link from "next/link";
-import { Search } from "lucide-react";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { NotifyMeForm } from "@/components/storefront/notify-me-form";
@@ -217,14 +216,6 @@ export default async function ProductDetailPage({
               {dictionary.product.buyWhatsapp}
             </a>
           </div>
-
-          <button
-            type="button"
-            className="mt-2 inline-flex w-full items-center justify-center gap-2 border border-ink/15 bg-warm/45 px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:border-ink"
-          >
-            <Search className="h-4 w-4" aria-hidden="true" />
-            {dictionary.product.requestSimilar}
-          </button>
 
           <div className="mt-5 grid gap-4">
             {shouldShowNotifyForm ? (

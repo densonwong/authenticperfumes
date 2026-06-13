@@ -18,6 +18,7 @@ export async function getLocale() {
 export type Dictionary = {
   announcement: string;
   nav: Record<
+    | "home"
     | "shop"
     | "brands"
     | "newArrivals"
@@ -141,6 +142,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     announcement:
       "100% ORIGINAL - BEBAS REQUEST BRAND PARFUM",
     nav: {
+      home: "Home",
       shop: "Shop",
       brands: "Brands A-Z",
       newArrivals: "New Arrivals",
@@ -274,6 +276,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     announcement:
       "100% ORIGINAL - BEBAS REQUEST BRAND PARFUM",
     nav: {
+      home: "Home",
       shop: "Belanja",
       brands: "Brand A-Z",
       newArrivals: "Terbaru",
