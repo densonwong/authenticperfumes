@@ -495,7 +495,7 @@ export const seedBanners: Banner[] = [
     title: "Niche arrivals, verified authentic",
     subtitle: "Curated bottles from Europe and the US with concierge sourcing for rare requests.",
     imageUrl: image("photo-1541643600914-78b084683601", 1800, 900),
-    href: "/products?filter=new-arrivals",
+    href: "/shop?newArrival=true",
     position: "primary"
   },
   {
@@ -503,7 +503,7 @@ export const seedBanners: Banner[] = [
     title: "Ready stock favorites",
     subtitle: "Fast dispatch for Jakarta and nationwide delivery with careful packaging proof.",
     imageUrl: image("photo-1592945403244-b3fbafd7f539", 1400, 800),
-    href: "/products?availability=ready-stock",
+    href: "/shop?readyStock=true",
     position: "secondary"
   },
   {
@@ -511,7 +511,7 @@ export const seedBanners: Banner[] = [
     title: "Find your next signature",
     subtitle: "Tell us your taste profile and occasion, then get a short-list via WhatsApp.",
     imageUrl: image("photo-1608528577891-eb055944f2e7", 1400, 800),
-    href: "/sampling",
+    href: "/contact",
     position: "tertiary"
   }
 ];

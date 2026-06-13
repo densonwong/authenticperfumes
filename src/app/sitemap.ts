@@ -9,7 +9,6 @@ const staticRoutes = [
   { path: "/new-arrivals", priority: 0.75 },
   { path: "/best-sellers", priority: 0.75 },
   { path: "/pre-order", priority: 0.75 },
-  { path: "/sampling", priority: 0.65 },
   { path: "/testimonials", priority: 0.65 },
   { path: "/about", priority: 0.55 },
   { path: "/contact", priority: 0.55 }

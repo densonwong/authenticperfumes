@@ -4,18 +4,17 @@ import { Reveal } from "@/components/motion/reveal";
 import { BrandCloud } from "@/components/storefront/brand-cloud";
 import { CollectionTile } from "@/components/storefront/collection-tile";
 import { ProductCard } from "@/components/storefront/product-card";
-import { ProductRow } from "@/components/storefront/product-row";
 import { TrustStrip } from "@/components/storefront/trust-strip";
 import {
   getBanners,
   getBestSellers,
   getFeaturedBrands,
   getNewArrivals,
-  getPreOrderProducts,
   getReadyStockProducts
 } from "@/lib/repositories/catalog";
 import { getDictionary, getLocale, type Dictionary } from "@/lib/i18n";
 import type { Banner, Product } from "@/lib/types";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
   alternates: {
@@ -84,16 +83,16 @@ function localizeBanner(banner: Banner, locale: string): Banner {
 
   const translations: Record<string, Pick<Banner, "title" | "subtitle">> = {
     "banner-niche-arrivals": {
-      title: "Arrival niche, original terverifikasi",
-      subtitle: "Botol pilihan dari Eropa dan US dengan sourcing personal untuk request langka."
+      title: "100% original",
+      subtitle: "Bebas request brand parfum niche dan designer original via WhatsApp."
     },
     "banner-ready-stock": {
-      title: "Favorit ready stock",
-      subtitle: "Pengiriman cepat untuk Jakarta dan seluruh Indonesia dengan bukti packing."
+      title: "Ready stock",
+      subtitle: "Pengiriman ke seluruh Indonesia dengan konfirmasi stok sebelum pembayaran."
     },
     "banner-consultation": {
-      title: "Temukan signature scent berikutnya",
-      subtitle: "Ceritakan profil aroma dan occasion, lalu dapatkan shortlist via WhatsApp."
+      title: "Discover your scent",
+      subtitle: "Konsultasi aroma, hadiah, dan pilihan personal langsung via WhatsApp."
     }
   };
 
@@ -108,14 +107,12 @@ export default async function HomePage() {
     newArrivals,
     bestSellers,
     readyStock,
-    preOrders,
     featuredBrands
   ] = await Promise.all([
     getBanners(),
     getNewArrivals(),
     getBestSellers(),
     getReadyStockProducts(),
-    getPreOrderProducts(),
     getFeaturedBrands()
   ]);
 
@@ -135,7 +132,16 @@ export default async function HomePage() {
   const primaryBanner =
     normalizedBanners.find((banner) => banner.position === "primary") ?? normalizedBanners[0];
   const secondaryBanners = normalizedBanners.filter((banner) => banner.id !== primaryBanner?.id).slice(0, 2);
-  const samplingProducts = [...newArrivals, ...bestSellers].slice(0, 4);
+  const consultationUrl = buildWhatsAppUrl(
+    locale === "id"
+      ? "Halo Authentic Perfumes 8, saya ingin konsultasi parfum dan request brand."
+      : "Hello Authentic Perfumes 8, I would like fragrance consultation and brand request help."
+  );
+  const requestUrl = buildWhatsAppUrl(
+    locale === "id"
+      ? "Halo Authentic Perfumes 8, saya mencari parfum tertentu. Mohon bantu cek stok, harga, dan opsi request."
+      : "Hello Authentic Perfumes 8, I am looking for a specific fragrance. Please help check stock, price, and request options."
+  );
 
   return (
     <main className="bg-paper">
@@ -157,24 +163,24 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <Reveal>
           <SectionHeader
-            eyebrow={dictionary.home.freshEdit}
-            title={dictionary.home.newNoteworthy}
-            href="/new-arrivals"
-            linkLabel={dictionary.common.viewAll}
+            eyebrow={dictionary.home.customerFavorites}
+            title={dictionary.home.bestSellers}
+            href="/best-sellers"
+            linkLabel={dictionary.home.discoverMore}
           />
-          <ProductGrid products={newArrivals.slice(0, 4)} priority dictionary={dictionary} />
+          <ProductGrid products={bestSellers.slice(0, 4)} priority dictionary={dictionary} />
         </Reveal>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <Reveal>
           <SectionHeader
-            eyebrow={dictionary.home.customerFavorites}
-            title={dictionary.home.bestSellers}
-            href="/best-sellers"
-            linkLabel={dictionary.common.viewAll}
+            eyebrow={dictionary.home.freshEdit}
+            title={dictionary.home.newNoteworthy}
+            href="/new-arrivals"
+            linkLabel={dictionary.home.discoverMore}
           />
-          <ProductGrid products={bestSellers.slice(0, 4)} dictionary={dictionary} />
+          <ProductGrid products={newArrivals.slice(0, 4)} dictionary={dictionary} />
         </Reveal>
       </section>
 
@@ -185,7 +191,7 @@ export default async function HomePage() {
               eyebrow={dictionary.home.fastDispatch}
               title={dictionary.home.readyStock}
               href="/shop?readyStock=true"
-              linkLabel={dictionary.common.viewAll}
+              linkLabel={dictionary.home.discoverMore}
             />
             <ProductGrid products={readyStock.slice(0, 4)} dictionary={dictionary} />
           </Reveal>
@@ -194,43 +200,27 @@ export default async function HomePage() {
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <Reveal>
-          <SectionHeader
-            eyebrow={dictionary.home.conciergeSourcing}
-            title={dictionary.home.preOrderPicks}
-            href="/pre-order"
-            linkLabel={dictionary.common.viewAll}
-          />
-          <ProductGrid products={preOrders.slice(0, 4)} dictionary={dictionary} />
-        </Reveal>
-      </section>
-
-      <section className="bg-ink py-10 text-paper">
-        <div className="mx-auto grid max-w-7xl gap-8 px-4 lg:grid-cols-[0.85fr_1.15fr] lg:px-8">
-          <Reveal>
-            <div className="max-w-xl">
+          <div className="grid gap-6 border border-ink/10 bg-ink p-6 text-paper md:grid-cols-[1fr_auto] md:items-center md:p-8">
+            <div>
               <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-                {dictionary.home.sampling}
+                {dictionary.home.discoverScent}
               </p>
-              <h2 className="mt-3 font-serif text-3xl leading-tight">{dictionary.home.samplingTitle}</h2>
-              <p className="mt-4 text-sm leading-6 text-paper/70">
-                {dictionary.home.samplingBody}
-              </p>
-              <Link
-                href="/sampling"
-                className="mt-6 inline-flex border border-paper/25 px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] transition hover:border-paper hover:bg-paper hover:text-ink"
-              >
-                {dictionary.home.startSampling}
-              </Link>
+              <h2 className="mt-3 font-serif text-3xl leading-tight">
+                {locale === "id"
+                  ? "Gratis konsultasi untuk rekomendasi scent, hadiah, dan pilihan personal."
+                  : "Free consultation for scent recommendations, gifts, and personal choices."}
+              </h2>
             </div>
-          </Reveal>
-          <Reveal delay={0.08}>
-            <div className="bg-paper px-4 text-ink sm:px-6">
-              {samplingProducts.map((product) => (
-                <ProductRow key={product.id} product={product} dictionary={dictionary} />
-              ))}
-            </div>
-          </Reveal>
-        </div>
+            <a
+              href={consultationUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="inline-flex justify-center border border-paper/25 px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] transition hover:border-paper hover:bg-paper hover:text-ink"
+            >
+              {dictionary.home.consultNow}
+            </a>
+          </div>
+        </Reveal>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
@@ -259,12 +249,14 @@ export default async function HomePage() {
                 {dictionary.home.requestBody}
               </p>
             </div>
-            <Link
-              href="/contact"
+            <a
+              href={requestUrl}
+              target="_blank"
+              rel="noreferrer"
               className="inline-flex w-full justify-center bg-ink px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-gold sm:w-auto"
             >
               {dictionary.home.requestViaWhatsApp}
-            </Link>
+            </a>
           </div>
         </Reveal>
       </section>

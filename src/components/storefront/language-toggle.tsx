@@ -16,7 +16,7 @@ export function LanguageToggle({ locale, label }: { locale: Locale; label: strin
     <button
       type="button"
       onClick={toggleLocale}
-      className="inline-flex h-9 items-center gap-2 border border-ink/15 px-3 text-[11px] font-semibold uppercase tracking-[0.14em] text-ink transition hover:border-gold hover:text-gold"
+      className="inline-flex h-9 items-center gap-1 border border-ink/15 px-2 text-[10px] font-semibold uppercase tracking-[0.1em] text-ink transition hover:border-gold hover:text-gold sm:gap-2 sm:px-3 sm:text-[11px] sm:tracking-[0.14em]"
       aria-label={label}
       title={label}
     >

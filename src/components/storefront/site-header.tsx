@@ -19,7 +19,6 @@ const navItems: NavItem[] = [
   { key: "newArrivals", href: "/new-arrivals" },
   { key: "bestSellers", href: "/best-sellers" },
   { key: "preOrder", href: "/pre-order" },
-  { key: "sampling", href: "/sampling" },
   { key: "testimonials", href: "/testimonials" },
   { key: "contact", href: "/contact" }
 ];
@@ -33,7 +32,7 @@ export function SiteHeader({
 }) {
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
-      <div className="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 lg:px-8">
+      <div className="mx-auto grid max-w-7xl grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 lg:flex lg:justify-between lg:px-8">
         <button
           className="inline-flex h-10 w-10 items-center justify-center border border-ink/15 text-ink lg:hidden"
           type="button"
@@ -44,14 +43,14 @@ export function SiteHeader({
 
         <Link
           href="/"
-          className="absolute left-1/2 -translate-x-1/2 font-logo text-2xl tracking-[0.16em] text-ink sm:text-3xl"
+          className="min-w-0 justify-self-center text-center font-logo text-[clamp(1.12rem,5.2vw,1.65rem)] leading-none tracking-[0.12em] text-ink lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:text-3xl lg:tracking-[0.16em]"
         >
-          Authentic Perfumes 8
+          AUTHENTIC PERFUMES8
         </Link>
 
         <div className="hidden flex-1 lg:block" />
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center justify-end gap-1">
           <LanguageToggle locale={locale} label={dictionary.language} />
           <Link
             href="/shop"

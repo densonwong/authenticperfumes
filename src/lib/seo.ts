@@ -2,6 +2,7 @@ import { getPublicSiteUrl } from "@/lib/env";
 
 export const SITE_NAME = "Authentic Perfumes 8";
 export const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZWVxa3loeGd1eQ==";
+export const TIKTOK_URL = "https://www.tiktok.com/@authenticperfumes8_?_r=1&_t=ZS-977N0qpXaks";
 
 export function siteUrl(path = "/") {
   const baseUrl = getPublicSiteUrl().replace(/\/$/, "");
@@ -16,7 +17,7 @@ export function organizationJsonLd() {
     "@type": "Organization",
     name: SITE_NAME,
     url: siteUrl(),
-    sameAs: [INSTAGRAM_URL],
+    sameAs: [INSTAGRAM_URL, TIKTOK_URL],
     contactPoint: [
       {
         "@type": "ContactPoint",

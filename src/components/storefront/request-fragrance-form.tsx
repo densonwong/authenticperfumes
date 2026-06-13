@@ -6,6 +6,7 @@ import { useForm } from "react-hook-form";
 import type { z } from "zod";
 import type { Dictionary } from "@/lib/i18n";
 import { fragranceRequestSchema } from "@/lib/validation";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type FragranceRequestValues = z.infer<typeof fragranceRequestSchema>;
 
@@ -16,7 +17,6 @@ type RequestFragranceFormProps = {
 
 export function RequestFragranceForm({ defaultValues, dictionary }: RequestFragranceFormProps) {
   const [message, setMessage] = useState<string | null>(null);
-  const [messageType, setMessageType] = useState<"success" | "error">("success");
   const {
     formState: { errors, isSubmitting },
     handleSubmit,
@@ -34,33 +34,28 @@ export function RequestFragranceForm({ defaultValues, dictionary }: RequestFragr
     }
   });
 
-  async function onSubmit(values: FragranceRequestValues) {
-    setMessage(null);
+  function onSubmit(values: FragranceRequestValues) {
+    const url = buildWhatsAppUrl(
+      [
+        "Halo Authentic Perfumes 8, saya ingin request parfum.",
+        `Nama: ${values.customerName}`,
+        `WhatsApp: ${values.contact}`,
+        `Brand: ${values.brandName}`,
+        `Parfum: ${values.productName}`,
+        `Ukuran: ${values.size}`,
+        "Mohon informasi stok, harga, dan opsi pre-order."
+      ].join("\n")
+    );
 
-    try {
-      const response = await fetch("/api/fragrance-requests", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values)
-      });
-
-      if (!response.ok) {
-        throw new Error("Submission failed");
-      }
-
-      setMessageType("success");
-      setMessage(dictionary.requestSuccess);
-      reset({
-        productName: defaultValues?.productName ?? "",
-        brandName: defaultValues?.brandName ?? "",
-        size: defaultValues?.size ?? "",
-        customerName: "",
-        contact: ""
-      });
-    } catch {
-      setMessageType("error");
-      setMessage(dictionary.requestError);
-    }
+    setMessage(dictionary.requestSuccess);
+    reset({
+      productName: defaultValues?.productName ?? "",
+      brandName: defaultValues?.brandName ?? "",
+      size: defaultValues?.size ?? "",
+      customerName: "",
+      contact: ""
+    });
+    window.location.href = url;
   }
 
   return (
@@ -134,11 +129,7 @@ export function RequestFragranceForm({ defaultValues, dictionary }: RequestFragr
       </button>
 
       {message ? (
-        <p
-          className={`mt-4 text-sm font-semibold ${
-            messageType === "success" ? "text-ink" : "text-red-700"
-          }`}
-        >
+        <p className="mt-4 text-sm font-semibold text-ink">
           {message}
         </p>
       ) : null}

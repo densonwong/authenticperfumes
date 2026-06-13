@@ -23,7 +23,6 @@ export type Dictionary = {
     | "newArrivals"
     | "bestSellers"
     | "preOrder"
-    | "sampling"
     | "testimonials"
     | "contact"
     | "search"
@@ -56,10 +55,9 @@ export type Dictionary = {
     | "readyStock"
     | "conciergeSourcing"
     | "preOrderPicks"
-    | "sampling"
-    | "samplingTitle"
-    | "samplingBody"
-    | "startSampling"
+    | "discoverScent"
+    | "consultNow"
+    | "discoverMore"
     | "brandUniverse"
     | "featuredHouses"
     | "requestFragrance"
@@ -141,14 +139,13 @@ export type Dictionary = {
 export const dictionaries: Record<Locale, Dictionary> = {
   en: {
     announcement:
-      "100% original niche & designer fragrances - Ready Stock and Pre Order available across Indonesia",
+      "100% ORIGINAL - BEBAS REQUEST BRAND PARFUM",
     nav: {
       shop: "Shop",
       brands: "Brands A-Z",
       newArrivals: "New Arrivals",
       bestSellers: "Best Sellers",
       preOrder: "Pre Order",
-      sampling: "Sampling",
       testimonials: "Testimonials",
       contact: "Contact",
       search: "Search catalog",
@@ -176,36 +173,34 @@ export const dictionaries: Record<Locale, Dictionary> = {
       out_of_stock: "Out of stock"
     } satisfies Record<ProductStatus, string>,
     home: {
-      freshEdit: "Fresh edit",
-      newNoteworthy: "New and Noteworthy",
-      customerFavorites: "Customer favorites",
+      freshEdit: "New Arrivals",
+      newNoteworthy: "New Arrivals",
+      customerFavorites: "Best Seller",
       bestSellers: "Best Sellers",
-      fastDispatch: "Fast dispatch",
+      fastDispatch: "Ready Stock",
       readyStock: "Ready Stock",
-      conciergeSourcing: "Concierge sourcing",
-      preOrderPicks: "Pre Order Picks",
-      sampling: "Sampling",
-      samplingTitle: "Test the story before the bottle",
-      samplingBody:
-        "Build a short list from new arrivals and customer favorites, then ask for decants, wearing advice, and climate notes before committing to a full presentation.",
-      startSampling: "Start sampling",
-      brandUniverse: "Brand universe",
-      featuredHouses: "Explore featured houses",
+      conciergeSourcing: "Discover Your Scent",
+      preOrderPicks: "Discover Your Scent",
+      discoverScent: "Discover Your Scent",
+      consultNow: "Consult now",
+      discoverMore: "Discover more",
+      brandUniverse: "Click to Explore Brand",
+      featuredHouses: "Click to Explore Brand",
       requestFragrance: "Request fragrance",
-      requestTitle: "Looking for a bottle not listed yet?",
+      requestTitle: "Looking for something specific? Contact us now",
       requestBody:
         "Share the house, size, and preferred timeline. We will confirm availability, estimated landed price, and ordering options through WhatsApp.",
-      requestViaWhatsApp: "Request via WhatsApp"
+      requestViaWhatsApp: "Contact us now"
     },
     trust: {
-      authentic: "100% Authentic",
-      sourcing: "Verified sourcing",
-      shipping: "Indonesia Shipping",
-      dispatch: "Tracked dispatch",
-      split: "Split Payment",
-      flexible: "Flexible checkout",
-      consultation: "Fragrance Consultation",
-      guidance: "WhatsApp guidance"
+      authentic: "100% Original",
+      sourcing: "Original guarantee",
+      shipping: "Ship to All Indonesia",
+      dispatch: "Nationwide delivery",
+      split: "Flexible Payment",
+      flexible: "Split payment available",
+      consultation: "Consult or Request",
+      guidance: "Via WhatsApp"
     },
     tile: {
       featured: "Featured edit",
@@ -237,10 +232,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       brandName: "Brand name",
       size: "Size",
       name: "Name",
-      contact: "WhatsApp or contact",
-      sendRequest: "Send request",
-      submitting: "Submitting",
-      requestSuccess: "Request received. Our team will contact you via WhatsApp.",
+      contact: "WhatsApp number",
+      sendRequest: "Request via WhatsApp",
+      submitting: "Opening WhatsApp",
+      requestSuccess: "Opening WhatsApp.",
       requestError: "Submission failed. Please try again or contact us via WhatsApp.",
       notifyEyebrow: "Stock notification",
       notifyTitle: "Notify me",
@@ -277,14 +272,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
   },
   id: {
     announcement:
-      "100% parfum niche & designer original - Ready Stock dan Pre Order tersedia ke seluruh Indonesia",
+      "100% ORIGINAL - BEBAS REQUEST BRAND PARFUM",
     nav: {
       shop: "Belanja",
       brands: "Brand A-Z",
       newArrivals: "Terbaru",
       bestSellers: "Terlaris",
       preOrder: "Pre Order",
-      sampling: "Sampling",
       testimonials: "Testimoni",
       contact: "Kontak",
       search: "Cari katalog",
@@ -312,36 +306,34 @@ export const dictionaries: Record<Locale, Dictionary> = {
       out_of_stock: "Stok habis"
     } satisfies Record<ProductStatus, string>,
     home: {
-      freshEdit: "Pilihan terbaru",
-      newNoteworthy: "Baru dan Menarik",
-      customerFavorites: "Favorit customer",
-      bestSellers: "Terlaris",
-      fastDispatch: "Pengiriman cepat",
+      freshEdit: "New Arrivals",
+      newNoteworthy: "New Arrivals",
+      customerFavorites: "Best Seller",
+      bestSellers: "Best Seller",
+      fastDispatch: "Ready Stock",
       readyStock: "Ready Stock",
-      conciergeSourcing: "Sourcing personal",
-      preOrderPicks: "Pilihan Pre Order",
-      sampling: "Sampling",
-      samplingTitle: "Coba arahnya sebelum beli botol",
-      samplingBody:
-        "Buat shortlist dari arrival terbaru dan favorit customer, lalu konsultasikan decant, cara pakai, dan kecocokan cuaca sebelum membeli full bottle.",
-      startSampling: "Mulai sampling",
-      brandUniverse: "Dunia brand",
-      featuredHouses: "Jelajahi brand pilihan",
+      conciergeSourcing: "Discover Your Scent",
+      preOrderPicks: "Discover Your Scent",
+      discoverScent: "Discover Your Scent",
+      consultNow: "Consult now",
+      discoverMore: "Discover more",
+      brandUniverse: "Click to Explore Brand",
+      featuredHouses: "Click to Explore Brand",
       requestFragrance: "Request parfum",
-      requestTitle: "Mencari botol yang belum ada di katalog?",
+      requestTitle: "Looking for something specific? Contact us now",
       requestBody:
         "Kirim brand, ukuran, dan timeline yang diinginkan. Kami akan konfirmasi ketersediaan, estimasi harga landed, dan opsi order via WhatsApp.",
-      requestViaWhatsApp: "Request via WhatsApp"
+      requestViaWhatsApp: "Contact us now"
     },
     trust: {
-      authentic: "100% Authentic",
-      sourcing: "Sourcing terverifikasi",
-      shipping: "Kirim Indonesia",
-      dispatch: "Resi terlacak",
-      split: "Split Payment",
-      flexible: "Bayar fleksibel",
-      consultation: "Konsultasi Parfum",
-      guidance: "Panduan WhatsApp"
+      authentic: "100% Original",
+      sourcing: "Jaminan original",
+      shipping: "Pengiriman ke seluruh Indonesia",
+      dispatch: "Pengiriman nasional",
+      split: "Pembayaran Fleksibel",
+      flexible: "Cicilan tersedia",
+      consultation: "Konsultasi atau Request",
+      guidance: "Via WhatsApp"
     },
     tile: {
       featured: "Pilihan utama",
@@ -373,10 +365,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       brandName: "Nama brand",
       size: "Ukuran",
       name: "Nama",
-      contact: "WhatsApp atau kontak",
-      sendRequest: "Kirim request",
-      submitting: "Mengirim",
-      requestSuccess: "Request diterima. Tim kami akan menghubungi Anda via WhatsApp.",
+      contact: "Nomor WhatsApp",
+      sendRequest: "Request via WhatsApp",
+      submitting: "Membuka WhatsApp",
+      requestSuccess: "Membuka WhatsApp.",
       requestError: "Gagal mengirim. Silakan coba lagi atau hubungi kami via WhatsApp.",
       notifyEyebrow: "Notifikasi stok",
       notifyTitle: "Beri tahu saya",

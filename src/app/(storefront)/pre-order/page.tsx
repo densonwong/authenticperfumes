@@ -80,7 +80,7 @@ export default async function PreOrderPage() {
         <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div>
             <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-              {dictionary.home.conciergeSourcing}
+              {isId ? "Sistem Pre-Order" : "Pre-Order System"}
             </p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
               {isId ? "Pre-order dengan checkpoint jelas" : "Pre-order with clear checkpoints"}
@@ -109,7 +109,7 @@ export default async function PreOrderPage() {
                 ))}
               </ol>
             </section>
-            <section className="border border-ink/10 bg-paper p-5">
+            <section id="refund" className="scroll-mt-32 border border-ink/10 bg-paper p-5">
               <h2 className="font-serif text-2xl text-ink">{isId ? "Kebijakan refund" : "Refund policy"}</h2>
               <ul className="mt-4 space-y-3">
                 {refundItems.map((item) => (
@@ -121,6 +121,48 @@ export default async function PreOrderPage() {
             </section>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-3 lg:px-8">
+        <section id="shipping" className="scroll-mt-32 border border-ink/10 bg-warm/45 p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+            {isId ? "Pengiriman" : "Shipping"}
+          </p>
+          <h2 className="mt-3 font-serif text-2xl text-ink">
+            {isId ? "Pengiriman ke seluruh Indonesia" : "Ship to all Indonesia"}
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-ink/70">
+            {isId
+              ? "Ready stock dikirim setelah stok dan pembayaran terkonfirmasi. Untuk pre-order, pengiriman dilakukan setelah barang tiba, dicek, dan siap dispatch."
+              : "Ready stock ships after stock and payment are confirmed. For pre-order, dispatch happens after arrival, checking, and final confirmation."}
+          </p>
+        </section>
+        <section id="payment" className="scroll-mt-32 border border-ink/10 bg-warm/45 p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+            {isId ? "Pembayaran" : "Payment"}
+          </p>
+          <h2 className="mt-3 font-serif text-2xl text-ink">
+            {isId ? "Pembayaran fleksibel" : "Flexible payment"}
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-ink/70">
+            {isId
+              ? "Pembayaran bertahap 2-3x tersedia untuk produk tertentu. Detail nominal, deadline, dan pelunasan dikonfirmasi via WhatsApp sebelum order."
+              : "2-3x installment payment is available for selected products. Amounts, deadlines, and settlement details are confirmed through WhatsApp before ordering."}
+          </p>
+        </section>
+        <section id="terms" className="scroll-mt-32 border border-ink/10 bg-warm/45 p-5">
+          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+            {isId ? "Syarat dan Ketentuan" : "Terms and Conditions"}
+          </p>
+          <h2 className="mt-3 font-serif text-2xl text-ink">
+            {isId ? "Konfirmasi sebelum pembayaran" : "Confirm before payment"}
+          </h2>
+          <p className="mt-3 text-sm leading-6 text-ink/70">
+            {isId
+              ? "Harga, stok, ETA, opsi cicilan, dan kebijakan refund dikonfirmasi melalui WhatsApp sebelum transaksi dilanjutkan."
+              : "Price, stock, ETA, installment options, and refund terms are confirmed through WhatsApp before the transaction proceeds."}
+          </p>
+        </section>
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">

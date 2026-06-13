@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { Instagram, Mail, MapPin, MessageCircle } from "lucide-react";
+import { Instagram, MapPin, MessageCircle } from "lucide-react";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import { siteUrl, SITE_NAME } from "@/lib/seo";
+import { siteUrl, INSTAGRAM_URL, SITE_NAME, TIKTOK_URL } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-
-const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZWVxa3loeGd1eQ==";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -22,54 +20,42 @@ export default async function ContactPage() {
   const contactOptions = isId
     ? [
         {
-          title: "Concierge WhatsApp",
-          body: "Paling cepat untuk cek stok, invoice, update pre-order, dan matching aroma: +62 823-1000-1899.",
+          title: "WhatsApp",
+          body: "Contact Us Through WhatsApp for any inquiries: cek stok, harga, pre-order, dan request brand.",
           icon: MessageCircle,
           href: buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin bertanya tentang parfum.")
         },
         {
-          title: "Email",
-          body: "Untuk kolaborasi, wholesale, atau request yang membutuhkan detail lebih panjang.",
-          icon: Mail,
-          href: "mailto:hello@authenticperfumes.id"
-        },
-        {
           title: "Instagram",
-          body: "Follow update arrival, story customer, dan katalog singkat di @authenticperfumes8_.",
+          body: "Follow us for new arrivals update and any promotion di @authenticperfumes8_.",
           icon: Instagram,
           href: INSTAGRAM_URL
         },
         {
-          title: "Pengiriman Indonesia",
-          body: "Ready stock dikirim ke seluruh Indonesia dengan resi dan bukti packing.",
+          title: "Ship to All Indonesia",
+          body: "Pengiriman ke seluruh Indonesia dengan konfirmasi stok dan packing aman.",
           icon: MapPin,
-          href: "/testimonials"
+          href: "/pre-order#shipping"
         }
       ]
     : [
         {
-          title: "WhatsApp concierge",
-          body: "Fastest for stock checks, invoices, pre-order updates, and scent matching: +62 823-1000-1899.",
+          title: "WhatsApp",
+          body: "Contact Us Through WhatsApp for any inquiries: stock checks, prices, pre-orders, and brand requests.",
           icon: MessageCircle,
           href: buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin bertanya tentang parfum.")
         },
         {
-          title: "Email",
-          body: "Best for collaboration, wholesale inquiries, and longer requests.",
-          icon: Mail,
-          href: "mailto:hello@authenticperfumes.id"
-        },
-        {
           title: "Instagram",
-          body: "Follow arrivals, customer stories, and short catalog updates at @authenticperfumes8_.",
+          body: "Follow us for new arrivals updates and any promotion at @authenticperfumes8_.",
           icon: Instagram,
           href: INSTAGRAM_URL
         },
         {
-          title: "Indonesia delivery",
-          body: "Ready stock ships nationwide with tracked delivery and packing proof.",
+          title: "Ship to All Indonesia",
+          body: "Nationwide Indonesia shipping with stock confirmation and safe packing.",
           icon: MapPin,
-          href: "/testimonials"
+          href: "/pre-order#shipping"
         }
       ];
   const jsonLd = {
@@ -81,7 +67,7 @@ export default async function ContactPage() {
       "@type": "Organization",
       name: SITE_NAME,
       telephone: "+62 823-1000-1899",
-      sameAs: [INSTAGRAM_URL]
+      sameAs: [INSTAGRAM_URL, TIKTOK_URL]
     }
   };
 
@@ -107,7 +93,7 @@ export default async function ContactPage() {
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-2 lg:grid-cols-4 lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-3 lg:px-8">
         {contactOptions.map((option) => {
           const Icon = option.icon;
 
@@ -130,7 +116,7 @@ export default async function ContactPage() {
       <section className="border-t border-ink/10 px-4 py-10 lg:px-8">
         <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="border border-ink/10 bg-warm/45 p-5">
-            <h2 className="font-serif text-2xl text-ink">{isId ? "Detail request" : "Request details"}</h2>
+            <h2 className="font-serif text-2xl text-ink">{isId ? "Detail request WhatsApp" : "WhatsApp request details"}</h2>
             <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
               <div>
                 <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{isId ? "Produk" : "Product"}</dt>
