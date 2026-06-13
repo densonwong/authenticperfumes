@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import {
   Menu,
-  Search
+  Search,
+  X
 } from "lucide-react";
 import { LanguageToggle } from "@/components/storefront/language-toggle";
 import type { Dictionary, Locale } from "@/lib/i18n";
@@ -30,6 +32,9 @@ export function SiteHeader({
   locale: Locale;
   dictionary: Dictionary["nav"];
 }) {
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const MenuIcon = isMenuOpen ? X : Menu;
+
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
       <div className="mx-auto grid max-w-7xl grid-cols-[44px_minmax(0,1fr)_auto] items-center gap-2 px-4 py-3 lg:flex lg:justify-between lg:px-8">
@@ -37,8 +42,11 @@ export function SiteHeader({
           className="inline-flex h-10 w-10 items-center justify-center border border-ink/15 text-ink lg:hidden"
           type="button"
           aria-label={dictionary.open}
+          aria-expanded={isMenuOpen}
+          aria-controls="mobile-navigation"
+          onClick={() => setIsMenuOpen((current) => !current)}
         >
-          <Menu className="h-5 w-5" aria-hidden="true" />
+          <MenuIcon className="h-5 w-5" aria-hidden="true" />
         </button>
 
         <Link
@@ -72,6 +80,26 @@ export function SiteHeader({
               <Link
                 href={item.href}
                 className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
+              >
+                {dictionary[item.key]}
+              </Link>
+            </li>
+          ))}
+        </ul>
+      </nav>
+
+      <nav
+        id="mobile-navigation"
+        className={`${isMenuOpen ? "block" : "hidden"} border-t border-ink/10 bg-paper px-4 py-3 lg:hidden`}
+        aria-label="Mobile navigation"
+      >
+        <ul className="grid divide-y divide-ink/10">
+          {navItems.map((item) => (
+            <li key={item.key}>
+              <Link
+                href={item.href}
+                onClick={() => setIsMenuOpen(false)}
+                className="flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
               >
                 {dictionary[item.key]}
               </Link>
