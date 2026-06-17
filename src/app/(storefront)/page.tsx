@@ -3,7 +3,7 @@ import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/reveal";
 import { BrandCloud } from "@/components/storefront/brand-cloud";
 import { CollectionTile } from "@/components/storefront/collection-tile";
-import { ProductCard } from "@/components/storefront/product-card";
+import { ProductSlider } from "@/components/storefront/product-slider";
 import { TrustStrip } from "@/components/storefront/trust-strip";
 import {
   getBanners,
@@ -12,8 +12,8 @@ import {
   getNewArrivals,
   getReadyStockProducts
 } from "@/lib/repositories/catalog";
-import { getDictionary, getLocale, type Dictionary } from "@/lib/i18n";
-import type { Banner, Product } from "@/lib/types";
+import { getDictionary, getLocale } from "@/lib/i18n";
+import type { Banner } from "@/lib/types";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export const metadata: Metadata = {
@@ -53,29 +53,6 @@ function SectionHeader({
           {linkLabel}
         </Link>
       ) : null}
-    </div>
-  );
-}
-
-function ProductGrid({
-  products,
-  priority = false,
-  dictionary
-}: {
-  products: Product[];
-  priority?: boolean;
-  dictionary: Dictionary;
-}) {
-  return (
-    <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-      {products.map((product, index) => (
-        <ProductCard
-          key={product.id}
-          product={product}
-          priority={priority && index < 2}
-          dictionary={dictionary}
-        />
-      ))}
     </div>
   );
 }
@@ -170,7 +147,7 @@ export default async function HomePage() {
             href="/best-sellers"
             linkLabel={dictionary.home.discoverMore}
           />
-          <ProductGrid products={bestSellers.slice(0, 4)} priority dictionary={dictionary} />
+          <ProductSlider products={bestSellers.slice(0, 12)} priority dictionary={dictionary} />
         </Reveal>
       </section>
 
@@ -182,7 +159,7 @@ export default async function HomePage() {
             href="/new-arrivals"
             linkLabel={dictionary.home.discoverMore}
           />
-          <ProductGrid products={newArrivals.slice(0, 4)} dictionary={dictionary} />
+          <ProductSlider products={newArrivals.slice(0, 12)} dictionary={dictionary} />
         </Reveal>
       </section>
 
@@ -195,7 +172,7 @@ export default async function HomePage() {
               href="/shop?readyStock=true"
               linkLabel={dictionary.home.discoverMore}
             />
-            <ProductGrid products={readyStock.slice(0, 4)} dictionary={dictionary} />
+            <ProductSlider products={readyStock.slice(0, 12)} dictionary={dictionary} />
           </Reveal>
         </div>
       </section>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, ChevronDown } from "lucide-react";
+import { Check, ChevronDown, Search } from "lucide-react";
 
 export type CustomSelectOption<TValue extends string = string> = {
   value: TValue;
@@ -16,6 +16,8 @@ type CustomSelectProps<TValue extends string = string> = {
   disabled?: boolean;
   ariaLabel?: string;
   className?: string;
+  searchable?: boolean;
+  searchPlaceholder?: string;
 };
 
 export function CustomSelect<TValue extends string = string>({
@@ -25,14 +27,23 @@ export function CustomSelect<TValue extends string = string>({
   placeholder = "Select",
   disabled = false,
   ariaLabel,
-  className = ""
+  className = "",
+  searchable = false,
+  searchPlaceholder = "Search"
 }: CustomSelectProps<TValue>) {
   const [isOpen, setIsOpen] = useState(false);
+  const [query, setQuery] = useState("");
   const rootRef = useRef<HTMLDivElement>(null);
   const selectedOption = useMemo(
     () => options.find((option) => option.value === value) ?? null,
     [options, value]
   );
+  const filteredOptions = useMemo(() => {
+    const normalizedQuery = query.trim().toLowerCase();
+    if (!normalizedQuery) return options;
+
+    return options.filter((option) => option.label.toLowerCase().includes(normalizedQuery));
+  }, [options, query]);
 
   useEffect(() => {
     function closeOnOutsideClick(event: MouseEvent) {
@@ -64,7 +75,10 @@ export function CustomSelect<TValue extends string = string>({
         aria-haspopup="listbox"
         aria-expanded={isOpen}
         aria-label={ariaLabel}
-        onClick={() => setIsOpen((current) => !current)}
+        onClick={() => {
+          setIsOpen((current) => !current);
+          setQuery("");
+        }}
         className="flex h-10 w-full min-w-0 items-center justify-between gap-3 border border-ink/15 bg-paper px-3 text-left font-caps text-sm font-semibold tracking-[0.02em] text-ink transition hover:border-gold/70 hover:bg-warm focus:border-gold focus:outline-none focus:ring-4 focus:ring-gold/15 disabled:cursor-not-allowed disabled:border-stone/40 disabled:bg-warm disabled:text-ink/40"
       >
         <span className="min-w-0 flex-1 truncate">
@@ -80,7 +94,19 @@ export function CustomSelect<TValue extends string = string>({
           role="listbox"
           className="absolute left-0 right-0 top-[calc(100%+6px)] z-50 max-h-72 overflow-y-auto border border-ink/20 bg-ink p-1 text-paper shadow-[0_18px_45px_rgba(17,17,17,0.22)]"
         >
-          {options.map((option) => {
+          {searchable ? (
+            <div className="sticky top-0 z-10 flex items-center gap-2 border-b border-paper/10 bg-ink p-2">
+              <Search className="h-4 w-4 shrink-0 text-gold" />
+              <input
+                value={query}
+                onChange={(event) => setQuery(event.target.value)}
+                className="h-9 min-w-0 flex-1 border border-paper/15 bg-paper/10 px-2 font-caps text-sm font-semibold text-paper placeholder:text-paper/45 focus:border-gold focus:outline-none focus:ring-0"
+                placeholder={searchPlaceholder}
+                autoFocus
+              />
+            </div>
+          ) : null}
+          {filteredOptions.map((option) => {
             const selected = option.value === value;
 
             return (
@@ -104,6 +130,11 @@ export function CustomSelect<TValue extends string = string>({
               </button>
             );
           })}
+          {filteredOptions.length === 0 ? (
+            <div className="px-3 py-3 font-caps text-sm font-semibold text-paper/55">
+              No results
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>

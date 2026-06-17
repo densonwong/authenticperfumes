@@ -1,4 +1,8 @@
+"use client";
+
 import Link from "next/link";
+import { useEffect, useState } from "react";
+import { CustomSelect } from "@/components/admin/custom-select";
 import type { Dictionary } from "@/lib/i18n";
 import type { Brand, Gender, Product } from "@/lib/types";
 
@@ -45,8 +49,19 @@ function uniqueSorted(values: string[]) {
 }
 
 export function FilterPanel({ brands, products, selected, dictionary }: FilterPanelProps) {
+  const [brand, setBrand] = useState(selected.brand ?? "");
+  const [note, setNote] = useState(selected.note ?? "");
+  const [price, setPrice] = useState(selected.price ?? "");
+  const [size, setSize] = useState(selected.size ?? "");
   const notes = uniqueSorted(products.flatMap((product) => product.notes));
   const sizes = uniqueSorted(products.flatMap((product) => product.variants.map((variant) => variant.size)));
+
+  useEffect(() => {
+    setBrand(selected.brand ?? "");
+    setNote(selected.note ?? "");
+    setPrice(selected.price ?? "");
+    setSize(selected.size ?? "");
+  }, [selected.brand, selected.note, selected.price, selected.size]);
 
   return (
     <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:self-start">
@@ -75,18 +90,21 @@ export function FilterPanel({ brands, products, selected, dictionary }: FilterPa
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
             {dictionary.brand}
           </span>
-          <select
-            name="brand"
-            defaultValue={selected.brand ?? ""}
-            className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
-          >
-            <option value="">{dictionary.allBrands}</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.slug}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
+          <input type="hidden" name="brand" value={brand} />
+          <div className="mt-2">
+            <CustomSelect
+              value={brand}
+              onChange={setBrand}
+              placeholder={dictionary.allBrands}
+              options={[
+                { value: "", label: dictionary.allBrands },
+                ...brands.map((item) => ({ value: item.slug, label: item.name }))
+              ]}
+              searchable
+              searchPlaceholder="Cari brand"
+              ariaLabel={dictionary.brand}
+            />
+          </div>
         </label>
 
         <div>
@@ -116,54 +134,57 @@ export function FilterPanel({ brands, products, selected, dictionary }: FilterPa
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
             {dictionary.note}
           </span>
-          <select
-            name="note"
-            defaultValue={selected.note ?? ""}
-            className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
-          >
-            <option value="">{dictionary.anyNote}</option>
-            {notes.map((note) => (
-              <option key={note} value={note}>
-                {note}
-              </option>
-            ))}
-          </select>
+          <input type="hidden" name="note" value={note} />
+          <div className="mt-2">
+            <CustomSelect
+              value={note}
+              onChange={setNote}
+              placeholder={dictionary.anyNote}
+              options={[
+                { value: "", label: dictionary.anyNote },
+                ...notes.map((item) => ({ value: item, label: item }))
+              ]}
+              ariaLabel={dictionary.note}
+            />
+          </div>
         </label>
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
             {dictionary.price}
           </span>
-          <select
-            name="price"
-            defaultValue={selected.price ?? ""}
-            className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
-          >
-            <option value="">{dictionary.anyPrice}</option>
-            {priceBands.map((band) => (
-              <option key={band.value} value={band.value}>
-                {band.label}
-              </option>
-            ))}
-          </select>
+          <input type="hidden" name="price" value={price} />
+          <div className="mt-2">
+            <CustomSelect
+              value={price}
+              onChange={setPrice}
+              placeholder={dictionary.anyPrice}
+              options={[
+                { value: "", label: dictionary.anyPrice },
+                ...priceBands
+              ]}
+              ariaLabel={dictionary.price}
+            />
+          </div>
         </label>
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
             {dictionary.size}
           </span>
-          <select
-            name="size"
-            defaultValue={selected.size ?? ""}
-            className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
-          >
-            <option value="">{dictionary.anySize}</option>
-            {sizes.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
+          <input type="hidden" name="size" value={size} />
+          <div className="mt-2">
+            <CustomSelect
+              value={size}
+              onChange={setSize}
+              placeholder={dictionary.anySize}
+              options={[
+                { value: "", label: dictionary.anySize },
+                ...sizes.map((item) => ({ value: item, label: item }))
+              ]}
+              ariaLabel={dictionary.size}
+            />
+          </div>
         </label>
 
         <div className="space-y-3 border-t border-ink/10 pt-4">

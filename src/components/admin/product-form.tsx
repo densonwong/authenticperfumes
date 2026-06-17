@@ -26,6 +26,8 @@ const concentrations = [
   "Body Mist"
 ];
 const variantSizes = ["100ml", "75ml", "70ml", "50ml", "35ml", "30ml", "25ml", "10ml", "5ml"];
+const customVariantSizesStorageKey = "ap-admin-custom-variant-sizes";
+const recentBrandIdsStorageKey = "ap-admin-recent-brand-ids";
 
 function uniqueOptions(values: string[]) {
   return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
@@ -45,6 +47,7 @@ function emptyVariant(): ProductVariant {
 export function ProductForm({ brands, product }: ProductFormProps) {
   const router = useRouter();
   const [brandId, setBrandId] = useState(product?.brandId ?? "");
+  const [recentBrandIds, setRecentBrandIds] = useState<string[]>([]);
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
   const [slugEdited, setSlugEdited] = useState(Boolean(product?.slug));
@@ -68,6 +71,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
   const [variantSizeOptions, setVariantSizeOptions] = useState(() =>
     uniqueOptions([...variantSizes, ...(product?.variants ?? []).map((variant) => variant.size)])
   );
+  const [customVariantSizeOptions, setCustomVariantSizeOptions] = useState<string[]>([]);
   const [newVariantSizeOption, setNewVariantSizeOption] = useState("");
   const [isAddingVariantSize, setIsAddingVariantSize] = useState(false);
   const [askPriceVariantIds, setAskPriceVariantIds] = useState(
@@ -91,6 +95,26 @@ export function ProductForm({ brands, product }: ProductFormProps) {
       setSlug(generatedSlug);
     }
   }, [generatedSlug, slugEdited]);
+
+  useEffect(() => {
+    try {
+      const storedSizes = JSON.parse(localStorage.getItem(customVariantSizesStorageKey) ?? "[]");
+      const storedRecentBrands = JSON.parse(localStorage.getItem(recentBrandIdsStorageKey) ?? "[]");
+
+      if (Array.isArray(storedSizes)) {
+        const nextSizes = uniqueOptions(storedSizes.filter((item) => typeof item === "string"));
+        setCustomVariantSizeOptions(nextSizes);
+        setVariantSizeOptions((current) => uniqueOptions([...current, ...nextSizes]));
+      }
+
+      if (Array.isArray(storedRecentBrands)) {
+        setRecentBrandIds(storedRecentBrands.filter((item) => typeof item === "string").slice(0, 5));
+      }
+    } catch {
+      setCustomVariantSizeOptions([]);
+      setRecentBrandIds([]);
+    }
+  }, []);
 
   function validateForPublish() {
     const nextErrors: string[] = [];
@@ -203,8 +227,39 @@ export function ProductForm({ brands, product }: ProductFormProps) {
     if (!nextOption) return;
 
     setVariantSizeOptions((current) => uniqueOptions([...current, nextOption]));
+    setCustomVariantSizeOptions((current) => {
+      const next = uniqueOptions([...current, nextOption]);
+      localStorage.setItem(customVariantSizesStorageKey, JSON.stringify(next));
+      return next;
+    });
     setNewVariantSizeOption("");
     setIsAddingVariantSize(false);
+  }
+
+  function removeVariantSizeOption(size: string) {
+    setCustomVariantSizeOptions((current) => {
+      const next = current.filter((item) => item !== size);
+      localStorage.setItem(customVariantSizesStorageKey, JSON.stringify(next));
+      return next;
+    });
+    setVariantSizeOptions((current) =>
+      current.filter((item) => item !== size || variants.some((variant) => variant.size === size))
+    );
+  }
+
+  function selectBrand(nextBrandId: string) {
+    setBrandId(nextBrandId);
+    if (nextBrandId) {
+      setRecentBrandIds((current) => {
+        const next = [nextBrandId, ...current.filter((item) => item !== nextBrandId)].slice(0, 5);
+        localStorage.setItem(recentBrandIdsStorageKey, JSON.stringify(next));
+        return next;
+      });
+    }
+    if (!slugEdited) {
+      const nextBrand = brands.find((brand) => brand.id === nextBrandId);
+      setSlug(slugify([nextBrand?.name, name].filter(Boolean).join(" ")));
+    }
   }
 
   function setAskPrice(variant: ProductVariant, enabled: boolean) {
@@ -261,19 +316,21 @@ export function ProductForm({ brands, product }: ProductFormProps) {
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Brand</span>
           <CustomSelect
             value={brandId}
-            onChange={(nextBrandId) => {
-              setBrandId(nextBrandId);
-              if (!slugEdited) {
-                const nextBrand = brands.find((brand) => brand.id === nextBrandId);
-                setSlug(slugify([nextBrand?.name, name].filter(Boolean).join(" ")));
-              }
-            }}
+            onChange={selectBrand}
             placeholder="Select brand"
             options={[
               { value: "", label: "Select brand" },
-              ...brands.map((brand) => ({ value: brand.id, label: brand.name }))
+              ...recentBrandIds
+                .map((id) => brands.find((brand) => brand.id === id))
+                .filter((brand): brand is Brand => Boolean(brand))
+                .map((brand) => ({ value: brand.id, label: `Recent - ${brand.name}` })),
+              ...brands
+                .filter((brand) => !recentBrandIds.includes(brand.id))
+                .map((brand) => ({ value: brand.id, label: brand.name }))
             ]}
             ariaLabel="Product brand"
+            searchable
+            searchPlaceholder="Search brand"
           />
         </label>
         <label className="grid gap-1 text-sm">
@@ -465,28 +522,45 @@ export function ProductForm({ brands, product }: ProductFormProps) {
                   }))}
                 />
                 {isAddingVariantSize ? (
-                  <div className="flex gap-2">
-                    <input
-                      value={newVariantSizeOption}
-                      onChange={(event) => setNewVariantSizeOption(event.target.value)}
-                      onKeyDown={(event) => {
-                        if (event.key === "Enter") {
-                          event.preventDefault();
-                          addVariantSizeOption();
-                        }
-                      }}
-                      className="h-9 min-w-0 flex-1 border-stone/40 text-sm"
-                      placeholder="15ml"
-                      autoFocus
-                    />
-                    <button
-                      type="button"
-                      onClick={addVariantSizeOption}
-                      className="h-9 shrink-0 border border-stone/40 px-3 font-caps text-[11px] font-semibold uppercase tracking-[0.12em] hover:bg-warm"
-                    >
-                      Add
-                    </button>
-                  </div>
+                  <>
+                    <div className="flex gap-2">
+                      <input
+                        value={newVariantSizeOption}
+                        onChange={(event) => setNewVariantSizeOption(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") {
+                            event.preventDefault();
+                            addVariantSizeOption();
+                          }
+                        }}
+                        className="h-9 min-w-0 flex-1 border-stone/40 text-sm"
+                        placeholder="15ml"
+                        autoFocus
+                      />
+                      <button
+                        type="button"
+                        onClick={addVariantSizeOption}
+                        className="h-9 shrink-0 border border-stone/40 px-3 font-caps text-[11px] font-semibold uppercase tracking-[0.12em] hover:bg-warm"
+                      >
+                        Add
+                      </button>
+                    </div>
+                  {customVariantSizeOptions.length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {customVariantSizeOptions.map((size) => (
+                        <button
+                          key={size}
+                          type="button"
+                          onClick={() => removeVariantSizeOption(size)}
+                          className="border border-stone/30 px-2 py-1 font-caps text-[10px] font-semibold uppercase tracking-[0.1em] text-stone hover:border-red-300 hover:bg-red-50 hover:text-red-700"
+                          title={`Remove ${size}`}
+                        >
+                          {size} x
+                        </button>
+                      ))}
+                    </div>
+                  ) : null}
+                  </>
                 ) : (
                   <button
                     type="button"

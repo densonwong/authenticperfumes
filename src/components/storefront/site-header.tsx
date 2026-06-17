@@ -35,6 +35,8 @@ export function SiteHeader({
 }) {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const MenuIcon = isMenuOpen ? X : Menu;
+  const desktopNavItems = navItems.filter((item) => item.key !== "shop");
+  const mobileNavItems = navItems.filter((item) => item.key !== "shop");
 
   return (
     <header className="sticky top-0 z-40 border-b border-ink/10 bg-paper/95 backdrop-blur">
@@ -59,7 +61,7 @@ export function SiteHeader({
 
         <div className="hidden flex-1 lg:block" />
 
-        <div className="flex items-center justify-end gap-1">
+        <div className="flex items-center justify-end gap-2">
           <LanguageToggle locale={locale} label={dictionary.language} />
           <Link
             href="/shop"
@@ -67,6 +69,12 @@ export function SiteHeader({
             aria-label={dictionary.search}
           >
             <Search className="h-5 w-5" aria-hidden="true" />
+          </Link>
+          <Link
+            href="/shop"
+            className="hidden h-10 items-center border border-ink bg-ink px-5 font-caps text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-ink lg:inline-flex"
+          >
+            {dictionary.shop}
           </Link>
         </div>
       </div>
@@ -76,7 +84,7 @@ export function SiteHeader({
         aria-label="Primary navigation"
       >
         <ul className="mx-auto flex max-w-7xl items-center justify-center gap-8">
-          {navItems.map((item) => (
+          {desktopNavItems.map((item) => (
             <li key={item.key}>
               <Link
                 href={item.href}
@@ -95,7 +103,7 @@ export function SiteHeader({
         aria-label="Mobile navigation"
       >
         <ul className="grid divide-y divide-ink/10">
-          {navItems.map((item) => (
+          {mobileNavItems.map((item) => (
             <li key={item.key}>
               <Link
                 href={item.href}
@@ -107,6 +115,15 @@ export function SiteHeader({
             </li>
           ))}
         </ul>
+        <div className="mt-3 border-t border-ink/10 pt-3">
+          <Link
+            href="/shop"
+            onClick={() => setIsMenuOpen(false)}
+            className="flex min-h-12 items-center justify-center border border-ink bg-ink px-4 text-xs font-semibold uppercase tracking-[0.18em] text-paper transition hover:bg-paper hover:text-ink"
+          >
+            {dictionary.shop}
+          </Link>
+        </div>
       </nav>
     </header>
   );
