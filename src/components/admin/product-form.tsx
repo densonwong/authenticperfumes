@@ -27,6 +27,10 @@ const concentrations = [
 ];
 const variantSizes = ["100ml", "75ml", "70ml", "50ml", "35ml", "30ml", "25ml", "10ml", "5ml"];
 
+function uniqueOptions(values: string[]) {
+  return [...new Set(values.map((value) => value.trim()).filter(Boolean))];
+}
+
 function emptyVariant(): ProductVariant {
   return {
     id: `variant-${Date.now()}`,
@@ -48,6 +52,10 @@ export function ProductForm({ brands, product }: ProductFormProps) {
   const [galleryUrls, setGalleryUrls] = useState(product?.galleryUrls ?? []);
   const [gender, setGender] = useState<Gender>(product?.gender ?? "unisex");
   const [concentration, setConcentration] = useState(product?.concentration ?? "Eau de Parfum");
+  const [concentrationOptions, setConcentrationOptions] = useState(() =>
+    uniqueOptions([...concentrations, product?.concentration ?? ""])
+  );
+  const [newConcentrationOption, setNewConcentrationOption] = useState("");
   const [notes, setNotes] = useState(product?.notes.join(", ") ?? "");
   const [countryOfOrigin, setCountryOfOrigin] = useState(product?.countryOfOrigin ?? "");
   const [description, setDescription] = useState(product?.description ?? "");
@@ -57,6 +65,11 @@ export function ProductForm({ brands, product }: ProductFormProps) {
   const [readyStock, setReadyStock] = useState(product?.readyStock ?? true);
   const [preOrder, setPreOrder] = useState(product?.preOrder ?? false);
   const [variants, setVariants] = useState<ProductVariant[]>(product?.variants ?? [emptyVariant()]);
+  const [variantSizeOptions, setVariantSizeOptions] = useState(() =>
+    uniqueOptions([...variantSizes, ...(product?.variants ?? []).map((variant) => variant.size)])
+  );
+  const [newVariantSizeOption, setNewVariantSizeOption] = useState("");
+  const [isAddingVariantSize, setIsAddingVariantSize] = useState(false);
   const [askPriceVariantIds, setAskPriceVariantIds] = useState(
     () => new Set((product?.variants ?? []).filter((variant) => variant.authenticPrice <= 0).map((variant) => variant.id))
   );
@@ -176,6 +189,24 @@ export function ProductForm({ brands, product }: ProductFormProps) {
     );
   }
 
+  function addConcentrationOption() {
+    const nextOption = newConcentrationOption.trim();
+    if (!nextOption) return;
+
+    setConcentrationOptions((current) => uniqueOptions([...current, nextOption]));
+    setConcentration(nextOption);
+    setNewConcentrationOption("");
+  }
+
+  function addVariantSizeOption() {
+    const nextOption = newVariantSizeOption.trim();
+    if (!nextOption) return;
+
+    setVariantSizeOptions((current) => uniqueOptions([...current, nextOption]));
+    setNewVariantSizeOption("");
+    setIsAddingVariantSize(false);
+  }
+
   function setAskPrice(variant: ProductVariant, enabled: boolean) {
     setAskPriceVariantIds((current) => {
       const next = new Set(current);
@@ -293,15 +324,36 @@ export function ProductForm({ brands, product }: ProductFormProps) {
             ariaLabel="Product gender"
           />
         </label>
-        <label className="grid gap-1 text-sm">
+        <div className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Concentration</span>
           <CustomSelect
             value={concentration}
             onChange={setConcentration}
-            options={concentrations.map((item) => ({ value: item, label: item }))}
+            options={concentrationOptions.map((item) => ({ value: item, label: item }))}
             ariaLabel="Product concentration"
           />
-        </label>
+          <div className="mt-1 flex gap-2">
+            <input
+              value={newConcentrationOption}
+              onChange={(event) => setNewConcentrationOption(event.target.value)}
+              onKeyDown={(event) => {
+                if (event.key === "Enter") {
+                  event.preventDefault();
+                  addConcentrationOption();
+                }
+              }}
+              className="min-w-0 flex-1 border-stone/40 text-sm"
+              placeholder="Add concentration"
+            />
+            <button
+              type="button"
+              onClick={addConcentrationOption}
+              className="shrink-0 border border-stone/40 px-3 font-caps text-[11px] font-semibold uppercase tracking-[0.12em] hover:bg-warm"
+            >
+              Add
+            </button>
+          </div>
+        </div>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Country</span>
           <input
@@ -387,7 +439,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
             onClick={() => setVariants((current) => [...current, emptyVariant()])}
           >
             <Plus className="h-4 w-4" />
-            Add
+            Add variant
           </button>
         </div>
         <div className="hidden grid-cols-[1fr_1fr_1fr_1fr_1fr_40px] gap-3 border-b border-stone/20 bg-warm/60 px-4 py-3 text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:grid">
@@ -400,20 +452,50 @@ export function ProductForm({ brands, product }: ProductFormProps) {
         </div>
         <div className="divide-y divide-stone/20">
           {variants.map((variant, index) => (
-            <div key={variant.id} className="grid gap-3 p-4 md:grid-cols-[1fr_1fr_1fr_1fr_1fr_40px]">
+            <div key={variant.id} className="grid gap-3 p-4 md:grid-cols-[1.15fr_1fr_1fr_1fr_1fr_40px] md:items-start">
               <label className="grid gap-1 text-sm">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Size</span>
                 <CustomSelect
                   value={variant.size}
                   onChange={(nextSize) => updateVariant(index, { size: nextSize })}
                   ariaLabel="Variant size"
-                  options={[
-                    ...variantSizes.map((size) => ({ value: size, label: size })),
-                    ...(variant.size && !variantSizes.includes(variant.size)
-                      ? [{ value: variant.size, label: variant.size }]
-                      : [])
-                  ]}
+                  options={uniqueOptions([...variantSizeOptions, variant.size]).map((size) => ({
+                    value: size,
+                    label: size
+                  }))}
                 />
+                {isAddingVariantSize ? (
+                  <div className="flex gap-2">
+                    <input
+                      value={newVariantSizeOption}
+                      onChange={(event) => setNewVariantSizeOption(event.target.value)}
+                      onKeyDown={(event) => {
+                        if (event.key === "Enter") {
+                          event.preventDefault();
+                          addVariantSizeOption();
+                        }
+                      }}
+                      className="h-9 min-w-0 flex-1 border-stone/40 text-sm"
+                      placeholder="15ml"
+                      autoFocus
+                    />
+                    <button
+                      type="button"
+                      onClick={addVariantSizeOption}
+                      className="h-9 shrink-0 border border-stone/40 px-3 font-caps text-[11px] font-semibold uppercase tracking-[0.12em] hover:bg-warm"
+                    >
+                      Add
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setIsAddingVariantSize(true)}
+                    className="h-8 w-fit font-caps text-[11px] font-semibold uppercase tracking-[0.12em] text-gold underline underline-offset-4 hover:text-ink"
+                  >
+                    + Add size
+                  </button>
+                )}
               </label>
               <label className="grid gap-1 text-sm">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Retail price</span>
@@ -421,7 +503,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
                   type="number"
                   value={variant.retailPrice}
                   onChange={(event) => updateVariant(index, { retailPrice: Number(event.target.value) })}
-                  className="border-stone/40 text-sm"
+                  className="h-10 border-stone/40 text-sm"
                   aria-label="Retail price"
                   placeholder="4800000"
                 />
@@ -434,11 +516,11 @@ export function ProductForm({ brands, product }: ProductFormProps) {
                     value={variant.authenticPrice}
                     disabled={askPriceVariantIds.has(variant.id)}
                     onChange={(event) => updateVariant(index, { authenticPrice: Number(event.target.value) })}
-                    className="border-stone/40 text-sm disabled:bg-warm disabled:text-stone"
+                    className="h-10 border-stone/40 text-sm disabled:bg-warm disabled:text-stone"
                     aria-label="Authentic price"
                     placeholder="3950000"
                   />
-                  <label className="flex items-center gap-2 text-xs text-stone">
+                  <label className="flex h-9 items-center gap-2 text-xs text-stone">
                     <input
                       type="checkbox"
                       checked={askPriceVariantIds.has(variant.id)}
@@ -455,7 +537,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
                   type="number"
                   value={variant.stock}
                   onChange={(event) => updateVariant(index, { stock: Number(event.target.value) })}
-                  className="border-stone/40 text-sm"
+                  className="h-10 border-stone/40 text-sm"
                   aria-label="Stock"
                   placeholder="4"
                 />
@@ -472,7 +554,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
                   }))}
                 />
               </label>
-              <div className="flex items-end">
+              <div className="flex md:pt-0">
                 <button
                   type="button"
                   className="h-10 w-10 border border-stone/40 text-stone hover:bg-warm hover:text-ink"
