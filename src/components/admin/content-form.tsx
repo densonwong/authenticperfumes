@@ -4,11 +4,12 @@ import { useState } from "react";
 import { Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CloudinaryUpload, type CloudinaryUploadValue } from "@/components/admin/cloudinary-upload";
-import type { Banner, Testimonial } from "@/lib/types";
+import { CustomSelect } from "@/components/admin/custom-select";
+import type { Banner, Product, Testimonial } from "@/lib/types";
 
 type ContentFormProps =
   | { type: "banner"; item?: Banner | null }
-  | { type: "testimonial"; item?: Testimonial | null };
+  | { type: "testimonial"; item?: Testimonial | null; products: Product[] };
 
 export function ContentForm(props: ContentFormProps) {
   const router = useRouter();
@@ -36,6 +37,7 @@ export function ContentForm(props: ContentFormProps) {
       isSaving={isSaving}
       setIsSaving={setIsSaving}
       refresh={() => router.refresh()}
+      products={props.products}
     />
   );
 }
@@ -132,6 +134,7 @@ function BannerForm({
 
       setMessage(`Deleted banner: ${title || "Untitled"}.`);
       refresh();
+      window.history.replaceState(null, "", "/admin/banners");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Banner delete failed.");
     } finally {
@@ -155,15 +158,16 @@ function BannerForm({
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Position</span>
-          <select
+          <CustomSelect
             value={position}
-            onChange={(event) => setPosition(event.target.value as Banner["position"])}
-            className="border-stone/40 text-sm"
-          >
-            <option value="primary">primary</option>
-            <option value="secondary">secondary</option>
-            <option value="tertiary">tertiary</option>
-          </select>
+            onChange={setPosition}
+            options={[
+              { value: "primary", label: "primary" },
+              { value: "secondary", label: "secondary" },
+              { value: "tertiary", label: "tertiary" }
+            ]}
+            ariaLabel="Banner position"
+          />
         </label>
         <label className="grid gap-1 text-sm md:col-span-2">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Subtitle</span>
@@ -193,6 +197,7 @@ function BannerForm({
 
 function TestimonialForm({
   item,
+  products,
   message,
   setMessage,
   isSaving,
@@ -200,6 +205,7 @@ function TestimonialForm({
   refresh
 }: {
   item?: Testimonial | null;
+  products: Product[];
   message: string;
   setMessage: (message: string) => void;
   isSaving: boolean;
@@ -251,6 +257,7 @@ function TestimonialForm({
 
       setMessage(`Deleted testimonial: ${customerName || "Customer"}.`);
       refresh();
+      window.history.replaceState(null, "", "/admin/testimonials");
     } catch (error) {
       setMessage(error instanceof Error ? error.message : "Testimonial delete failed.");
     } finally {
@@ -274,7 +281,26 @@ function TestimonialForm({
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Product</span>
-          <input value={productName} onChange={(event) => setProductName(event.target.value)} className="border-stone/40 text-sm" />
+          <CustomSelect
+            value={productName}
+            onChange={setProductName}
+            placeholder="Select product"
+            options={[
+              { value: "", label: "Select product" },
+              ...(productName && !products.some((product) => `${product.brandName} ${product.name}` === productName)
+                ? [{ value: productName, label: productName }]
+                : []),
+              ...products.map((product) => {
+                const label = `${product.brandName} ${product.name}`;
+
+                return {
+                  value: label,
+                  label
+                };
+              })
+            ]}
+            ariaLabel="Testimonial product"
+          />
         </label>
         <label className="grid gap-1 text-sm md:col-span-2">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Quote</span>

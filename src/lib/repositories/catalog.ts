@@ -108,14 +108,31 @@ async function readLiveBrands() {
   const supabase = createSupabasePublicClient();
   if (!supabase) return null;
 
-  const { data, error } = await supabase
+  const [{ data, error }, { data: products, error: productsError }] = await Promise.all([
+    supabase
     .from("brands")
     .select("id,name,slug,logo_url,country,founded_year,description,product_count,featured")
     .eq("published", true)
-    .order("name");
+    .order("name"),
+    supabase
+      .from("products")
+      .select("brand_id")
+      .eq("published", true)
+  ]);
 
   if (error || !data?.length) return null;
-  return (data as BrandRow[]).map(mapBrand);
+
+  const productCounts = new Map<string, number>();
+  if (!productsError && products) {
+    products.forEach((product) => {
+      productCounts.set(product.brand_id, (productCounts.get(product.brand_id) ?? 0) + 1);
+    });
+  }
+
+  return (data as BrandRow[]).map((row) => ({
+    ...mapBrand(row),
+    productCount: productCounts.get(row.id) ?? 0
+  }));
 }
 
 async function readLiveProducts() {
@@ -141,7 +158,8 @@ async function readLiveBanners() {
   const { data, error } = await supabase
     .from("banners")
     .select("id,title,subtitle,image_url,href,position")
-    .eq("published", true);
+    .eq("published", true)
+    .order("position");
 
   if (error || !data?.length) return null;
   return data.map((row) => ({

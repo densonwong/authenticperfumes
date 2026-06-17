@@ -37,7 +37,13 @@ function selectedFrom(searchParams: Awaited<SearchParams>) {
 
 function priceMatches(product: Product, band?: string) {
   if (!band) return true;
-  const lowest = Math.min(...product.variants.map((variant) => variant.authenticPrice));
+  const numericPrices = product.variants
+    .map((variant) => variant.authenticPrice)
+    .filter((price) => price > 0);
+
+  if (numericPrices.length === 0) return false;
+
+  const lowest = Math.min(...numericPrices);
 
   if (band === "under-1m") return lowest < 1000000;
   if (band === "1m-3m") return lowest >= 1000000 && lowest < 3000000;

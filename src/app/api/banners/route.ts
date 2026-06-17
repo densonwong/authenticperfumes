@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
 import { getBanners } from "@/lib/repositories/catalog";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -51,6 +52,9 @@ export async function POST(request: Request) {
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
+
+  revalidatePath("/");
+  revalidatePath("/admin/banners");
 
   return NextResponse.json({ id: data.id, status: "saved" }, { status: 201 });
 }

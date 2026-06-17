@@ -5,7 +5,11 @@ import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
 function getStartingPrice(product: Product, key: "retailPrice" | "authenticPrice") {
-  const price = Math.min(...product.variants.map((variant) => variant[key]));
+  const prices = product.variants.map((variant) => variant[key]).filter((price) => price > 0);
+
+  if (prices.length === 0) return "Ask";
+
+  const price = Math.min(...prices);
 
   return formatRupiah(price);
 }

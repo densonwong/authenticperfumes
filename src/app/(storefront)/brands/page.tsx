@@ -13,6 +13,8 @@ export const metadata: Metadata = {
   }
 };
 
+export const dynamic = "force-dynamic";
+
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
 function valueOf(searchParams: Awaited<SearchParams>, key: string) {

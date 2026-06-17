@@ -2,7 +2,7 @@ import Link from "next/link";
 import { Plus } from "lucide-react";
 import { ContentForm } from "@/components/admin/content-form";
 import { requireAdmin } from "@/lib/admin-auth";
-import { getAdminTestimonials } from "@/lib/repositories/admin-cms";
+import { getAdminProducts, getAdminTestimonials } from "@/lib/repositories/admin-cms";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -13,8 +13,9 @@ function valueOf(searchParams: Awaited<SearchParams>, key: string) {
 
 export default async function AdminTestimonialsPage({ searchParams }: { searchParams: SearchParams }) {
   await requireAdmin();
-  const [testimonials, resolvedSearchParams] = await Promise.all([
+  const [testimonials, products, resolvedSearchParams] = await Promise.all([
     getAdminTestimonials(),
+    getAdminProducts(),
     searchParams
   ]);
   const selectedId = valueOf(resolvedSearchParams, "edit");
@@ -65,6 +66,7 @@ export default async function AdminTestimonialsPage({ searchParams }: { searchPa
             key={selectedTestimonial?.id ?? "new"}
             type="testimonial"
             item={selectedTestimonial}
+            products={products}
           />
         </div>
       </section>

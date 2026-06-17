@@ -5,7 +5,10 @@ import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
 function getPriceRange(product: Product, key: "retailPrice" | "authenticPrice") {
-  const prices = product.variants.map((variant) => variant[key]);
+  const prices = product.variants.map((variant) => variant[key]).filter((price) => price > 0);
+
+  if (prices.length === 0) return "Ask";
+
   const min = Math.min(...prices);
   const max = Math.max(...prices);
 

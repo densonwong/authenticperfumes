@@ -1,9 +1,11 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import Link from "next/link";
+import { useEffect, useMemo, useState } from "react";
 import { Plus, Save, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CloudinaryUpload, type CloudinaryUploadValue } from "@/components/admin/cloudinary-upload";
+import { CustomSelect } from "@/components/admin/custom-select";
 import { slugify } from "@/lib/slugs";
 import type { Brand, Gender, Product, ProductStatus, ProductVariant } from "@/lib/types";
 
@@ -14,6 +16,16 @@ type ProductFormProps = {
 
 const statuses: ProductStatus[] = ["ready_stock", "limited_stock", "pre_order", "out_of_stock"];
 const genders: Gender[] = ["unisex", "men", "women"];
+const concentrations = [
+  "Extrait de Parfum",
+  "Eau de Parfum",
+  "Parfum",
+  "Eau de Toilette",
+  "Eau de Cologne",
+  "Hair Mist",
+  "Body Mist"
+];
+const variantSizes = ["100ml", "75ml", "70ml", "50ml", "35ml", "30ml", "25ml", "10ml", "5ml"];
 
 function emptyVariant(): ProductVariant {
   return {
@@ -31,6 +43,7 @@ export function ProductForm({ brands, product }: ProductFormProps) {
   const [brandId, setBrandId] = useState(product?.brandId ?? "");
   const [name, setName] = useState(product?.name ?? "");
   const [slug, setSlug] = useState(product?.slug ?? "");
+  const [slugEdited, setSlugEdited] = useState(Boolean(product?.slug));
   const [imageUrl, setImageUrl] = useState(product?.imageUrl ?? "");
   const [galleryUrls, setGalleryUrls] = useState(product?.galleryUrls ?? []);
   const [gender, setGender] = useState<Gender>(product?.gender ?? "unisex");
@@ -44,6 +57,9 @@ export function ProductForm({ brands, product }: ProductFormProps) {
   const [readyStock, setReadyStock] = useState(product?.readyStock ?? true);
   const [preOrder, setPreOrder] = useState(product?.preOrder ?? false);
   const [variants, setVariants] = useState<ProductVariant[]>(product?.variants ?? [emptyVariant()]);
+  const [askPriceVariantIds, setAskPriceVariantIds] = useState(
+    () => new Set((product?.variants ?? []).filter((variant) => variant.authenticPrice <= 0).map((variant) => variant.id))
+  );
   const [message, setMessage] = useState("");
   const [errors, setErrors] = useState<string[]>([]);
   const [isSaving, setIsSaving] = useState(false);
@@ -52,6 +68,16 @@ export function ProductForm({ brands, product }: ProductFormProps) {
     () => brands.find((brand) => brand.id === brandId) ?? null,
     [brandId, brands]
   );
+  const generatedSlug = useMemo(
+    () => slugify([selectedBrand?.name, name].filter(Boolean).join(" ")),
+    [name, selectedBrand?.name]
+  );
+
+  useEffect(() => {
+    if (!slugEdited) {
+      setSlug(generatedSlug);
+    }
+  }, [generatedSlug, slugEdited]);
 
   function validateForPublish() {
     const nextErrors: string[] = [];
@@ -150,6 +176,22 @@ export function ProductForm({ brands, product }: ProductFormProps) {
     );
   }
 
+  function setAskPrice(variant: ProductVariant, enabled: boolean) {
+    setAskPriceVariantIds((current) => {
+      const next = new Set(current);
+      if (enabled) {
+        next.add(variant.id);
+      } else {
+        next.delete(variant.id);
+      }
+      return next;
+    });
+    updateVariant(
+      variants.findIndex((item) => item.id === variant.id),
+      { authenticPrice: enabled ? 0 : variant.authenticPrice }
+    );
+  }
+
   function handleUpload(upload: CloudinaryUploadValue) {
     setImageUrl(upload.secure_url);
     setGalleryUrls((current) =>
@@ -186,72 +228,78 @@ export function ProductForm({ brands, product }: ProductFormProps) {
       <section className="grid gap-3 border border-stone/30 bg-white p-4 md:grid-cols-2">
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Brand</span>
-          <select
+          <CustomSelect
             value={brandId}
-            onChange={(event) => setBrandId(event.target.value)}
-            className="border-stone/40 text-sm"
-          >
-            <option value="">Select brand</option>
-            {brands.map((brand) => (
-              <option key={brand.id} value={brand.id}>
-                {brand.name}
-              </option>
-            ))}
-          </select>
+            onChange={(nextBrandId) => {
+              setBrandId(nextBrandId);
+              if (!slugEdited) {
+                const nextBrand = brands.find((brand) => brand.id === nextBrandId);
+                setSlug(slugify([nextBrand?.name, name].filter(Boolean).join(" ")));
+              }
+            }}
+            placeholder="Select brand"
+            options={[
+              { value: "", label: "Select brand" },
+              ...brands.map((brand) => ({ value: brand.id, label: brand.name }))
+            ]}
+            ariaLabel="Product brand"
+          />
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Name</span>
-          <input
-            value={name}
-            onChange={(event) => {
-              setName(event.target.value);
-              if (!slug) setSlug(slugify(event.target.value));
-            }}
-            className="border-stone/40 text-sm"
-          />
+          <div className="flex border border-stone/40 bg-white focus-within:ring-1 focus-within:ring-ink">
+            {selectedBrand ? (
+              <span className="flex shrink-0 items-center border-r border-stone/30 bg-warm px-3 text-sm text-stone">
+                {selectedBrand.name}
+              </span>
+            ) : null}
+            <input
+              value={name}
+              onChange={(event) => setName(event.target.value)}
+              className="min-w-0 flex-1 border-0 text-sm focus:ring-0"
+              placeholder={selectedBrand ? "Guidance" : "Select brand first"}
+            />
+          </div>
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Slug</span>
           <input
             value={slug}
-            onChange={(event) => setSlug(slugify(event.target.value))}
+            onChange={(event) => {
+              setSlugEdited(true);
+              setSlug(slugify(event.target.value));
+            }}
             className="border-stone/40 text-sm"
           />
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Status</span>
-          <select
+          <CustomSelect
             value={status}
-            onChange={(event) => setStatus(event.target.value as ProductStatus)}
-            className="border-stone/40 text-sm"
-          >
-            {statuses.map((item) => (
-              <option key={item} value={item}>
-                {item.replaceAll("_", " ")}
-              </option>
-            ))}
-          </select>
+            onChange={setStatus}
+            options={statuses.map((item) => ({
+              value: item,
+              label: item.replaceAll("_", " ")
+            }))}
+            ariaLabel="Product status"
+          />
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Gender</span>
-          <select
+          <CustomSelect
             value={gender}
-            onChange={(event) => setGender(event.target.value as Gender)}
-            className="border-stone/40 text-sm"
-          >
-            {genders.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
+            onChange={setGender}
+            options={genders.map((item) => ({ value: item, label: item }))}
+            ariaLabel="Product gender"
+          />
         </label>
         <label className="grid gap-1 text-sm">
           <span className="text-xs font-semibold uppercase tracking-[0.12em] text-stone">Concentration</span>
-          <input
+          <CustomSelect
             value={concentration}
-            onChange={(event) => setConcentration(event.target.value)}
-            className="border-stone/40 text-sm"
+            onChange={setConcentration}
+            options={concentrations.map((item) => ({ value: item, label: item }))}
+            ariaLabel="Product concentration"
           />
         </label>
         <label className="grid gap-1 text-sm">
@@ -355,12 +403,16 @@ export function ProductForm({ brands, product }: ProductFormProps) {
             <div key={variant.id} className="grid gap-3 p-4 md:grid-cols-[1fr_1fr_1fr_1fr_1fr_40px]">
               <label className="grid gap-1 text-sm">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Size</span>
-                <input
+                <CustomSelect
                   value={variant.size}
-                  onChange={(event) => updateVariant(index, { size: event.target.value })}
-                  className="border-stone/40 text-sm"
-                  aria-label="Variant size"
-                  placeholder="100ml"
+                  onChange={(nextSize) => updateVariant(index, { size: nextSize })}
+                  ariaLabel="Variant size"
+                  options={[
+                    ...variantSizes.map((size) => ({ value: size, label: size })),
+                    ...(variant.size && !variantSizes.includes(variant.size)
+                      ? [{ value: variant.size, label: variant.size }]
+                      : [])
+                  ]}
                 />
               </label>
               <label className="grid gap-1 text-sm">
@@ -376,14 +428,26 @@ export function ProductForm({ brands, product }: ProductFormProps) {
               </label>
               <label className="grid gap-1 text-sm">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Authentic price</span>
-                <input
-                  type="number"
-                  value={variant.authenticPrice}
-                  onChange={(event) => updateVariant(index, { authenticPrice: Number(event.target.value) })}
-                  className="border-stone/40 text-sm"
-                  aria-label="Authentic price"
-                  placeholder="3950000"
-                />
+                <div className="grid gap-2">
+                  <input
+                    type="number"
+                    value={variant.authenticPrice}
+                    disabled={askPriceVariantIds.has(variant.id)}
+                    onChange={(event) => updateVariant(index, { authenticPrice: Number(event.target.value) })}
+                    className="border-stone/40 text-sm disabled:bg-warm disabled:text-stone"
+                    aria-label="Authentic price"
+                    placeholder="3950000"
+                  />
+                  <label className="flex items-center gap-2 text-xs text-stone">
+                    <input
+                      type="checkbox"
+                      checked={askPriceVariantIds.has(variant.id)}
+                      onChange={(event) => setAskPrice(variant, event.target.checked)}
+                      className="border-stone/40"
+                    />
+                    Ask Price
+                  </label>
+                </div>
               </label>
               <label className="grid gap-1 text-sm">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Stock</span>
@@ -398,24 +462,28 @@ export function ProductForm({ brands, product }: ProductFormProps) {
               </label>
               <label className="grid gap-1 text-sm">
                 <span className="text-[11px] font-semibold uppercase tracking-[0.12em] text-stone md:hidden">Status</span>
-                <select
+                <CustomSelect
                   value={variant.status}
-                  onChange={(event) => updateVariant(index, { status: event.target.value as ProductStatus })}
-                  className="min-w-0 border-stone/40 text-sm"
-                  aria-label="Variant status"
-                >
-                  {statuses.map((item) => (
-                    <option key={item} value={item}>
-                      {item.replaceAll("_", " ")}
-                    </option>
-                  ))}
-                </select>
+                  onChange={(nextStatus) => updateVariant(index, { status: nextStatus })}
+                  ariaLabel="Variant status"
+                  options={statuses.map((item) => ({
+                    value: item,
+                    label: item.replaceAll("_", " ")
+                  }))}
+                />
               </label>
               <div className="flex items-end">
                 <button
                   type="button"
                   className="h-10 w-10 border border-stone/40 text-stone hover:bg-warm hover:text-ink"
-                  onClick={() => setVariants((current) => current.filter((_, variantIndex) => variantIndex !== index))}
+                  onClick={() => {
+                    setAskPriceVariantIds((current) => {
+                      const next = new Set(current);
+                      next.delete(variant.id);
+                      return next;
+                    });
+                    setVariants((current) => current.filter((_, variantIndex) => variantIndex !== index));
+                  }}
                   aria-label="Remove variant"
                 >
                   <Trash2 className="mx-auto h-4 w-4" />
@@ -464,6 +532,15 @@ export function ProductForm({ brands, product }: ProductFormProps) {
             <Trash2 className="h-4 w-4" />
             Delete product
           </button>
+        ) : null}
+        {product ? (
+          <Link
+            href="/admin/products/new"
+            className="inline-flex h-10 items-center gap-2 border border-stone/40 px-4 text-xs font-semibold uppercase tracking-[0.12em] hover:bg-warm"
+          >
+            <Plus className="h-4 w-4" />
+            Add more product
+          </Link>
         ) : null}
       </div>
     </form>

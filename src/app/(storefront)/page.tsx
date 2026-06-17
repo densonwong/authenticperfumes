@@ -22,6 +22,8 @@ export const metadata: Metadata = {
   }
 };
 
+export const dynamic = "force-dynamic";
+
 function SectionHeader({
   eyebrow,
   title,

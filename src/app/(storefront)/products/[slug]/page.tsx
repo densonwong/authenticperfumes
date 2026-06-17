@@ -81,7 +81,8 @@ export default async function ProductDetailPage({
 
   const variant = selectedVariant(product.variants, valueOf(resolvedSearchParams, "variant"));
   const savings = calculateSavings(variant.retailPrice, variant.authenticPrice);
-  const savingsPercent = variant.retailPrice > 0 ? Math.round((savings / variant.retailPrice) * 100) : 0;
+  const isAskPrice = variant.authenticPrice <= 0;
+  const savingsPercent = variant.retailPrice > 0 && !isAskPrice ? Math.round((savings / variant.retailPrice) * 100) : 0;
   const shouldShowNotifyForm = variant.status === "out_of_stock" || variant.stock < 1;
   const canonicalUrl = siteUrl(`/products/${product.slug}`);
   const whatsappUrl = buildWhatsAppUrl(
@@ -103,7 +104,7 @@ export default async function ProductDetailPage({
       offers: product.variants.map((item) => ({
         "@type": "Offer",
         priceCurrency: "IDR",
-        price: item.authenticPrice,
+        price: item.authenticPrice > 0 ? item.authenticPrice : undefined,
         availability: schemaAvailability[item.status],
         itemCondition: "https://schema.org/NewCondition",
         priceValidUntil: priceValidUntil(),
@@ -181,16 +182,20 @@ export default async function ProductDetailPage({
               <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
                 {dictionary.product.authentic}
               </p>
-              <p className="text-xl font-semibold text-ink">{formatRupiah(variant.authenticPrice)}</p>
-            </div>
-            <div className="flex items-center justify-between gap-4 pt-3">
-              <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
-                {dictionary.product.savings}
-              </p>
-              <p className="text-sm font-semibold text-gold">
-                {formatRupiah(savings)} ({savingsPercent}%)
+              <p className="text-xl font-semibold text-ink">
+                {isAskPrice ? "Ask" : formatRupiah(variant.authenticPrice)}
               </p>
             </div>
+            {!isAskPrice ? (
+              <div className="flex items-center justify-between gap-4 pt-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
+                  {dictionary.product.savings}
+                </p>
+                <p className="text-sm font-semibold text-gold">
+                  {formatRupiah(savings)} ({savingsPercent}%)
+                </p>
+              </div>
+            ) : null}
             <p className="mt-4 border-t border-ink/10 pt-3 text-sm leading-6 text-ink/68">
               {dictionary.product.installment}
             </p>

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { CustomSelect } from "@/components/admin/custom-select";
 
 type StatusSelectProps<TStatus extends string> = {
   id: string;
@@ -45,17 +46,16 @@ export function StatusSelect<TStatus extends string>({
   }
 
   return (
-    <select
+    <CustomSelect
       value={status}
       disabled={isSaving}
-      onChange={(event) => void updateStatus(event.target.value as TStatus)}
-      className="min-w-36 border-stone/40 text-sm disabled:cursor-not-allowed disabled:opacity-60"
-    >
-      {options.map((item) => (
-        <option key={item} value={item}>
-          {item.replaceAll("_", " ")}
-        </option>
-      ))}
-    </select>
+      onChange={(nextStatus) => void updateStatus(nextStatus)}
+      options={options.map((item) => ({
+        value: item,
+        label: item.replaceAll("_", " ")
+      }))}
+      ariaLabel="Update status"
+      className="min-w-36"
+    />
   );
 }

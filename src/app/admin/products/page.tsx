@@ -4,6 +4,10 @@ import { requireAdmin } from "@/lib/admin-auth";
 import { formatRupiah } from "@/lib/format";
 import { getAdminProducts } from "@/lib/repositories/admin-cms";
 
+function formatAdminPrice(price: number | undefined) {
+  return price && price > 0 ? formatRupiah(price) : "Ask";
+}
+
 export default async function AdminProductsPage() {
   await requireAdmin();
   const products = await getAdminProducts();
@@ -45,7 +49,7 @@ export default async function AdminProductsPage() {
                   <td className="px-3 py-3 text-stone">{product.brandName}</td>
                   <td className="px-3 py-3">{product.status.replaceAll("_", " ")}</td>
                   <td className="px-3 py-3">{product.variants.reduce((total, variant) => total + variant.stock, 0)}</td>
-                  <td className="px-3 py-3">{formatRupiah(product.variants[0]?.authenticPrice ?? 0)}</td>
+                  <td className="px-3 py-3">{formatAdminPrice(product.variants[0]?.authenticPrice)}</td>
                   <td className="px-3 py-3">
                     <Link href={`/admin/products/${product.id}`} className="font-semibold text-ink underline underline-offset-4">
                       Edit

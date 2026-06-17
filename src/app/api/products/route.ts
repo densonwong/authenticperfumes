@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
 import { getProducts } from "@/lib/repositories/catalog";
 import { isUuid } from "@/lib/ids";
@@ -85,6 +86,11 @@ export async function POST(request: Request) {
   if (variantsError) {
     return NextResponse.json({ error: variantsError.message }, { status: 500 });
   }
+
+  revalidatePath("/");
+  revalidatePath("/shop");
+  revalidatePath("/brands");
+  revalidatePath("/admin/products");
 
   return NextResponse.json({ id: product.id, status: "saved" }, { status: 201 });
 }

@@ -190,13 +190,29 @@ export async function getAdminBrands() {
   const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
+  const [{ data, error }, { data: products, error: productsError }] = await Promise.all([
+    supabase
     .from("brands")
     .select("id,name,slug,logo_url,country,founded_year,description,product_count,featured")
-    .order("name");
+    .order("name"),
+    supabase
+      .from("products")
+      .select("brand_id")
+  ]);
 
   if (error || !data) return [];
-  return (data as BrandRow[]).map(mapBrand);
+
+  const productCounts = new Map<string, number>();
+  if (!productsError && products) {
+    products.forEach((product) => {
+      productCounts.set(product.brand_id, (productCounts.get(product.brand_id) ?? 0) + 1);
+    });
+  }
+
+  return (data as BrandRow[]).map((row) => ({
+    ...mapBrand(row),
+    productCount: productCounts.get(row.id) ?? 0
+  }));
 }
 
 export async function getAdminProducts() {
