@@ -6,6 +6,7 @@ import { ProductCard } from "@/components/storefront/product-card";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getBrandBySlug, getBrands, getProducts } from "@/lib/repositories/catalog";
 import { breadcrumbJsonLd, siteUrl, SITE_NAME } from "@/lib/seo";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type Params = Promise<{ slug: string }>;
 
@@ -46,6 +47,11 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
   if (!brand) notFound();
 
   const brandProducts = products.filter((product) => product.brandId === brand.id);
+  const requestUrl = buildWhatsAppUrl(
+    locale === "id"
+      ? `Halo Authentic Perfumes 8, saya ingin request parfum ${brand.name}. Mohon bantu cek stok, harga, dan opsi sourcing.`
+      : `Hello Authentic Perfumes 8, I would like to request a ${brand.name} fragrance. Please help check stock, price, and sourcing options.`
+  );
   const jsonLd = [
     {
       "@context": "https://schema.org",
@@ -119,6 +125,29 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
           {brandProducts.map((product, index) => (
             <ProductCard key={product.id} product={product} priority={index < 2} dictionary={dictionary} />
           ))}
+        </div>
+        <div className="mt-10 border border-gold/35 bg-warm p-5 text-ink shadow-[0_18px_45px_rgba(153,119,55,0.10)] sm:p-7 lg:grid lg:grid-cols-[1fr_auto] lg:items-center lg:gap-8">
+          <div>
+            <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+              {locale === "id" ? "Tidak menemukan parfum yang dicari?" : "Looking for another fragrance?"}
+            </p>
+            <h2 className="mt-3 font-serif text-3xl leading-tight">
+              {locale === "id" ? `Cari ${brand.name} Lainnya?` : `Looking for Another ${brand.name}?`}
+            </h2>
+            <p className="mt-3 max-w-3xl text-sm leading-6 text-ink/70">
+              {locale === "id"
+                ? `Kami bisa bantu request banyak parfum ${brand.name} lain di luar yang tampil online. Kirim nama parfum yang dicari, tim kami akan bantu cek stok, harga, dan opsi sourcing.`
+                : `We carry many more ${brand.name} fragrances than those displayed online. Request any fragrance and our team will check availability, price, and sourcing options for you.`}
+            </p>
+          </div>
+          <a
+            href={requestUrl}
+            target="_blank"
+            rel="noreferrer"
+            className="mt-5 inline-flex w-full justify-center border border-gold bg-gold px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-gold lg:mt-0 lg:w-auto"
+          >
+            {locale === "id" ? "Request Fragrance" : "Request Fragrance"}
+          </a>
         </div>
       </section>
     </main>

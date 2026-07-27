@@ -1,5 +1,5 @@
-import Image from "next/image";
 import type { Metadata } from "next";
+import { TestimonialGrid } from "@/components/storefront/testimonial-grid";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getTestimonials } from "@/lib/repositories/catalog";
 
@@ -38,28 +38,7 @@ export default async function TestimonialsPage() {
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {testimonials.map((testimonial) => (
-            <blockquote key={testimonial.id} className="border border-ink/10 bg-warm/45 p-5">
-              <div className="flex items-center gap-3">
-                <div className="relative h-12 w-12 overflow-hidden bg-clay">
-                  <Image
-                    src={testimonial.imageUrl}
-                    alt=""
-                    fill
-                    sizes="48px"
-                    className="object-cover"
-                  />
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-ink">{testimonial.customerName}</p>
-                  <p className="text-xs text-ink/55">{testimonial.productName}</p>
-                </div>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-ink/70">"{testimonial.quote}"</p>
-            </blockquote>
-          ))}
-        </div>
+        <TestimonialGrid testimonials={testimonials} />
       </section>
     </main>
   );

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Open_Sans } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { getLocale } from "@/lib/i18n";
 import { siteUrl, SITE_NAME } from "@/lib/seo";
 import "./globals.css";
@@ -62,7 +63,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
   return (
     <html lang={locale} className={`${montserrat.variable} ${openSans.variable}`}>
-      <body>{children}</body>
+      <body>
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }
