@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
+import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
 import { getDictionary, getLocale } from "@/lib/i18n";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
 import type { Product } from "@/lib/types";
@@ -120,20 +121,25 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
           selected={selected}
           dictionary={{ ...dictionary.shop, ...dictionary.common }}
         />
-        {filteredProducts.length > 0 ? (
-          <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-            {filteredProducts.map((product, index) => (
-              <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} />
-            ))}
+        <div>
+          {filteredProducts.length > 0 ? (
+            <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
+              {filteredProducts.map((product, index) => (
+                <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} />
+              ))}
+            </div>
+          ) : (
+            <div className="border border-ink/10 bg-warm/45 p-8">
+              <h2 className="font-serif text-2xl text-ink">{dictionary.shop.noTitle}</h2>
+              <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65">
+                {dictionary.shop.noBody}
+              </p>
+            </div>
+          )}
+          <div className="mt-10">
+            <RequestFragranceCta locale={locale} />
           </div>
-        ) : (
-          <div className="border border-ink/10 bg-warm/45 p-8">
-            <h2 className="font-serif text-2xl text-ink">{dictionary.shop.noTitle}</h2>
-            <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65">
-              {dictionary.shop.noBody}
-            </p>
-          </div>
-        )}
+        </div>
       </section>
     </main>
   );
