@@ -1,4 +1,7 @@
 import { getPublicSiteUrl } from "@/lib/env";
+import type { Metadata } from "next";
+import { defaultLocale, type Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 
 export const SITE_NAME = "Authentic Perfumes 8";
 export const INSTAGRAM_URL = "https://www.instagram.com/authenticperfumes8_?igsh=MWg5ZWVxa3loeGd1eQ==";
@@ -11,12 +14,38 @@ export function siteUrl(path = "/") {
   return `${baseUrl}${normalizedPath}`;
 }
 
-export function organizationJsonLd() {
+export function localizedAlternates(locale: Locale, path: string): Metadata["alternates"] {
+  return {
+    canonical: localizedPath(locale, path),
+    languages: {
+      "id-ID": localizedPath("id", path),
+      en: localizedPath("en", path),
+      "x-default": localizedPath(defaultLocale, path)
+    }
+  };
+}
+
+export function localizedPageMetadata(
+  locale: Locale,
+  path: string,
+  metadata: Metadata = {}
+): Metadata {
+  return {
+    ...metadata,
+    alternates: localizedAlternates(locale, path),
+    openGraph: {
+      ...metadata.openGraph,
+      url: localizedPath(locale, path)
+    }
+  };
+}
+
+export function organizationJsonLd(locale: Locale = defaultLocale) {
   return {
     "@context": "https://schema.org",
     "@type": "Organization",
     name: SITE_NAME,
-    url: siteUrl(),
+    url: siteUrl(localizedPath(locale, "/")),
     sameAs: [INSTAGRAM_URL, TIKTOK_URL],
     contactPoint: [
       {
@@ -30,7 +59,10 @@ export function organizationJsonLd() {
   };
 }
 
-export function breadcrumbJsonLd(items: Array<{ name: string; path: string }>) {
+export function breadcrumbJsonLd(
+  items: Array<{ name: string; path: string }>,
+  locale: Locale = defaultLocale
+) {
   return {
     "@context": "https://schema.org",
     "@type": "BreadcrumbList",
@@ -38,7 +70,7 @@ export function breadcrumbJsonLd(items: Array<{ name: string; path: string }>) {
       "@type": "ListItem",
       position: index + 1,
       name: item.name,
-      item: siteUrl(item.path)
+      item: siteUrl(localizedPath(locale, item.path))
     }))
   };
 }

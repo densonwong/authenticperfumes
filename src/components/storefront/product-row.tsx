@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
@@ -16,14 +17,16 @@ function getStartingPrice(product: Product, key: "retailPrice" | "authenticPrice
 
 export function ProductRow({
   product,
-  dictionary
+  dictionary,
+  locale
 }: {
   product: Product;
   dictionary: Pick<Dictionary, "common" | "status" | "product">;
+  locale: Locale;
 }) {
   return (
     <Link
-      href={`/products/${product.slug}`}
+      href={localizedPath(locale, `/products/${product.slug}`)}
       className="grid grid-cols-[88px_1fr] gap-4 border-b border-ink/10 py-4 transition hover:bg-warm/50 focus:outline-none focus:ring-2 focus:ring-gold/60 sm:grid-cols-[104px_1fr_auto]"
     >
       <div className="relative aspect-square overflow-hidden bg-warm">

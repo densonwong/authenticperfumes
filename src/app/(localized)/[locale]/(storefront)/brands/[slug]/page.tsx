@@ -4,29 +4,34 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import { ProductCard } from "@/components/storefront/product-card";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { getBrandBySlug, getProductsByBrandId } from "@/lib/repositories/catalog";
-import { breadcrumbJsonLd, siteUrl, SITE_NAME } from "@/lib/seo";
+import { breadcrumbJsonLd, localizedAlternates, siteUrl, SITE_NAME } from "@/lib/seo";
 
-type Params = Promise<{ slug: string }>;
+type Params = Promise<{ locale: string; slug: string }>;
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
+export const dynamicParams = true;
+
+export function generateStaticParams() {
+  return [];
+}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale: localeParam, slug } = await params;
+  const locale = normalizeLocale(localeParam);
   const brand = await getBrandBySlug(slug);
 
   return {
     title: brand ? brand.name : "Brand",
     description: brand?.description,
-    alternates: {
-      canonical: brand ? `/brands/${brand.slug}` : "/brands"
-    },
+    alternates: localizedAlternates(locale, brand ? `/brands/${brand.slug}` : "/brands"),
     openGraph: brand
       ? {
           title: `${brand.name} | ${SITE_NAME}`,
           description: brand.description,
-          url: siteUrl(`/brands/${brand.slug}`),
+          url: siteUrl(localizedPath(locale, `/brands/${brand.slug}`)),
           images: [brand.logoUrl]
         }
       : undefined
@@ -34,8 +39,8 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
 }
 
 export default async function BrandDetailPage({ params }: { params: Params }) {
-  const { slug } = await params;
-  const locale = await getLocale();
+  const { locale: localeParam, slug } = await params;
+  const locale = normalizeLocale(localeParam);
   const dictionary = getDictionary(locale);
   const brand = await getBrandBySlug(slug);
 
@@ -47,7 +52,7 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
       "@context": "https://schema.org",
       "@type": "Brand",
       name: brand.name,
-      url: siteUrl(`/brands/${brand.slug}`),
+      url: siteUrl(localizedPath(locale, `/brands/${brand.slug}`)),
       logo: brand.logoUrl,
       description: brand.description
     },
@@ -55,7 +60,7 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
       { name: "Home", path: "/" },
       { name: "Brands", path: "/brands" },
       { name: brand.name, path: `/brands/${brand.slug}` }
-    ])
+    ], locale)
   ];
 
   return (
@@ -71,7 +76,7 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
           </div>
           <div>
             <Link
-              href="/brands"
+              href={localizedPath(locale, "/brands")}
               className="text-xs font-semibold uppercase tracking-[0.16em] text-gold"
             >
               {dictionary.common.allBrands}
@@ -113,7 +118,7 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {brandProducts.map((product, index) => (
-            <ProductCard key={product.id} product={product} priority={index < 2} dictionary={dictionary} />
+            <ProductCard key={product.id} product={product} priority={index < 2} dictionary={dictionary} locale={locale} />
           ))}
         </div>
         <div className="mt-10">

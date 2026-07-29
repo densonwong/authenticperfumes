@@ -1,9 +1,6 @@
 import type { Metadata } from "next";
 import { Montserrat, Open_Sans } from "next/font/google";
-import { Analytics } from "@vercel/analytics/next";
-import { getLocale } from "@/lib/i18n";
 import { siteUrl, SITE_NAME } from "@/lib/seo";
-import "./globals.css";
 
 const montserrat = Montserrat({
   subsets: ["latin"],
@@ -17,7 +14,9 @@ const openSans = Open_Sans({
   variable: "--font-caps"
 });
 
-export const metadata: Metadata = {
+export const documentClassName = `${montserrat.variable} ${openSans.variable}`;
+
+export const siteMetadata: Metadata = {
   metadataBase: new URL(siteUrl()),
   title: {
     default: SITE_NAME,
@@ -57,16 +56,3 @@ export const metadata: Metadata = {
     follow: true
   }
 };
-
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
-  const locale = await getLocale();
-
-  return (
-    <html lang={locale} className={`${montserrat.variable} ${openSans.variable}`}>
-      <body>
-        {children}
-        <Analytics />
-      </body>
-    </html>
-  );
-}

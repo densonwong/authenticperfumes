@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
@@ -18,15 +19,17 @@ function getPriceRange(product: Product, key: "retailPrice" | "authenticPrice") 
 export function ProductCard({
   product,
   priority = false,
-  dictionary
+  dictionary,
+  locale
 }: {
   product: Product;
   priority?: boolean;
   dictionary: Pick<Dictionary, "status" | "product">;
+  locale: Locale;
 }) {
   return (
     <Link
-      href={`/products/${product.slug}`}
+      href={localizedPath(locale, `/products/${product.slug}`)}
       className="group block min-w-0 border border-ink/10 bg-paper transition hover:border-ink/30 hover:bg-white focus:outline-none focus:ring-2 focus:ring-gold/60"
     >
       <div className="relative aspect-square overflow-hidden bg-warm">

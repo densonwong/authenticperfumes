@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
 import { Instagram, MapPin, MessageCircle } from "lucide-react";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
-import { getDictionary, getLocale } from "@/lib/i18n";
-import { siteUrl, INSTAGRAM_URL, SITE_NAME, TIKTOK_URL } from "@/lib/seo";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
+import { localizedPageMetadata, siteUrl, INSTAGRAM_URL, SITE_NAME, TIKTOK_URL } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation.",
-  alternates: {
-    canonical: "/contact"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/contact", {
+    title: "Contact",
+    description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation."
+  });
+}
 
-export default async function ContactPage() {
-  const locale = await getLocale();
+export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const isId = locale === "id";
   const contactOptions = isId
@@ -62,7 +63,7 @@ export default async function ContactPage() {
     "@context": "https://schema.org",
     "@type": "ContactPage",
     name: `${SITE_NAME} Contact`,
-    url: siteUrl("/contact"),
+    url: siteUrl(localizedPath(locale, "/contact")),
     mainEntity: {
       "@type": "Organization",
       name: SITE_NAME,
@@ -100,7 +101,7 @@ export default async function ContactPage() {
           return (
             <a
               key={option.title}
-              href={option.href}
+              href={localizedPath(locale, option.href)}
               target={option.href.startsWith("http") ? "_blank" : undefined}
               rel={option.href.startsWith("http") ? "noreferrer" : undefined}
               className="border border-ink/10 bg-warm/45 p-5 transition hover:border-ink/35 hover:bg-white"

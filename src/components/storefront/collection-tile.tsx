@@ -1,24 +1,27 @@
 import Image from "next/image";
 import Link from "next/link";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import type { Banner } from "@/lib/types";
 
 export function CollectionTile({
   banner,
   priority = false,
   dictionary,
-  headingLevel = 2
+  headingLevel = 2,
+  locale
 }: {
   banner: Banner;
   priority?: boolean;
   dictionary: Dictionary["tile"];
   headingLevel?: 1 | 2;
+  locale: Locale;
 }) {
   const Heading = headingLevel === 1 ? "h1" : "h2";
 
   return (
     <Link
-      href={banner.href}
+      href={localizedPath(locale, banner.href)}
       className="group relative flex min-h-[260px] overflow-hidden border border-ink/10 bg-ink text-paper focus:outline-none focus:ring-2 focus:ring-gold/70 sm:min-h-[320px]"
     >
       <Image

@@ -1,20 +1,21 @@
 import type { Metadata } from "next";
 import { TestimonialGrid } from "@/components/storefront/testimonial-grid";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
 import { getTestimonials } from "@/lib/repositories/catalog";
+import { localizedPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Testimonials",
-  description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers.",
-  alternates: {
-    canonical: "/testimonials"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/testimonials", {
+    title: "Testimonials",
+    description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers."
+  });
+}
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
-export default async function TestimonialsPage() {
-  const locale = await getLocale();
+export default async function TestimonialsPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const testimonials = await getTestimonials();
   const isId = locale === "id";

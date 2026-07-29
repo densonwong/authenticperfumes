@@ -72,7 +72,7 @@ export function AdminFrame({ children }: { children: React.ReactNode }) {
 
         <div className="space-y-1 border-t border-ink/10 px-4 py-5">
           <Link
-            href="/"
+            href="/id"
             className="flex h-10 items-center gap-3 rounded-md px-3 text-sm text-ink/65 hover:bg-paper hover:text-ink"
           >
             <Store className="h-4 w-4" aria-hidden="true" />

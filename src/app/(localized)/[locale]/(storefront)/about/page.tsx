@@ -1,14 +1,16 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
+import { localizedPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About",
-  description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia.",
-  alternates: {
-    canonical: "/about"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/about", {
+    title: "About",
+    description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia."
+  });
+}
 
 const values = [
   {
@@ -25,8 +27,8 @@ const values = [
   }
 ];
 
-export default async function AboutPage() {
-  const locale = await getLocale();
+export default async function AboutPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const isId = locale === "id";
   const localizedValues = isId
@@ -77,7 +79,7 @@ export default async function AboutPage() {
             </p>
           </div>
           <Link
-            href="/contact"
+            href={localizedPath(locale, "/contact")}
             className="inline-flex border border-ink bg-ink px-5 py-3 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-ink"
           >
             {dictionary.nav.contact}

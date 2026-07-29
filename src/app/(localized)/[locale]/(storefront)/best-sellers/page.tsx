@@ -1,19 +1,21 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ProductCard } from "@/components/storefront/product-card";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { getBestSellers } from "@/lib/repositories/catalog";
+import { localizedPageMetadata } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Best Sellers",
-  description: "Customer favorite authentic perfumes and repeat-request bottles.",
-  alternates: {
-    canonical: "/best-sellers"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/best-sellers", {
+    title: "Best Sellers",
+    description: "Customer favorite authentic perfumes and repeat-request bottles."
+  });
+}
 
-export default async function BestSellersPage() {
-  const locale = await getLocale();
+export default async function BestSellersPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const products = await getBestSellers();
   const isId = locale === "id";
@@ -34,7 +36,7 @@ export default async function BestSellersPage() {
             </p>
           </div>
           <Link
-            href="/shop?bestSeller=true"
+            href={localizedPath(locale, "/shop?bestSeller=true")}
             className="text-xs font-semibold uppercase tracking-[0.16em] text-ink hover:text-gold"
           >
             {isId ? "Filter di toko" : "Filter in shop"}
@@ -42,7 +44,7 @@ export default async function BestSellersPage() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} />
+            <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} locale={locale} />
           ))}
         </div>
       </section>

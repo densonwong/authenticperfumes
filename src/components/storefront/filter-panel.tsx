@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { CustomSelect } from "@/components/admin/custom-select";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import type { Brand, Gender, Product } from "@/lib/types";
 
 type FilterPanelProps = {
@@ -22,6 +23,7 @@ type FilterPanelProps = {
     newArrival?: string;
   };
   dictionary: Dictionary["shop"] & Dictionary["common"];
+  locale: Locale;
 };
 
 const priceBands = [
@@ -48,7 +50,7 @@ function uniqueSorted(values: string[]) {
   return [...new Set(values)].sort((a, b) => a.localeCompare(b));
 }
 
-export function FilterPanel({ brands, products, selected, dictionary }: FilterPanelProps) {
+export function FilterPanel({ brands, products, selected, dictionary, locale }: FilterPanelProps) {
   const [brand, setBrand] = useState(selected.brand ?? "");
   const [note, setNote] = useState(selected.note ?? "");
   const [price, setPrice] = useState(selected.price ?? "");
@@ -67,12 +69,12 @@ export function FilterPanel({ brands, products, selected, dictionary }: FilterPa
     <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:self-start">
       <div className="mb-5 flex items-center justify-between gap-4 border-b border-ink/10 pb-4">
         <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">{dictionary.refine}</h2>
-        <Link href="/shop" className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
+        <Link href={localizedPath(locale, "/shop")} className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
           {dictionary.clear}
         </Link>
       </div>
 
-      <form action="/shop" className="space-y-5">
+      <form action={localizedPath(locale, "/shop")} className="space-y-5">
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
             {dictionary.search}

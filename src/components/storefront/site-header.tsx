@@ -10,6 +10,7 @@ import {
 } from "lucide-react";
 import { LanguageToggle } from "@/components/storefront/language-toggle";
 import type { Dictionary, Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const perfumeItems = [
@@ -38,7 +39,7 @@ export function SiteHeader({
   );
   const perfumeLinks = perfumeItems.map((item) => ({
     ...item,
-    href: item.href === "request" ? requestUrl : item.href,
+    href: item.href === "request" ? requestUrl : localizedPath(locale, item.href),
     external: item.href === "request"
   }));
 
@@ -57,7 +58,7 @@ export function SiteHeader({
         </button>
 
         <Link
-          href="/"
+          href={localizedPath(locale, "/")}
           className="min-w-0 justify-self-center text-center font-logo text-[clamp(1.12rem,5.2vw,1.65rem)] leading-none tracking-[0.12em] text-ink lg:absolute lg:left-1/2 lg:-translate-x-1/2 lg:text-3xl lg:tracking-[0.16em]"
         >
           AUTHENTIC PERFUMES8
@@ -68,14 +69,14 @@ export function SiteHeader({
         <div className="flex items-center justify-end gap-2">
           <LanguageToggle locale={locale} label={dictionary.language} />
           <Link
-            href="/shop"
+            href={localizedPath(locale, "/shop")}
             className="inline-flex h-10 w-10 items-center justify-center text-ink transition hover:bg-warm focus:outline-none focus:ring-2 focus:ring-gold/60"
             aria-label={dictionary.search}
           >
             <Search className="h-5 w-5" aria-hidden="true" />
           </Link>
           <Link
-            href="/shop"
+            href={localizedPath(locale, "/shop")}
             className="hidden h-10 items-center border border-ink bg-ink px-5 font-caps text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-paper hover:text-ink lg:inline-flex"
           >
             {dictionary.shop}
@@ -90,7 +91,7 @@ export function SiteHeader({
         <ul className="mx-auto flex max-w-7xl items-center justify-center gap-8">
           <li>
             <Link
-              href="/"
+              href={localizedPath(locale, "/")}
               className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
             >
               {dictionary.home}
@@ -140,7 +141,7 @@ export function SiteHeader({
           </li>
           <li>
             <Link
-              href="/testimonials"
+              href={localizedPath(locale, "/testimonials")}
               className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
             >
               {dictionary.testimonials}
@@ -148,7 +149,7 @@ export function SiteHeader({
           </li>
           <li>
             <Link
-              href="/contact"
+              href={localizedPath(locale, "/contact")}
               className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
             >
               {dictionary.contact}
@@ -165,7 +166,7 @@ export function SiteHeader({
         <ul className="grid divide-y divide-ink/10">
           <li>
             <Link
-              href="/"
+              href={localizedPath(locale, "/")}
               onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
             >
@@ -226,7 +227,7 @@ export function SiteHeader({
           </li>
           <li>
             <Link
-              href="/testimonials"
+              href={localizedPath(locale, "/testimonials")}
               onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
             >
@@ -235,7 +236,7 @@ export function SiteHeader({
           </li>
           <li>
             <Link
-              href="/contact"
+              href={localizedPath(locale, "/contact")}
               onClick={() => setIsMenuOpen(false)}
               className="flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
             >

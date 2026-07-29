@@ -3,17 +3,19 @@
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useRef } from "react";
 import { ProductCard } from "@/components/storefront/product-card";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
 import type { Product } from "@/lib/types";
 
 export function ProductSlider({
   products,
   priority = false,
-  dictionary
+  dictionary,
+  locale
 }: {
   products: Product[];
   priority?: boolean;
   dictionary: Dictionary;
+  locale: Locale;
 }) {
   const sliderRef = useRef<HTMLDivElement>(null);
 
@@ -58,6 +60,7 @@ export function ProductSlider({
               product={product}
               priority={priority && index < 2}
               dictionary={dictionary}
+              locale={locale}
             />
           </div>
         ))}

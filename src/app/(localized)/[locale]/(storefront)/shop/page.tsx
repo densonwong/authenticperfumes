@@ -2,17 +2,18 @@ import type { Metadata } from "next";
 import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
+import { localizedPageMetadata } from "@/lib/seo";
 import type { Product } from "@/lib/types";
 
-export const metadata: Metadata = {
-  title: "Shop Fragrances",
-  description: "Browse authentic niche and designer perfumes with ready stock, pre-order, and price filters.",
-  alternates: {
-    canonical: "/shop"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/shop", {
+    title: "Shop Fragrances",
+    description: "Browse authentic niche and designer perfumes with ready stock, pre-order, and price filters."
+  });
+}
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -85,8 +86,14 @@ function filterProducts(products: Product[], selected: ReturnType<typeof selecte
   });
 }
 
-export default async function ShopPage({ searchParams }: { searchParams: SearchParams }) {
-  const locale = await getLocale();
+export default async function ShopPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: SearchParams;
+}) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const resolvedSearchParams = await searchParams;
   const [brands, products] = await Promise.all([getBrands(), getProducts()]);
@@ -120,12 +127,13 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
           products={products}
           selected={selected}
           dictionary={{ ...dictionary.shop, ...dictionary.common }}
+          locale={locale}
         />
         <div>
           {filteredProducts.length > 0 ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
               {filteredProducts.map((product, index) => (
-                <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} />
+                <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} locale={locale} />
               ))}
             </div>
           ) : (

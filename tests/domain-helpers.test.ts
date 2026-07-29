@@ -7,6 +7,9 @@ import {
   seedTestimonials
 } from "../src/lib/seed-data";
 import { slugify } from "../src/lib/slugs";
+import { isLocale } from "../src/lib/i18n";
+import { localizedPath, switchLocalePath } from "../src/lib/localized-paths";
+import { changedDetailPaths } from "../src/lib/cache-paths";
 import { buildProductWhatsAppMessage, buildWhatsAppUrl, normalizeWhatsAppPhone } from "../src/lib/whatsapp";
 
 describe("domain helpers", () => {
@@ -42,6 +45,43 @@ describe("domain helpers", () => {
     expect(buildWhatsAppUrl("Halo", "+62 812-2899-9598")).toContain(
       "https://wa.me/6281228999598"
     );
+  });
+
+  it("validates supported storefront locales", () => {
+    expect(isLocale("id")).toBe(true);
+    expect(isLocale("en")).toBe(true);
+    expect(isLocale("fr")).toBe(false);
+  });
+
+  it("localizes internal paths without changing external links", () => {
+    expect(localizedPath("en", "/products/test?variant=1#buy")).toBe(
+      "/en/products/test?variant=1#buy"
+    );
+    expect(localizedPath("id", "/")).toBe("/id");
+    expect(localizedPath("id", "https://wa.me/1")).toBe("https://wa.me/1");
+    expect(localizedPath("en", "#details")).toBe("#details");
+  });
+
+  it("switches locale prefixes while preserving the rest of the URL", () => {
+    expect(switchLocalePath("/id/brands/test?q=x#top", "en")).toBe(
+      "/en/brands/test?q=x#top"
+    );
+    expect(switchLocalePath("/brands/test", "id")).toBe("/id/brands/test");
+  });
+});
+
+describe("catalog detail invalidation paths", () => {
+  it("keeps both old and new URLs when a slug changes", () => {
+    expect(changedDetailPaths("brands", "old-brand", "new-brand")).toEqual([
+      "/brands/old-brand",
+      "/brands/new-brand"
+    ]);
+  });
+
+  it("deduplicates an unchanged slug", () => {
+    expect(changedDetailPaths("products", "same-product", "same-product")).toEqual([
+      "/products/same-product"
+    ]);
   });
 });
 

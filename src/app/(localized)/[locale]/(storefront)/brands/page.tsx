@@ -1,17 +1,18 @@
 import Image from "next/image";
 import Link from "next/link";
 import type { Metadata } from "next";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { getBrands } from "@/lib/repositories/catalog";
-import { siteUrl } from "@/lib/seo";
+import { localizedPageMetadata, siteUrl } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Brands",
-  description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet.",
-  alternates: {
-    canonical: "/brands"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/brands", {
+    title: "Brands",
+    description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet."
+  });
+}
 
 export const dynamic = "force-dynamic";
 
@@ -22,8 +23,14 @@ function valueOf(searchParams: Awaited<SearchParams>, key: string) {
   return Array.isArray(value) ? value[0] : value;
 }
 
-export default async function BrandsPage({ searchParams }: { searchParams: SearchParams }) {
-  const locale = await getLocale();
+export default async function BrandsPage({
+  params,
+  searchParams
+}: {
+  params: Promise<{ locale: string }>;
+  searchParams: SearchParams;
+}) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const q = valueOf(await searchParams, "q")?.trim().toLowerCase() ?? "";
   const brands = await getBrands();
@@ -40,7 +47,7 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
     "@context": "https://schema.org",
     "@type": "CollectionPage",
     name: "Brands",
-    url: siteUrl("/brands"),
+    url: siteUrl(localizedPath(locale, "/brands")),
     numberOfItems: filteredBrands.length
   };
 
@@ -65,7 +72,7 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
                 : "A dense directory built to scale across hundreds of houses while keeping featured logos and quick alphabet jumps visible."}
             </p>
           </div>
-          <form action="/brands" className="flex gap-2">
+          <form action={localizedPath(locale, "/brands")} className="flex gap-2">
             <input
               type="search"
               name="q"
@@ -126,7 +133,7 @@ export default async function BrandsPage({ searchParams }: { searchParams: Searc
                       {group.map((brand) => (
                         <Link
                           key={brand.id}
-                          href={`/brands/${brand.slug}`}
+                          href={localizedPath(locale, `/brands/${brand.slug}`)}
                           className="grid grid-cols-[52px_1fr] gap-3 bg-paper p-3 transition hover:bg-white"
                         >
                           <div className="relative aspect-square overflow-hidden bg-warm">

@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { requireAdmin } from "@/lib/admin-auth";
+import { changedDetailPaths } from "@/lib/cache-paths";
 import { invalidateCatalog } from "@/lib/catalog-cache";
 import { isUuid } from "@/lib/ids";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
@@ -27,6 +28,20 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
     return NextResponse.json({ error: "Brand name and slug are required." }, { status: 400 });
   }
 
+  const { data: existingBrand, error: existingBrandError } = await supabase
+    .from("brands")
+    .select("slug")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existingBrandError) {
+    return NextResponse.json({ error: existingBrandError.message }, { status: 500 });
+  }
+
+  if (!existingBrand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 });
+  }
+
   const { error } = await supabase
     .from("brands")
     .update({
@@ -44,7 +59,10 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  invalidateCatalog(["brands", "products"], [`/brands/${body.slug}`]);
+  invalidateCatalog(
+    ["brands", "products"],
+    changedDetailPaths("brands", existingBrand.slug, body.slug)
+  );
 
   return NextResponse.json({ status: "saved" });
 }
@@ -63,6 +81,20 @@ export async function DELETE(_request: Request, { params }: { params: Params }) 
       { error: "This brand is demo/seed data and cannot be deleted. Create it in Supabase first." },
       { status: 400 }
     );
+  }
+
+  const { data: existingBrand, error: existingBrandError } = await supabase
+    .from("brands")
+    .select("slug")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existingBrandError) {
+    return NextResponse.json({ error: existingBrandError.message }, { status: 500 });
+  }
+
+  if (!existingBrand) {
+    return NextResponse.json({ error: "Brand not found." }, { status: 404 });
   }
 
   const { count, error: countError } = await supabase
@@ -87,7 +119,7 @@ export async function DELETE(_request: Request, { params }: { params: Params }) 
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  invalidateCatalog(["brands"]);
+  invalidateCatalog(["brands"], [`/brands/${existingBrand.slug}`]);
 
   return NextResponse.json({ status: "deleted" });
 }

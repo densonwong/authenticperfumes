@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Instagram } from "lucide-react";
-import type { Dictionary } from "@/lib/i18n";
+import type { Dictionary, Locale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { INSTAGRAM_URL, TIKTOK_URL } from "@/lib/seo";
 
 function TikTokIcon({ className }: { className?: string }) {
@@ -11,7 +12,7 @@ function TikTokIcon({ className }: { className?: string }) {
   );
 }
 
-export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
+export function SiteFooter({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
   const isId = dictionary.nav.shop === "Belanja";
   const exploreLinks = [
     { href: "/", label: "Home" },
@@ -31,7 +32,7 @@ export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
     <footer className="border-t border-ink/10 bg-warm">
       <div className="mx-auto grid max-w-7xl gap-10 px-4 py-10 sm:grid-cols-2 lg:grid-cols-[1.35fr_1fr_1fr_0.8fr] lg:px-8">
         <div className="max-w-sm">
-          <Link href="/" className="font-logo text-2xl tracking-[0.16em] text-ink">
+          <Link href={localizedPath(locale, "/")} className="font-logo text-2xl tracking-[0.16em] text-ink">
             AUTHENTIC PERFUMES8
           </Link>
           <p className="mt-3 text-sm leading-6 text-ink/65">
@@ -47,7 +48,7 @@ export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
           </h2>
           <nav className="mt-4 grid gap-2 text-sm text-ink/65" aria-label="Explore footer navigation">
             {exploreLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:text-ink">
+              <Link key={link.href} href={localizedPath(locale, link.href)} className="hover:text-ink">
                 {link.label}
               </Link>
             ))}
@@ -60,7 +61,7 @@ export function SiteFooter({ dictionary }: { dictionary: Dictionary }) {
           </h2>
           <nav className="mt-4 grid gap-2 text-sm text-ink/65" aria-label="Support footer navigation">
             {supportLinks.map((link) => (
-              <Link key={link.href} href={link.href} className="hover:text-ink">
+              <Link key={link.href} href={localizedPath(locale, link.href)} className="hover:text-ink">
                 {link.label}
               </Link>
             ))}

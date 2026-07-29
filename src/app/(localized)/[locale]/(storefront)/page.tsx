@@ -12,17 +12,18 @@ import {
   getNewArrivals,
   getReadyStockProducts
 } from "@/lib/repositories/catalog";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
+import { localizedPageMetadata } from "@/lib/seo";
 import type { Banner } from "@/lib/types";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
-  alternates: {
-    canonical: "/"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/");
+}
 
-export const dynamic = "force-dynamic";
+export const dynamic = "force-static";
 
 function SectionHeader({
   eyebrow,
@@ -78,8 +79,8 @@ function localizeBanner(banner: Banner, locale: string): Banner {
   return translations[banner.id] ? { ...banner, ...translations[banner.id] } : banner;
 }
 
-export default async function HomePage() {
-  const locale = await getLocale();
+export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const [
     banners,
@@ -127,11 +128,11 @@ export default async function HomePage() {
       <section className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
         <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
           {primaryBanner ? (
-            <CollectionTile banner={primaryBanner} priority dictionary={dictionary.tile} headingLevel={1} />
+            <CollectionTile banner={primaryBanner} priority dictionary={dictionary.tile} headingLevel={1} locale={locale} />
           ) : null}
           <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
             {secondaryBanners.map((banner) => (
-              <CollectionTile key={banner.id} banner={banner} dictionary={dictionary.tile} />
+              <CollectionTile key={banner.id} banner={banner} dictionary={dictionary.tile} locale={locale} />
             ))}
           </div>
         </div>
@@ -144,10 +145,10 @@ export default async function HomePage() {
           <SectionHeader
             eyebrow={dictionary.home.customerFavorites}
             title={dictionary.home.bestSellers}
-            href="/best-sellers"
+            href={localizedPath(locale, "/best-sellers")}
             linkLabel={dictionary.home.discoverMore}
           />
-          <ProductSlider products={bestSellers.slice(0, 12)} priority dictionary={dictionary} />
+          <ProductSlider products={bestSellers.slice(0, 12)} priority dictionary={dictionary} locale={locale} />
         </Reveal>
       </section>
 
@@ -156,10 +157,10 @@ export default async function HomePage() {
           <SectionHeader
             eyebrow={dictionary.home.freshEdit}
             title={dictionary.home.newNoteworthy}
-            href="/new-arrivals"
+            href={localizedPath(locale, "/new-arrivals")}
             linkLabel={dictionary.home.discoverMore}
           />
-          <ProductSlider products={newArrivals.slice(0, 12)} dictionary={dictionary} />
+          <ProductSlider products={newArrivals.slice(0, 12)} dictionary={dictionary} locale={locale} />
         </Reveal>
       </section>
 
@@ -169,10 +170,10 @@ export default async function HomePage() {
             <SectionHeader
               eyebrow={dictionary.home.fastDispatch}
               title={dictionary.home.readyStock}
-              href="/shop?readyStock=true"
+              href={localizedPath(locale, "/shop?readyStock=true")}
               linkLabel={dictionary.home.discoverMore}
             />
-            <ProductSlider products={readyStock.slice(0, 12)} dictionary={dictionary} />
+            <ProductSlider products={readyStock.slice(0, 12)} dictionary={dictionary} locale={locale} />
           </Reveal>
         </div>
       </section>
@@ -207,10 +208,10 @@ export default async function HomePage() {
           <SectionHeader
             eyebrow={dictionary.home.brandUniverse}
             title={dictionary.home.featuredHouses}
-            href="/brands"
+            href={localizedPath(locale, "/brands")}
             linkLabel={dictionary.common.allBrands}
           />
-          <BrandCloud brands={featuredBrands} dictionary={dictionary.common} />
+          <BrandCloud brands={featuredBrands} dictionary={dictionary.common} locale={locale} />
         </Reveal>
       </section>
 

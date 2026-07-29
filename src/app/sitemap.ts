@@ -1,4 +1,6 @@
 import type { MetadataRoute } from "next";
+import { defaultLocale, locales } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
 import { siteUrl } from "@/lib/seo";
 
@@ -18,24 +20,36 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const [brands, products] = await Promise.all([getBrands(), getProducts()]);
   const lastModified = new Date();
 
-  return [
+  const entries = [
     ...staticRoutes.map((route) => ({
-      url: siteUrl(route.path),
-      lastModified,
+      path: route.path,
       changeFrequency: route.path === "/" || route.path === "/shop" ? "daily" as const : "weekly" as const,
       priority: route.priority
     })),
     ...brands.map((brand) => ({
-      url: siteUrl(`/brands/${brand.slug}`),
-      lastModified,
+      path: `/brands/${brand.slug}`,
       changeFrequency: "weekly" as const,
       priority: 0.7
     })),
     ...products.map((product) => ({
-      url: siteUrl(`/products/${product.slug}`),
-      lastModified,
+      path: `/products/${product.slug}`,
       changeFrequency: product.readyStock || product.preOrder ? "daily" as const : "weekly" as const,
       priority: product.bestSeller || product.newArrival ? 0.85 : 0.8
     }))
   ];
+
+  return entries.flatMap((entry) => {
+    const languages = Object.fromEntries([
+      ...locales.map((locale) => [locale, siteUrl(localizedPath(locale, entry.path))]),
+      ["x-default", siteUrl(localizedPath(defaultLocale, entry.path))]
+    ]);
+
+    return locales.map((locale) => ({
+      url: languages[locale],
+      lastModified,
+      changeFrequency: entry.changeFrequency,
+      priority: entry.priority,
+      alternates: { languages }
+    }));
+  });
 }

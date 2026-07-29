@@ -1,17 +1,18 @@
 import type { Metadata } from "next";
 import { ProductCard } from "@/components/storefront/product-card";
-import { getDictionary, getLocale } from "@/lib/i18n";
+import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { localizedPath } from "@/lib/localized-paths";
 import { getPreOrderProducts } from "@/lib/repositories/catalog";
-import { siteUrl } from "@/lib/seo";
+import { localizedPageMetadata, siteUrl } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-export const metadata: Metadata = {
-  title: "Pre Order",
-  description: "Understand Authentic Perfumes 8 pre-order process, sourcing updates, and refund policy.",
-  alternates: {
-    canonical: "/pre-order"
-  }
-};
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const locale = normalizeLocale((await params).locale);
+  return localizedPageMetadata(locale, "/pre-order", {
+    title: "Pre Order",
+    description: "Understand Authentic Perfumes 8 pre-order process, sourcing updates, and refund policy."
+  });
+}
 
 const process = [
   "Share the fragrance, size, target budget, and preferred timeline through WhatsApp.",
@@ -37,8 +38,8 @@ const refundPolicyId = [
   "Refund tidak berlaku setelah special order yang sudah dikonfirmasi berhasil di-source sesuai kesepakatan, kecuali item tidak dapat dipenuhi atau diverifikasi."
 ];
 
-export default async function PreOrderPage() {
-  const locale = await getLocale();
+export default async function PreOrderPage({ params }: { params: Promise<{ locale: string }> }) {
+  const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const products = await getPreOrderProducts();
   const isId = locale === "id";
@@ -47,7 +48,7 @@ export default async function PreOrderPage() {
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
-    url: siteUrl("/pre-order"),
+    url: siteUrl(localizedPath(locale, "/pre-order")),
     mainEntity: [
       {
         "@type": "Question",
@@ -172,7 +173,7 @@ export default async function PreOrderPage() {
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
           {products.map((product, index) => (
-            <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} />
+            <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} locale={locale} />
           ))}
         </div>
       </section>

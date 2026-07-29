@@ -1,18 +1,17 @@
-import { cookies } from "next/headers";
 import type { ProductStatus } from "@/lib/types";
 
-export type Locale = "en" | "id";
+export const locales = ["id", "en"] as const;
+export type Locale = (typeof locales)[number];
 
 export const defaultLocale: Locale = "id";
 
-export function normalizeLocale(value: string | undefined | null): Locale {
-  if (value === "en" || value === "id") return value;
-  return defaultLocale;
+export function isLocale(value: string | undefined | null): value is Locale {
+  return locales.includes(value as Locale);
 }
 
-export async function getLocale() {
-  const cookieStore = await cookies();
-  return normalizeLocale(cookieStore.get("ap_locale")?.value);
+export function normalizeLocale(value: string | undefined | null): Locale {
+  if (isLocale(value)) return value;
+  return defaultLocale;
 }
 
 export type Dictionary = {

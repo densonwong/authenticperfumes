@@ -22,7 +22,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3000`. The root redirects to the Indonesian storefront at `/id`; use `/en` for English.
 
 The app can run without Supabase or Cloudinary credentials. In that state, storefront pages use seed data, admin opens in local preview mode, and Cloudinary upload fields show a configuration message instead of crashing.
 
@@ -118,16 +118,22 @@ npm run typecheck
 npm run build
 ```
 
+## Storefront Locales and Caching
+
+Every public page has a language-prefixed URL. Indonesian uses `/id/...` and English uses `/en/...`. Old unprefixed storefront URLs permanently redirect to the matching Indonesian page; admin and API URLs remain unprefixed.
+
+Product and brand detail pages use on-demand static generation. Deployments do not prebuild every catalog item: the first request generates and caches a localized page, and repeat requests are served from the cached response. Successful admin catalog updates invalidate the affected Indonesian and English pages so the next request regenerates them with current Supabase data.
+
 Useful manual routes:
 
-- `/`
-- `/shop`
-- `/brands`
-- `/products/xerjoff-naxos-100ml`
-- `/sampling`
-- `/pre-order`
-- `/testimonials`
-- `/contact`
+- `/id`
+- `/en`
+- `/id/shop`
+- `/en/brands`
+- `/id/products/xerjoff-naxos-100ml`
+- `/id/pre-order`
+- `/en/testimonials`
+- `/id/contact`
 - `/admin/login`
 - `/admin/products`
 
