@@ -6,7 +6,7 @@ import { ProductGalleryCarousel } from "@/components/storefront/product-gallery-
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { calculateSavings, formatRupiah } from "@/lib/format";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import { getProductBySlug, getProducts } from "@/lib/repositories/catalog";
+import { getProductBySlug } from "@/lib/repositories/catalog";
 import { breadcrumbJsonLd, siteUrl, SITE_NAME } from "@/lib/seo";
 import type { ProductStatus, ProductVariant } from "@/lib/types";
 import { buildProductWhatsAppMessage, buildWhatsAppUrl } from "@/lib/whatsapp";
@@ -36,11 +36,6 @@ function priceValidUntil() {
   const date = new Date();
   date.setFullYear(date.getFullYear() + 1);
   return date.toISOString().slice(0, 10);
-}
-
-export async function generateStaticParams() {
-  const products = await getProducts();
-  return products.map((product) => ({ slug: product.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {

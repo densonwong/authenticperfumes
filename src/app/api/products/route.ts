@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { invalidateCatalog } from "@/lib/catalog-cache";
 import { getProducts } from "@/lib/repositories/catalog";
+import { syncBrandProductCounts } from "@/lib/repositories/brand-counts";
 import { isUuid } from "@/lib/ids";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -84,13 +85,21 @@ export async function POST(request: Request) {
   const { error: variantsError } = await supabase.from("product_variants").insert(variants);
 
   if (variantsError) {
+    await supabase.from("products").delete().eq("id", product.id);
     return NextResponse.json({ error: variantsError.message }, { status: 500 });
   }
 
-  revalidatePath("/");
-  revalidatePath("/shop");
-  revalidatePath("/brands");
-  revalidatePath("/admin/products");
+  try {
+    await syncBrandProductCounts(supabase, [body.brandId]);
+  } catch (error) {
+    invalidateCatalog(["brands", "products"], [`/products/${body.slug}`]);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unable to synchronize brand count." },
+      { status: 500 }
+    );
+  }
+
+  invalidateCatalog(["brands", "products"], [`/products/${body.slug}`]);
 
   return NextResponse.json({ id: product.id, status: "saved" }, { status: 201 });
 }

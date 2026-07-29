@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "import:brands": "node scripts/import-brands-from-xlsx.mjs",
+    "catalog:sync-counts": "node scripts/sync-brand-product-counts.mjs",
     "test:watch": "vitest"
   },
   "dependencies": {

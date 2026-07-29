@@ -4,6 +4,9 @@ import {
   seedProducts,
   seedTestimonials
 } from "../seed-data";
+import { unstable_cache } from "next/cache";
+import { catalogCacheTags } from "@/lib/catalog-cache";
+import { hasSupabaseConfig } from "@/lib/env";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
 import type {
   Banner,
@@ -55,6 +58,11 @@ type ProductRow = {
   pre_order: boolean;
   product_variants: VariantRow[];
 };
+
+const productSelect =
+  "id,brand_id,brands(name),slug,name,image_url,gallery_urls,gender,concentration,notes,country_of_origin,description,status,best_seller,new_arrival,ready_stock,pre_order,product_variants(id,size,retail_price,authentic_price,stock,status)";
+const productPageSize = 500;
+const brandPageSize = 500;
 
 function mapBrand(row: BrandRow): Brand {
   return {
@@ -108,47 +116,82 @@ async function readLiveBrands() {
   const supabase = createSupabasePublicClient();
   if (!supabase) return null;
 
-  const [{ data, error }, { data: products, error: productsError }] = await Promise.all([
-    supabase
-    .from("brands")
-    .select("id,name,slug,logo_url,country,founded_year,description,product_count,featured")
-    .eq("published", true)
-    .order("name"),
-    supabase
-      .from("products")
-      .select("brand_id")
+  const rows: BrandRow[] = [];
+  for (let from = 0; ; from += brandPageSize) {
+    const { data, error } = await supabase
+      .from("brands")
+      .select("id,name,slug,logo_url,country,founded_year,description,product_count,featured")
       .eq("published", true)
-  ]);
+      .order("name")
+      .range(from, from + brandPageSize - 1);
 
-  if (error || !data?.length) return null;
-
-  const productCounts = new Map<string, number>();
-  if (!productsError && products) {
-    products.forEach((product) => {
-      productCounts.set(product.brand_id, (productCounts.get(product.brand_id) ?? 0) + 1);
-    });
+    if (error) throw new Error(`Unable to load brands: ${error.message}`);
+    const page = (data ?? []) as BrandRow[];
+    rows.push(...page);
+    if (page.length < brandPageSize) break;
   }
 
-  return (data as BrandRow[]).map((row) => ({
-    ...mapBrand(row),
-    productCount: productCounts.get(row.id) ?? 0
-  }));
+  return rows.map(mapBrand);
 }
 
 async function readLiveProducts() {
   const supabase = createSupabasePublicClient();
   if (!supabase) return null;
 
+  const rows: ProductRow[] = [];
+  for (let from = 0; ; from += productPageSize) {
+    const { data, error } = await supabase
+      .from("products")
+      .select(productSelect)
+      .eq("published", true)
+      .order("created_at", { ascending: false })
+      .range(from, from + productPageSize - 1);
+
+    if (error) throw new Error(`Unable to load products: ${error.message}`);
+    const page = (data ?? []) as unknown as ProductRow[];
+    rows.push(...page);
+    if (page.length < productPageSize) break;
+  }
+
+  return rows.map(mapProduct);
+}
+
+async function readLiveProductBySlug(slug: string) {
+  const supabase = createSupabasePublicClient();
+  if (!supabase) return null;
+
   const { data, error } = await supabase
     .from("products")
-    .select(
-      "id,brand_id,brands(name),slug,name,image_url,gallery_urls,gender,concentration,notes,country_of_origin,description,status,best_seller,new_arrival,ready_stock,pre_order,product_variants(id,size,retail_price,authentic_price,stock,status)"
-    )
+    .select(productSelect)
     .eq("published", true)
-    .order("created_at", { ascending: false });
+    .eq("slug", slug)
+    .maybeSingle();
 
-  if (error || !data?.length) return null;
-  return (data as unknown as ProductRow[]).map(mapProduct);
+  if (error) throw new Error(`Unable to load product ${slug}: ${error.message}`);
+  return data ? mapProduct(data as unknown as ProductRow) : undefined;
+}
+
+async function readLiveProductsByBrandId(brandId: string) {
+  const supabase = createSupabasePublicClient();
+  if (!supabase) return null;
+
+  const rows: ProductRow[] = [];
+  for (let from = 0; ; from += productPageSize) {
+    const { data, error } = await supabase
+      .from("products")
+      .select(productSelect)
+      .eq("published", true)
+      .eq("brand_id", brandId)
+      .order("created_at", { ascending: false })
+      .range(from, from + productPageSize - 1);
+
+    if (error) throw new Error(`Unable to load brand products: ${error.message}`);
+    const page = (data ?? []) as unknown as ProductRow[];
+    rows.push(...page);
+    if (page.length < productPageSize) break;
+  }
+
+  return rows.map(mapProduct);
 }
 
 async function readLiveBanners() {
@@ -191,8 +234,30 @@ async function readLiveTestimonials() {
   })) as Testimonial[];
 }
 
+const readCachedBrands = unstable_cache(readLiveBrands, ["public-brands"], {
+  tags: [catalogCacheTags.brands]
+});
+const readCachedProducts = unstable_cache(readLiveProducts, ["public-products"], {
+  tags: [catalogCacheTags.products]
+});
+const readCachedProductBySlug = unstable_cache(readLiveProductBySlug, ["public-product-by-slug"], {
+  tags: [catalogCacheTags.products]
+});
+const readCachedProductsByBrandId = unstable_cache(
+  readLiveProductsByBrandId,
+  ["public-products-by-brand"],
+  { tags: [catalogCacheTags.products] }
+);
+const readCachedBanners = unstable_cache(readLiveBanners, ["public-banners"], {
+  tags: [catalogCacheTags.banners]
+});
+const readCachedTestimonials = unstable_cache(readLiveTestimonials, ["public-testimonials"], {
+  tags: [catalogCacheTags.testimonials]
+});
+
 export async function getBrands() {
-  return (await readLiveBrands()) ?? seedBrands;
+  if (!hasSupabaseConfig()) return seedBrands;
+  return (await readCachedBrands()) ?? seedBrands;
 }
 
 export async function getFeaturedBrands() {
@@ -204,11 +269,26 @@ export async function getBrandBySlug(slug: string) {
 }
 
 export async function getProducts() {
-  return (await readLiveProducts()) ?? seedProducts;
+  if (!hasSupabaseConfig()) return seedProducts;
+  return (await readCachedProducts()) ?? seedProducts;
 }
 
 export async function getProductBySlug(slug: string) {
-  return (await getProducts()).find((product) => product.slug === slug) ?? null;
+  if (!hasSupabaseConfig()) {
+    return seedProducts.find((product) => product.slug === slug) ?? null;
+  }
+  const liveProduct = await readCachedProductBySlug(slug);
+  if (liveProduct !== null) return liveProduct ?? null;
+  return seedProducts.find((product) => product.slug === slug) ?? null;
+}
+
+export async function getProductsByBrandId(brandId: string) {
+  if (!hasSupabaseConfig()) {
+    return seedProducts.filter((product) => product.brandId === brandId);
+  }
+  const liveProducts = await readCachedProductsByBrandId(brandId);
+  if (liveProducts !== null) return liveProducts;
+  return seedProducts.filter((product) => product.brandId === brandId);
 }
 
 export async function getNewArrivals() {
@@ -228,9 +308,11 @@ export async function getPreOrderProducts() {
 }
 
 export async function getBanners() {
-  return (await readLiveBanners()) ?? seedBanners;
+  if (!hasSupabaseConfig()) return seedBanners;
+  return (await readCachedBanners()) ?? seedBanners;
 }
 
 export async function getTestimonials() {
-  return (await readLiveTestimonials()) ?? seedTestimonials;
+  if (!hasSupabaseConfig()) return seedTestimonials;
+  return (await readCachedTestimonials()) ?? seedTestimonials;
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { invalidateCatalog } from "@/lib/catalog-cache";
 import { getTestimonials } from "@/lib/repositories/catalog";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -51,8 +51,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  revalidatePath("/testimonials");
-  revalidatePath("/admin/testimonials");
+  invalidateCatalog(["testimonials"]);
 
   return NextResponse.json({ id: data.id, status: "saved" }, { status: 201 });
 }

@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { invalidateCatalog } from "@/lib/catalog-cache";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type Params = Promise<{ id: string }>;
@@ -48,8 +48,7 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  revalidatePath("/");
-  revalidatePath("/admin/banners");
+  invalidateCatalog(["banners"]);
 
   return NextResponse.json({ status: "saved" });
 }
@@ -69,8 +68,7 @@ export async function DELETE(_request: Request, { params }: { params: Params }) 
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  revalidatePath("/");
-  revalidatePath("/admin/banners");
+  invalidateCatalog(["banners"]);
 
   return NextResponse.json({ status: "deleted" });
 }

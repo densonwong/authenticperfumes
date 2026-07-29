@@ -83,6 +83,18 @@ npm run import:brands -- "/Users/tsth/Downloads/Brand parfum a-z final.xlsx" --d
 
 The importer reads the first sheet, removes A-Z divider rows, slugifies names, and upserts brands by slug. Product count defaults to `0`, country defaults to `Unknown`, and logo uses a placeholder image until real brand logos are uploaded from admin.
 
+## Catalog Count Maintenance
+
+Apply [supabase/migrations/20260729000000_sync_brand_product_counts.sql](/Users/tsth/Coding/denson/supabase/migrations/20260729000000_sync_brand_product_counts.sql) to keep `brands.product_count` synchronized transactionally whenever products are created, deleted, reassigned, published, or unpublished.
+
+The application also resynchronizes affected brand counts after admin product mutations. To safely backfill or repair every live count, run:
+
+```bash
+npm run catalog:sync-counts
+```
+
+The command is idempotent and updates only counters that differ from the exact number of published products.
+
 ## Cloudinary Setup
 
 Set `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and `CLOUDINARY_API_SECRET`.

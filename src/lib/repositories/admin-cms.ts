@@ -92,6 +92,11 @@ type ProductRow = {
   product_variants: VariantRow[];
 };
 
+const productSelect =
+  "id,brand_id,brands(name),slug,name,image_url,gallery_urls,gender,concentration,notes,country_of_origin,description,status,best_seller,new_arrival,ready_stock,pre_order,product_variants(id,size,retail_price,authentic_price,stock,status)";
+const productPageSize = 500;
+const brandPageSize = 500;
+
 function mapBanner(row: BannerRow): Banner {
   return {
     id: row.id,
@@ -190,44 +195,42 @@ export async function getAdminBrands() {
   const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
-  const [{ data, error }, { data: products, error: productsError }] = await Promise.all([
-    supabase
-    .from("brands")
-    .select("id,name,slug,logo_url,country,founded_year,description,product_count,featured")
-    .order("name"),
-    supabase
-      .from("products")
-      .select("brand_id")
-  ]);
+  const rows: BrandRow[] = [];
+  for (let from = 0; ; from += brandPageSize) {
+    const { data, error } = await supabase
+      .from("brands")
+      .select("id,name,slug,logo_url,country,founded_year,description,product_count,featured")
+      .order("name")
+      .range(from, from + brandPageSize - 1);
 
-  if (error || !data) return [];
-
-  const productCounts = new Map<string, number>();
-  if (!productsError && products) {
-    products.forEach((product) => {
-      productCounts.set(product.brand_id, (productCounts.get(product.brand_id) ?? 0) + 1);
-    });
+    if (error || !data) return [];
+    const page = data as BrandRow[];
+    rows.push(...page);
+    if (page.length < brandPageSize) break;
   }
 
-  return (data as BrandRow[]).map((row) => ({
-    ...mapBrand(row),
-    productCount: productCounts.get(row.id) ?? 0
-  }));
+  return rows.map(mapBrand);
 }
 
 export async function getAdminProducts() {
   const supabase = createSupabaseAdminClient();
   if (!supabase) return [];
 
-  const { data, error } = await supabase
-    .from("products")
-    .select(
-      "id,brand_id,brands(name),slug,name,image_url,gallery_urls,gender,concentration,notes,country_of_origin,description,status,best_seller,new_arrival,ready_stock,pre_order,product_variants(id,size,retail_price,authentic_price,stock,status)"
-    )
-    .order("created_at", { ascending: false });
+  const rows: ProductRow[] = [];
+  for (let from = 0; ; from += productPageSize) {
+    const { data, error } = await supabase
+      .from("products")
+      .select(productSelect)
+      .order("created_at", { ascending: false })
+      .range(from, from + productPageSize - 1);
 
-  if (error || !data) return [];
-  return (data as unknown as ProductRow[]).map(mapProduct);
+    if (error || !data) return [];
+    const page = data as unknown as ProductRow[];
+    rows.push(...page);
+    if (page.length < productPageSize) break;
+  }
+
+  return rows.map(mapProduct);
 }
 
 export async function getAdminBanners() {

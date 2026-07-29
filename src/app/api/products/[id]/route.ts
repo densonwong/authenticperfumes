@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { invalidateCatalog } from "@/lib/catalog-cache";
 import { isUuid } from "@/lib/ids";
+import { syncBrandProductCounts } from "@/lib/repositories/brand-counts";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
 type Params = Promise<{ id: string }>;
@@ -40,6 +41,20 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
 
   if (errors.length) {
     return NextResponse.json({ error: errors.join(" ") }, { status: 400 });
+  }
+
+  const { data: existingProduct, error: existingProductError } = await supabase
+    .from("products")
+    .select("brand_id,slug")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existingProductError) {
+    return NextResponse.json({ error: existingProductError.message }, { status: 500 });
+  }
+
+  if (!existingProduct) {
+    return NextResponse.json({ error: "Product not found." }, { status: 404 });
   }
 
   const { error: productError } = await supabase
@@ -83,14 +98,31 @@ export async function PATCH(request: Request, { params }: { params: Params }) {
   const { error: variantsError } = await supabase.from("product_variants").insert(variants);
 
   if (variantsError) {
+    await syncBrandProductCounts(supabase, [existingProduct.brand_id, body.brandId]).catch(() => undefined);
+    invalidateCatalog(["brands", "products"], [
+      `/products/${existingProduct.slug}`,
+      `/products/${body.slug}`
+    ]);
     return NextResponse.json({ error: variantsError.message }, { status: 500 });
   }
 
-  revalidatePath("/");
-  revalidatePath("/shop");
-  revalidatePath("/brands");
-  revalidatePath(`/products/${body.slug}`);
-  revalidatePath("/admin/products");
+  try {
+    await syncBrandProductCounts(supabase, [existingProduct.brand_id, body.brandId]);
+  } catch (error) {
+    invalidateCatalog(["brands", "products"], [
+      `/products/${existingProduct.slug}`,
+      `/products/${body.slug}`
+    ]);
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Unable to synchronize brand counts." },
+      { status: 500 }
+    );
+  }
+
+  invalidateCatalog(["brands", "products"], [
+    `/products/${existingProduct.slug}`,
+    `/products/${body.slug}`
+  ]);
 
   return NextResponse.json({ status: "saved" });
 }
@@ -111,16 +143,37 @@ export async function DELETE(_request: Request, { params }: { params: Params }) 
     );
   }
 
+  const { data: existingProduct, error: existingProductError } = await supabase
+    .from("products")
+    .select("brand_id,slug")
+    .eq("id", id)
+    .maybeSingle();
+
+  if (existingProductError) {
+    return NextResponse.json({ error: existingProductError.message }, { status: 500 });
+  }
+
+  if (!existingProduct) {
+    return NextResponse.json({ error: "Product not found." }, { status: 404 });
+  }
+
   const { error } = await supabase.from("products").delete().eq("id", id);
 
   if (error) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  revalidatePath("/");
-  revalidatePath("/shop");
-  revalidatePath("/brands");
-  revalidatePath("/admin/products");
+  try {
+    await syncBrandProductCounts(supabase, [existingProduct.brand_id]);
+  } catch (syncError) {
+    invalidateCatalog(["brands", "products"], [`/products/${existingProduct.slug}`]);
+    return NextResponse.json(
+      { error: syncError instanceof Error ? syncError.message : "Unable to synchronize brand count." },
+      { status: 500 }
+    );
+  }
+
+  invalidateCatalog(["brands", "products"], [`/products/${existingProduct.slug}`]);
 
   return NextResponse.json({ status: "deleted" });
 }

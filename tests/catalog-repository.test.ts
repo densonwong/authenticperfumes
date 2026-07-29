@@ -4,7 +4,8 @@ import {
   getBrandBySlug,
   getBrands,
   getNewArrivals,
-  getProductBySlug
+  getProductBySlug,
+  getProductsByBrandId
 } from "../src/lib/repositories/catalog";
 
 describe("catalog repository", () => {
@@ -23,5 +24,12 @@ describe("catalog repository", () => {
   it("returns merchandising product groups", async () => {
     expect((await getBestSellers()).length).toBeGreaterThan(0);
     expect((await getNewArrivals()).length).toBeGreaterThan(0);
+  });
+
+  it("returns products scoped to a brand", async () => {
+    const products = await getProductsByBrandId("brand-xerjoff");
+
+    expect(products.length).toBeGreaterThan(0);
+    expect(products.every((product) => product.brandId === "brand-xerjoff")).toBe(true);
   });
 });

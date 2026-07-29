@@ -5,17 +5,12 @@ import type { Metadata } from "next";
 import { ProductCard } from "@/components/storefront/product-card";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
 import { getDictionary, getLocale } from "@/lib/i18n";
-import { getBrandBySlug, getBrands, getProducts } from "@/lib/repositories/catalog";
+import { getBrandBySlug, getProductsByBrandId } from "@/lib/repositories/catalog";
 import { breadcrumbJsonLd, siteUrl, SITE_NAME } from "@/lib/seo";
 
 type Params = Promise<{ slug: string }>;
 
 export const dynamic = "force-dynamic";
-
-export async function generateStaticParams() {
-  const brands = await getBrands();
-  return brands.map((brand) => ({ slug: brand.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
   const { slug } = await params;
@@ -42,11 +37,11 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
   const locale = await getLocale();
   const dictionary = getDictionary(locale);
-  const [brand, products] = await Promise.all([getBrandBySlug(slug), getProducts()]);
+  const brand = await getBrandBySlug(slug);
 
   if (!brand) notFound();
 
-  const brandProducts = products.filter((product) => product.brandId === brand.id);
+  const brandProducts = await getProductsByBrandId(brand.id);
   const jsonLd = [
     {
       "@context": "https://schema.org",

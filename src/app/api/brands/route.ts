@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
+import { invalidateCatalog } from "@/lib/catalog-cache";
 import { getBrands } from "@/lib/repositories/catalog";
 import { createSupabaseAdminClient } from "@/lib/supabase/admin";
 
@@ -32,7 +32,7 @@ export async function POST(request: Request) {
       country: body.country || "Unknown",
       founded_year: body.foundedYear ? Number(body.foundedYear) : null,
       description: body.description || `${body.name} fragrances available through Authentic Perfumes 8.`,
-      product_count: Number(body.productCount ?? 0),
+      product_count: 0,
       featured: Boolean(body.featured),
       published: body.published ?? true
     })
@@ -43,8 +43,7 @@ export async function POST(request: Request) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  revalidatePath("/brands");
-  revalidatePath("/admin/brands");
+  invalidateCatalog(["brands"], [`/brands/${body.slug}`]);
 
   return NextResponse.json({ id: data.id, status: "saved" }, { status: 201 });
 }
