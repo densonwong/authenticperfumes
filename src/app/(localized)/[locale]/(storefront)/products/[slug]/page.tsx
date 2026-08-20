@@ -129,14 +129,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
           </Suspense>
 
           <dl className="mt-7 grid gap-4 border-t border-ink/10 pt-5 text-sm sm:grid-cols-2">
-            <div>
-              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.origin}</dt>
-              <dd className="mt-1 text-ink">{product.countryOfOrigin}</dd>
-            </div>
-            <div>
-              <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.notes}</dt>
-              <dd className="mt-1 text-ink">{product.notes.join(", ")}</dd>
-            </div>
+            {/* Origin (Asal) and Notes hidden from public storefront for now. */}
             <div>
               <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{dictionary.product.sku}</dt>
               <dd className="mt-1 text-ink">{product.id}</dd>
