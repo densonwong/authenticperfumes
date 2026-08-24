@@ -1,0 +1,30 @@
+{
+  "amouage": {
+    "name": "Amouage",
+    "domain": "amouage.com",
+    "file": "amouage.svg",
+    "aspect": 7.792,
+    "bytes": 1937
+  },
+  "eight-bob": {
+    "name": "EIGHT & BOB",
+    "domain": "eightandbob.com",
+    "file": "eight-bob.png",
+    "aspect": 1.381,
+    "bytes": 11832
+  },
+  "maison-crivelli": {
+    "name": "Maison Crivelli",
+    "domain": "maisoncrivelli.com",
+    "file": "maison-crivelli.svg",
+    "aspect": 8.875,
+    "bytes": 7697
+  },
+  "zoologist": {
+    "name": "Zoologist",
+    "domain": "zoologistperfumes.com",
+    "file": "zoologist.png",
+    "aspect": 2.345,
+    "bytes": 10452
+  }
+}

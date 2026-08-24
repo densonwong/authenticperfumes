@@ -5,6 +5,7 @@ import {
   seedTestimonials
 } from "../seed-data";
 import { unstable_cache } from "next/cache";
+import { generatedLogo, LOGO_WALL } from "@/lib/brand-logo-wall";
 import { catalogCacheTags } from "@/lib/catalog-cache";
 import { hasSupabaseConfig } from "@/lib/env";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
@@ -262,6 +263,27 @@ export async function getBrands() {
 
 export async function getFeaturedBrands() {
   return (await getBrands()).filter((brand) => brand.featured);
+}
+
+/**
+ * Brands for the homepage logo marquee, in the curated order of LOGO_WALL,
+ * paired with the layout aspect for each. Missing slugs are skipped.
+ */
+export async function getLogoWallBrands() {
+  const brands = await getBrands();
+  const bySlug = new Map(brands.map((brand) => [brand.slug, brand]));
+
+  return LOGO_WALL.flatMap((entry) => {
+    const brand = bySlug.get(entry.slug);
+    if (!brand) return [];
+
+    const local = generatedLogo(entry.slug);
+    if (local) return [{ brand, logoUrl: local.src, aspect: local.aspect, vector: true }];
+
+    return brand.logoUrl
+      ? [{ brand, logoUrl: brand.logoUrl, aspect: entry.aspect, vector: false }]
+      : [];
+  });
 }
 
 export async function getBrandBySlug(slug: string) {

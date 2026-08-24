@@ -92,7 +92,7 @@ export function SiteHeader({
           <li>
             <Link
               href={localizedPath(locale, "/")}
-              className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
+              className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition duration-300 hover:text-gold"
             >
               {dictionary.home}
             </Link>
@@ -100,7 +100,7 @@ export function SiteHeader({
           <li className="group relative">
             <button
               type="button"
-              className="flex min-h-12 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold focus:outline-none focus:text-gold"
+              className="link-underline flex min-h-12 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition duration-300 hover:text-gold focus:outline-none focus:text-gold"
             >
               Perfumes
               <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
@@ -134,7 +134,7 @@ export function SiteHeader({
               href={requestUrl}
               target="_blank"
               rel="noreferrer"
-              className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-gold transition hover:text-ink"
+              className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-gold transition duration-300 hover:text-ink"
             >
               REQ FRAGRANCE
             </a>
@@ -142,7 +142,7 @@ export function SiteHeader({
           <li>
             <Link
               href={localizedPath(locale, "/testimonials")}
-              className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
+              className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition duration-300 hover:text-gold"
             >
               {dictionary.testimonials}
             </Link>
@@ -150,7 +150,7 @@ export function SiteHeader({
           <li>
             <Link
               href={localizedPath(locale, "/contact")}
-              className="flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition hover:text-gold"
+              className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition duration-300 hover:text-gold"
             >
               {dictionary.contact}
             </Link>

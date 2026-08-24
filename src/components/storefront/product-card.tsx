@@ -27,10 +27,12 @@ export function ProductCard({
   dictionary: Pick<Dictionary, "status" | "product">;
   locale: Locale;
 }) {
+  const hoverImageUrl = product.galleryUrls.find((url) => url && url !== product.imageUrl);
+
   return (
     <Link
       href={localizedPath(locale, `/products/${product.slug}`)}
-      className="group block min-w-0 border border-ink/10 bg-paper transition hover:border-ink/30 hover:bg-white focus:outline-none focus:ring-2 focus:ring-gold/60"
+      className="group block min-w-0 border border-ink/10 bg-paper transition duration-300 hover:border-ink/30 hover:bg-white focus:outline-none focus:ring-2 focus:ring-gold/60"
     >
       <div className="relative aspect-square overflow-hidden bg-warm">
         <Image
@@ -38,9 +40,19 @@ export function ProductCard({
           alt={`${product.brandName} ${product.name}`}
           fill
           sizes="(min-width: 1280px) 20vw, (min-width: 768px) 25vw, 50vw"
-          className="object-cover transition duration-500 group-hover:scale-[1.03]"
+          className="object-cover transition duration-700 ease-out group-hover:scale-[1.04]"
           priority={priority}
         />
+        {hoverImageUrl ? (
+          <Image
+            src={hoverImageUrl}
+            alt=""
+            aria-hidden="true"
+            fill
+            sizes="(min-width: 1280px) 20vw, (min-width: 768px) 25vw, 50vw"
+            className="object-cover opacity-0 transition duration-700 ease-out group-hover:scale-[1.04] group-hover:opacity-100"
+          />
+        ) : null}
       </div>
       <div className="space-y-2 p-3 sm:p-4">
         <div className="flex min-w-0 items-start justify-between gap-3">

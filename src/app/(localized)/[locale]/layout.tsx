@@ -40,7 +40,7 @@ export default async function StorefrontLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd(locale)) }}
         />
-        <AnnouncementBar text={dictionary.announcement} />
+        <AnnouncementBar items={dictionary.announcementItems} text={dictionary.announcement} />
         <SiteHeader locale={locale} dictionary={dictionary.nav} />
         {children}
         <SiteFooter locale={locale} dictionary={dictionary} />

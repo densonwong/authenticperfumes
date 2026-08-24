@@ -41,7 +41,7 @@ export function RequestFragranceCta({
         href={requestUrl}
         target="_blank"
         rel="noreferrer"
-        className="mt-5 inline-flex w-full justify-center border border-gold bg-gold px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:border-paper hover:bg-paper hover:text-ink lg:mt-0 lg:w-auto"
+        className="mt-5 inline-flex w-full justify-center border border-gold bg-gold px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition duration-300 hover:border-paper hover:bg-paper hover:text-ink active:scale-[0.98] lg:mt-0 lg:w-auto"
       >
         Request Fragrance
       </a>

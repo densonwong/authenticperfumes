@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 type WhatsAppFloatingButtonProps = {
@@ -9,7 +10,8 @@ export function WhatsAppFloatingButton({ label, message }: WhatsAppFloatingButto
   return (
     <a
       href={buildWhatsAppUrl(message)}
-      className="fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-ink/20 transition hover:bg-[#1ebe5d] focus:outline-none focus:ring-2 focus:ring-[#25D366]/70 focus:ring-offset-2 focus:ring-offset-paper"
+      className="pulse-ring fixed bottom-5 right-5 z-50 inline-flex h-12 w-12 items-center justify-center rounded-full bg-[#25D366] text-white shadow-xl shadow-ink/20 transition duration-300 hover:bg-[#1ebe5d] active:scale-[0.96] focus:outline-none focus:ring-2 focus:ring-[#25D366]/70 focus:ring-offset-2 focus:ring-offset-paper"
+      style={{ "--pulse-color": "#25D366" } as CSSProperties}
       target="_blank"
       rel="noreferrer"
       aria-label={label}

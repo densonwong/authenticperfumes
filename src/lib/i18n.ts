@@ -16,6 +16,7 @@ export function normalizeLocale(value: string | undefined | null): Locale {
 
 export type Dictionary = {
   announcement: string;
+  announcementItems: string[];
   nav: Record<
     | "home"
     | "shop"
@@ -140,6 +141,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
   en: {
     announcement:
       "100% ORIGINAL - BEBAS REQUEST BRAND PARFUM",
+    announcementItems: [
+      "100% ORIGINAL",
+      "READY STOCK",
+      "FREE SCENT CONSULTATION",
+      "SHIPPING NATIONWIDE"
+    ],
     nav: {
       home: "Home",
       shop: "Shop",
@@ -274,6 +281,12 @@ export const dictionaries: Record<Locale, Dictionary> = {
   id: {
     announcement:
       "100% ORIGINAL - BEBAS REQUEST BRAND PARFUM",
+    announcementItems: [
+      "100% ORIGINAL",
+      "READY STOCK",
+      "GRATIS KONSULTASI SCENT",
+      "KIRIM SELURUH INDONESIA"
+    ],
     nav: {
       home: "Home",
       shop: "Belanja",

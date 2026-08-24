@@ -2,6 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 import { Reveal } from "@/components/motion/reveal";
 import { BrandCloud } from "@/components/storefront/brand-cloud";
+import { BrandMarquee } from "@/components/storefront/brand-marquee";
 import { CollectionTile } from "@/components/storefront/collection-tile";
 import { ProductSlider } from "@/components/storefront/product-slider";
 import { TrustStrip } from "@/components/storefront/trust-strip";
@@ -9,6 +10,7 @@ import {
   getBanners,
   getBestSellers,
   getFeaturedBrands,
+  getLogoWallBrands,
   getNewArrivals,
   getReadyStockProducts
 } from "@/lib/repositories/catalog";
@@ -87,13 +89,15 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     newArrivals,
     bestSellers,
     readyStock,
-    featuredBrands
+    featuredBrands,
+    logoWallBrands
   ] = await Promise.all([
     getBanners(),
     getNewArrivals(),
     getBestSellers(),
     getReadyStockProducts(),
-    getFeaturedBrands()
+    getFeaturedBrands(),
+    getLogoWallBrands()
   ]);
 
   const normalizedBanners = banners.map((inputBanner) => {
@@ -139,6 +143,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       </section>
 
       <TrustStrip dictionary={dictionary.trust} />
+
+      <BrandMarquee brands={logoWallBrands} label={dictionary.home.featuredHouses} locale={locale} />
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <Reveal>
@@ -195,7 +201,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               href={consultationUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex justify-center border border-paper/25 px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] transition hover:border-paper hover:bg-paper hover:text-ink"
+              className="inline-flex justify-center border border-paper/25 px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] transition duration-300 hover:border-paper hover:bg-paper hover:text-ink active:scale-[0.98]"
             >
               {dictionary.home.consultNow}
             </a>
@@ -233,7 +239,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               href={requestUrl}
               target="_blank"
               rel="noreferrer"
-              className="inline-flex w-full justify-center bg-ink px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition hover:bg-gold sm:w-auto"
+              className="inline-flex w-full justify-center bg-ink px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition duration-300 hover:bg-gold active:scale-[0.98] sm:w-auto"
             >
               {dictionary.home.requestViaWhatsApp}
             </a>
