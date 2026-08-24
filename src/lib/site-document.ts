@@ -1,20 +1,26 @@
 import type { Metadata } from "next";
-import { Montserrat, Open_Sans } from "next/font/google";
+import { Italiana, Jost } from "next/font/google";
 import { siteUrl, SITE_NAME } from "@/lib/seo";
 
-const montserrat = Montserrat({
+// Jost is the closest free stand-in for Futura, the geometric sans behind the
+// straight, wide-tracked look of houses like Louis Vuitton. It carries every
+// piece of interface text.
+const jost = Jost({
   subsets: ["latin"],
-  weight: "300",
-  variable: "--font-logo"
+  weight: ["300", "400", "500", "600"],
+  variable: "--font-sans-face"
 });
 
-const openSans = Open_Sans({
+// Italiana is reserved for the wordmark and headings: high contrast, tall
+// lowercase, one weight only. It is a display face and should never be asked to
+// set body copy or interface labels.
+const italiana = Italiana({
   subsets: ["latin"],
-  weight: ["400", "600", "700"],
-  variable: "--font-caps"
+  weight: "400",
+  variable: "--font-display-face"
 });
 
-export const documentClassName = `${montserrat.variable} ${openSans.variable}`;
+export const documentClassName = `${jost.variable} ${italiana.variable}`;
 
 export const siteMetadata: Metadata = {
   metadataBase: new URL(siteUrl()),

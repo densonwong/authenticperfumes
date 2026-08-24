@@ -78,10 +78,6 @@ export type Dictionary = {
     | "brand"
     | "allBrands"
     | "gender"
-    | "note"
-    | "anyNote"
-    | "price"
-    | "anyPrice"
     | "size"
     | "anySize"
     | "noTitle"
@@ -217,20 +213,16 @@ export const dictionaries: Record<Locale, Dictionary> = {
     shop: {
       catalog: "Catalog",
       title: "Shop fragrances",
-      body: "Filter curated bottles by house, note, price, size, and fulfillment status.",
+      body: "Filter curated bottles by house, gender, size, and fulfillment status.",
       refine: "Refine",
-      searchPlaceholder: "Brand, note, perfume",
+      searchPlaceholder: "Brand or perfume name",
       brand: "Brand",
       allBrands: "All brands",
       gender: "Gender",
-      note: "Note",
-      anyNote: "Any note",
-      price: "Price",
-      anyPrice: "Any price",
       size: "Size",
       anySize: "Any size",
       noTitle: "No matching bottles",
-      noBody: "Try removing a status toggle or broadening the note and price filters.",
+      noBody: "Try removing a status toggle or widening the brand and size filters.",
       of: "of"
     },
     forms: {
@@ -357,20 +349,16 @@ export const dictionaries: Record<Locale, Dictionary> = {
     shop: {
       catalog: "Katalog",
       title: "Belanja parfum",
-      body: "Filter botol pilihan berdasarkan brand, notes, harga, ukuran, dan status pemenuhan.",
+      body: "Filter botol pilihan berdasarkan brand, gender, ukuran, dan status pemenuhan.",
       refine: "Filter",
-      searchPlaceholder: "Brand, notes, parfum",
+      searchPlaceholder: "Brand atau nama parfum",
       brand: "Brand",
       allBrands: "Semua brand",
       gender: "Gender",
-      note: "Notes",
-      anyNote: "Semua notes",
-      price: "Harga",
-      anyPrice: "Semua harga",
       size: "Ukuran",
       anySize: "Semua ukuran",
       noTitle: "Tidak ada botol yang cocok",
-      noBody: "Coba hapus filter status atau perluas filter notes dan harga.",
+      noBody: "Coba hapus filter status atau perluas filter brand dan ukuran.",
       of: "dari"
     },
     forms: {

@@ -14,8 +14,6 @@ type FilterPanelProps = {
     q?: string;
     brand?: string;
     gender?: string;
-    note?: string;
-    price?: string;
     size?: string;
     readyStock?: string;
     preOrder?: string;
@@ -25,13 +23,6 @@ type FilterPanelProps = {
   dictionary: Dictionary["shop"] & Dictionary["common"];
   locale: Locale;
 };
-
-const priceBands = [
-  { value: "under-1m", label: "Under Rp1m" },
-  { value: "1m-3m", label: "Rp1m - Rp3m" },
-  { value: "3m-5m", label: "Rp3m - Rp5m" },
-  { value: "over-5m", label: "Over Rp5m" }
-];
 
 const genders: Array<{ value: Gender; label: string }> = [
   { value: "unisex", label: "Unisex" },
@@ -52,18 +43,13 @@ function uniqueSorted(values: string[]) {
 
 export function FilterPanel({ brands, products, selected, dictionary, locale }: FilterPanelProps) {
   const [brand, setBrand] = useState(selected.brand ?? "");
-  const [note, setNote] = useState(selected.note ?? "");
-  const [price, setPrice] = useState(selected.price ?? "");
   const [size, setSize] = useState(selected.size ?? "");
-  const notes = uniqueSorted(products.flatMap((product) => product.notes));
   const sizes = uniqueSorted(products.flatMap((product) => product.variants.map((variant) => variant.size)));
 
   useEffect(() => {
     setBrand(selected.brand ?? "");
-    setNote(selected.note ?? "");
-    setPrice(selected.price ?? "");
     setSize(selected.size ?? "");
-  }, [selected.brand, selected.note, selected.price, selected.size]);
+  }, [selected.brand, selected.size]);
 
   return (
     <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:self-start">
@@ -131,44 +117,6 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
             ))}
           </div>
         </div>
-
-        <label className="block">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            {dictionary.note}
-          </span>
-          <input type="hidden" name="note" value={note} />
-          <div className="mt-2">
-            <CustomSelect
-              value={note}
-              onChange={setNote}
-              placeholder={dictionary.anyNote}
-              options={[
-                { value: "", label: dictionary.anyNote },
-                ...notes.map((item) => ({ value: item, label: item }))
-              ]}
-              ariaLabel={dictionary.note}
-            />
-          </div>
-        </label>
-
-        <label className="block">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            {dictionary.price}
-          </span>
-          <input type="hidden" name="price" value={price} />
-          <div className="mt-2">
-            <CustomSelect
-              value={price}
-              onChange={setPrice}
-              placeholder={dictionary.anyPrice}
-              options={[
-                { value: "", label: dictionary.anyPrice },
-                ...priceBands
-              ]}
-              ariaLabel={dictionary.price}
-            />
-          </div>
-        </label>
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">

@@ -11,7 +11,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale = normalizeLocale((await params).locale);
   return localizedPageMetadata(locale, "/shop", {
     title: "Shop Fragrances",
-    description: "Browse authentic niche and designer perfumes with ready stock, pre-order, and price filters."
+    description: "Browse authentic niche and designer perfumes with ready stock and pre-order filters."
   });
 }
 
@@ -27,32 +27,12 @@ function selectedFrom(searchParams: Awaited<SearchParams>) {
     q: valueOf(searchParams, "q"),
     brand: valueOf(searchParams, "brand"),
     gender: valueOf(searchParams, "gender"),
-    note: valueOf(searchParams, "note"),
-    price: valueOf(searchParams, "price"),
     size: valueOf(searchParams, "size"),
     readyStock: valueOf(searchParams, "readyStock"),
     preOrder: valueOf(searchParams, "preOrder"),
     bestSeller: valueOf(searchParams, "bestSeller"),
     newArrival: valueOf(searchParams, "newArrival")
   };
-}
-
-function priceMatches(product: Product, band?: string) {
-  if (!band) return true;
-  const numericPrices = product.variants
-    .map((variant) => variant.authenticPrice)
-    .filter((price) => price > 0);
-
-  if (numericPrices.length === 0) return false;
-
-  const lowest = Math.min(...numericPrices);
-
-  if (band === "under-1m") return lowest < 1000000;
-  if (band === "1m-3m") return lowest >= 1000000 && lowest < 3000000;
-  if (band === "3m-5m") return lowest >= 3000000 && lowest < 5000000;
-  if (band === "over-5m") return lowest >= 5000000;
-
-  return true;
 }
 
 function filterProducts(products: Product[], selected: ReturnType<typeof selectedFrom>) {
@@ -74,9 +54,7 @@ function filterProducts(products: Product[], selected: ReturnType<typeof selecte
     if (q && !searchable.includes(q)) return false;
     if (selected.brand && product.brandId !== `brand-${selected.brand}` && product.brandName.toLowerCase() !== selected.brand.replaceAll("-", " ")) return false;
     if (selected.gender && product.gender !== selected.gender) return false;
-    if (selected.note && !product.notes.some((note) => note.toLowerCase() === selected.note?.toLowerCase())) return false;
     if (selected.size && !product.variants.some((variant) => variant.size === selected.size)) return false;
-    if (!priceMatches(product, selected.price)) return false;
     if (selected.readyStock === "true" && !product.readyStock) return false;
     if (selected.preOrder === "true" && !product.preOrder) return false;
     if (selected.bestSeller === "true" && !product.bestSeller) return false;

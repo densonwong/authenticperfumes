@@ -55,11 +55,13 @@ export function ProductCard({
         ) : null}
       </div>
       <div className="space-y-2 p-3 sm:p-4">
-        <div className="flex min-w-0 items-start justify-between gap-3">
-          <p className="truncate text-[11px] font-semibold uppercase tracking-[0.16em] text-gold">
+        <div className="flex min-w-0 flex-col gap-0.5 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+          {/* Jost sets wider than the old face, so the tracking tightens on
+              narrow screens to keep the brand name from truncating. */}
+          <p className="truncate text-[11px] font-semibold uppercase tracking-[0.08em] text-gold sm:tracking-[0.16em]">
             {product.brandName}
           </p>
-          <p className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.12em] text-ink/55">
+          <p className="shrink-0 text-[11px] font-semibold uppercase tracking-[0.06em] text-ink/55 sm:tracking-[0.12em]">
             {dictionary.status[product.status as ProductStatus]}
           </p>
         </div>
