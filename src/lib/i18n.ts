@@ -111,9 +111,7 @@ export type Dictionary = {
   product: Record<
     | "selectedSize"
     | "stock"
-    | "retail"
     | "authentic"
-    | "savings"
     | "status"
     | "statusBody"
     | "installment"
@@ -250,9 +248,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     product: {
       selectedSize: "Selected size",
       stock: "stock",
-      retail: "Retail",
       authentic: "Authentic",
-      savings: "Savings",
       status: "Status",
       statusBody: "Final stock and dispatch timing are confirmed before payment through WhatsApp.",
       installment: "Split payment is available in 2-3 installments for selected bottles. Terms are confirmed through WhatsApp before payment.",
@@ -386,9 +382,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
     product: {
       selectedSize: "Ukuran dipilih",
       stock: "stok",
-      retail: "Retail",
       authentic: "Harga Authentic",
-      savings: "Hemat",
       status: "Status",
       statusBody: "Stok final dan waktu pengiriman dikonfirmasi sebelum pembayaran via WhatsApp.",
       installment: "Cicilan 2-3x tersedia untuk botol tertentu. Ketentuan dikonfirmasi via WhatsApp sebelum pembayaran.",

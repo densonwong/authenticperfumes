@@ -3,9 +3,9 @@
 @tailwind utilities;
 
 :root {
-  /* Jost for everything, Italiana for the wordmark and headings only. */
+  /* One family throughout; weight and tracking carry the hierarchy. */
   --font-sans: var(--font-sans-face), "Helvetica Neue", Arial, sans-serif;
-  --font-display: var(--font-display-face), Didot, "Times New Roman", serif;
+  --font-display: var(--font-sans-face), "Helvetica Neue", Arial, sans-serif;
   background: #f2f2f0;
   color: #111111;
 }
@@ -26,10 +26,21 @@ body {
   font-weight: 400;
 }
 
-/* The wordmark. Italiana has a single weight, so tracking does the work. */
+/* The wordmark: Futura Medium in all caps with wide tracking. */
 .font-logo {
   font-family: var(--font-display);
-  font-weight: 400;
+  font-weight: 500;
+}
+
+/*
+ * Display headings - section titles like "Best Seller" and page titles. Light
+ * at display sizes is the whole point of the reference: the strokes stay thin
+ * and the line reads as one clean rule. Kept as a rule on the utility rather
+ * than sprinkling `font-light` across 35 call sites.
+ */
+.font-serif {
+  font-weight: 300;
+  letter-spacing: 0.005em;
 }
 
 button,

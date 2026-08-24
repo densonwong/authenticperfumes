@@ -1,26 +1,24 @@
 import type { Metadata } from "next";
-import { Italiana, Jost } from "next/font/google";
+import { Jost } from "next/font/google";
 import { siteUrl, SITE_NAME } from "@/lib/seo";
 
-// Jost is the closest free stand-in for Futura, the geometric sans behind the
-// straight, wide-tracked look of houses like Louis Vuitton. It carries every
-// piece of interface text.
+/**
+ * Jost is the closest free stand-in for Futura, and it now sets the entire
+ * site: no second family. Real Futura PT is a licensed commercial face, not
+ * available from Google Fonts, so switching to it would mean buying a licence
+ * and self-hosting the files.
+ *
+ * The Futura look comes from weight and tracking discipline rather than from a
+ * contrasting family: 500 (Medium) for the wordmark, 300 (Light) for headings,
+ * 400 for copy, and wide tracking on anything uppercase.
+ */
 const jost = Jost({
   subsets: ["latin"],
   weight: ["300", "400", "500", "600"],
   variable: "--font-sans-face"
 });
 
-// Italiana is reserved for the wordmark and headings: high contrast, tall
-// lowercase, one weight only. It is a display face and should never be asked to
-// set body copy or interface labels.
-const italiana = Italiana({
-  subsets: ["latin"],
-  weight: "400",
-  variable: "--font-display-face"
-});
-
-export const documentClassName = `${jost.variable} ${italiana.variable}`;
+export const documentClassName = jost.variable;
 
 export const siteMetadata: Metadata = {
   metadataBase: new URL(siteUrl()),

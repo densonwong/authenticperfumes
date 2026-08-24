@@ -14,12 +14,12 @@ const config: Config = {
         gold: "#9A7A36"
       },
       fontFamily: {
-        // `serif` is what every heading in the storefront already asks for, so
-        // it maps to the display face rather than an actual serif stack.
-        serif: ["var(--font-display)", "Didot", "Times New Roman", "serif"],
-        display: ["var(--font-display)", "Didot", "Times New Roman", "serif"],
+        // Every alias resolves to the same Futura-like face; see globals.css for
+        // the weight rules that separate wordmark, headings, and copy.
+        serif: ["var(--font-display)", "Helvetica Neue", "Arial", "sans-serif"],
+        display: ["var(--font-display)", "Helvetica Neue", "Arial", "sans-serif"],
         caps: ["var(--font-sans)", "Helvetica Neue", "Arial", "sans-serif"],
-        logo: ["var(--font-display)", "Didot", "Times New Roman", "serif"],
+        logo: ["var(--font-display)", "Helvetica Neue", "Arial", "sans-serif"],
         sans: ["var(--font-sans)", "Helvetica Neue", "Arial", "sans-serif"]
       },
       borderRadius: {

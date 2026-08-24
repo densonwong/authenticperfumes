@@ -5,7 +5,7 @@ import { localizedPath } from "@/lib/localized-paths";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
-function getPriceRange(product: Product, key: "retailPrice" | "authenticPrice") {
+function getPriceRange(product: Product, key: "authenticPrice") {
   const prices = product.variants.map((variant) => variant[key]).filter((price) => price > 0);
 
   if (prices.length === 0) return "Ask";
@@ -73,12 +73,6 @@ export function ProductCard({
         </div>
         <div className="border-t border-ink/10 pt-2 text-sm text-ink">
           <div className="flex items-center justify-between gap-3">
-            <span className="text-[11px] uppercase tracking-[0.12em] text-ink/45">
-              {dictionary.product.retail}
-            </span>
-            <span className="text-xs text-ink/55 line-through">{getPriceRange(product, "retailPrice")}</span>
-          </div>
-          <div className="mt-1 flex items-center justify-between gap-3">
             <span className="text-[11px] uppercase tracking-[0.12em] text-ink/45">
               {dictionary.product.authentic}
             </span>

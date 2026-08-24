@@ -46,7 +46,7 @@ function SectionHeader({
             {eyebrow}
           </p>
         ) : null}
-        <h2 className="mt-2 font-serif text-2xl leading-tight text-ink sm:text-3xl">{title}</h2>
+        <h2 className="mt-2 font-serif text-[28px] leading-tight text-ink sm:text-[30px]">{title}</h2>
       </div>
       {href ? (
         <Link
@@ -115,7 +115,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   });
   const primaryBanner =
     normalizedBanners.find((banner) => banner.position === "primary") ?? normalizedBanners[0];
-  const secondaryBanners = normalizedBanners.filter((banner) => banner.id !== primaryBanner?.id).slice(0, 2);
   const consultationUrl = buildWhatsAppUrl(
     locale === "id"
       ? "Halo Authentic Perfumes 8, saya ingin konsultasi parfum dan request brand."
@@ -129,18 +128,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <main className="bg-paper">
-      <section className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
-        <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-          {primaryBanner ? (
-            <CollectionTile banner={primaryBanner} priority dictionary={dictionary.tile} headingLevel={1} locale={locale} />
-          ) : null}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
-            {secondaryBanners.map((banner) => (
-              <CollectionTile key={banner.id} banner={banner} dictionary={dictionary.tile} locale={locale} />
-            ))}
-          </div>
-        </div>
-      </section>
+      {primaryBanner ? (
+        <section className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+          <CollectionTile
+            banner={primaryBanner}
+            priority
+            dictionary={dictionary.tile}
+            headingLevel={1}
+            locale={locale}
+            full
+          />
+        </section>
+      ) : null}
 
       <TrustStrip dictionary={dictionary.trust} />
 
