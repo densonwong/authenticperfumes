@@ -10,32 +10,116 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   const locale = normalizeLocale((await params).locale);
   return localizedPageMetadata(locale, "/pre-order", {
     title: "Pre Order",
-    description: "Understand Authentic Perfumes 8 pre-order process, sourcing updates, and refund policy."
+    description: "Understand Authentic Perfumes 8 pre-order process, payment policy, shipping, and order terms."
   });
 }
 
 const process = [
-  "Share the fragrance, size, target budget, and preferred timeline through WhatsApp.",
-  "We confirm sourcing availability, estimated landed price, ETA, and payment terms before ordering.",
-  "After confirmation, the bottle is purchased through trusted channels and progress updates are sent.",
-  "Arrival photos, authenticity checks, and shipping details are shared before final dispatch."
-];
-
-const refundPolicy = [
-  "If we cannot source or verify the promised bottle, your paid amount is refunded.",
-  "Refunds do not apply after a confirmed special order is successfully sourced as agreed, unless the item cannot be fulfilled or verified."
+  "Send the perfume name, variant, and desired size through WhatsApp.",
+  "We will confirm availability, the estimated price, and payment terms before ordering.",
+  "Once confirmed, the perfume will be processed and we will provide updates throughout the process.",
+  "After the item arrives, the order will be prepared and shipped to you."
 ];
 
 const processId = [
-  "Kirim parfum, ukuran, target budget, dan timeline yang diinginkan via WhatsApp.",
-  "Kami konfirmasi sourcing availability, estimasi landed price, ETA, dan terms pembayaran sebelum order.",
-  "Setelah konfirmasi, botol dibeli melalui channel terpercaya dan update progres dikirim.",
-  "Foto arrival, pengecekan autentikasi, dan detail pengiriman dibagikan sebelum dispatch final."
+  "Kirim nama parfum, varian, dan ukuran yang diinginkan melalui WhatsApp.",
+  "Kami akan mengonfirmasi ketersediaan, estimasi harga, dan ketentuan pembayaran sebelum pemesanan.",
+  "Setelah dikonfirmasi, parfum akan diproses dan kami akan memberikan update selama proses berlangsung.",
+  "Setelah barang tiba, pesanan akan disiapkan dan dikirim kepada Anda."
 ];
 
-const refundPolicyId = [
-  "Jika kami tidak bisa sourcing atau verifikasi botol sesuai janji, nominal yang sudah dibayar akan di-refund.",
-  "Refund tidak berlaku setelah special order yang sudah dikonfirmasi berhasil di-source sesuai kesepakatan, kecuali item tidak dapat dipenuhi atau diverifikasi."
+const paymentPolicy = [
+  "Payment constitutes acceptance of the terms.",
+  "All transactions are final and cannot be cancelled or exchanged.",
+  "Deposits and payments already received are non-refundable. If an order is cancelled, the deposit or payment is forfeited.",
+  "If the item is unavailable, a 100% refund will be issued."
+];
+
+const paymentPolicyId = [
+  "Pembayaran merupakan tanda persetujuan.",
+  "Semua transaksi bersifat final (tidak dapat dibatalkan/ditukar).",
+  "DP maupun pembayaran yang sudah masuk tidak dapat dikembalikan. Jika dibatalkan maka DP/payment hangus.",
+  "Jika barang tidak tersedia, akan dilakukan refund 100%."
+];
+
+const termsGroups = [
+  {
+    title: "Ready Stock",
+    items: [
+      "Full payment is required to secure the item.",
+      "Reservations or holds are not available."
+    ]
+  },
+  {
+    title: "Pre-Order (PO)",
+    items: [
+      "A minimum 50% deposit is required.",
+      "Deposits below 50% are only available for selected trips and must be confirmed in advance.",
+      "For orders above IDR 15 million, a 50% deposit remains mandatory without exception."
+    ]
+  },
+  { title: "Payment Policy", items: paymentPolicy },
+  {
+    title: "Final Payment",
+    items: [
+      "Final payment is due when the item arrives in Indonesia and no later than seven days after notification."
+    ]
+  },
+  {
+    title: "Pre-Order Estimate",
+    items: [
+      "Arrival times may change depending on the logistics process.",
+      "Delays may occur for reasons outside our control, except for hand-carried items with a previously communicated schedule."
+    ]
+  },
+  {
+    title: "Order Shipping",
+    items: [
+      "Orders are shipped after full payment is received.",
+      "Complaints and claims must include an uninterrupted, uncut unboxing video.",
+      "Complaints without video evidence cannot be processed."
+    ]
+  }
+];
+
+const termsGroupsId = [
+  {
+    title: "Ready Stock",
+    items: [
+      "Pembayaran penuh diperlukan untuk mengamankan barang.",
+      "Tidak dapat dilakukan reservasi/hold."
+    ]
+  },
+  {
+    title: "Pre-Order (PO)",
+    items: [
+      "Minimal DP 50%.",
+      "Pengecualian untuk DP di bawah 50% hanya berlaku untuk trip tertentu (silakan konfirmasi terlebih dahulu).",
+      "Namun, pesanan >15 juta: DP tetap wajib 50% (tanpa pengecualian)."
+    ]
+  },
+  { title: "Kebijakan Pembayaran", items: paymentPolicyId },
+  {
+    title: "Pelunasan",
+    items: [
+      "Pelunasan pembayaran dilakukan saat barang tiba di Indonesia dan maksimal H+7 setelah pemberitahuan."
+    ]
+  },
+  {
+    title: "Estimasi Pre-Order",
+    items: [
+      "Waktu kedatangan dapat berubah mengikuti proses logistik.",
+      "Keterlambatan di luar kendali kami (pengecualian untuk item handcarry dengan jadwal yang telah diinformasikan)."
+    ]
+  },
+  {
+    title: "Pengiriman Pesanan",
+    items: [
+      "Pesanan akan dikirim setelah pembayaran lunas.",
+      "Komplain dan klaim wajib menyertakan video unboxing tanpa jeda (no cut).",
+      "Komplain tanpa bukti video tidak dapat diproses."
+    ]
+  }
 ];
 
 export default async function PreOrderPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -44,7 +128,8 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
   const products = await getPreOrderProducts();
   const isId = locale === "id";
   const processItems = isId ? processId : process;
-  const refundItems = isId ? refundPolicyId : refundPolicy;
+  const paymentPolicyItems = isId ? paymentPolicyId : paymentPolicy;
+  const localizedTermsGroups = isId ? termsGroupsId : termsGroups;
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "FAQPage",
@@ -60,10 +145,10 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
       },
       {
         "@type": "Question",
-        name: isId ? "Bagaimana kebijakan refund pre-order?" : "What is the pre-order refund policy?",
+        name: isId ? "Bagaimana kebijakan pembayaran pre-order?" : "What is the pre-order payment policy?",
         acceptedAnswer: {
           "@type": "Answer",
-          text: refundItems.join(" ")
+          text: paymentPolicyItems.join(" ")
         }
       }
     ]
@@ -82,12 +167,12 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
               {isId ? "Sistem Pre-Order" : "Pre-Order System"}
             </p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
-              {isId ? "Pre-order dengan checkpoint jelas" : "Pre-order with clear checkpoints"}
+              {isId ? "Pre-order dengan proses yang jelas" : "Pre-order with a clear process"}
             </h1>
             <p className="mt-4 text-sm leading-7 text-ink/68">
               {isId
-                ? "Pre-order untuk botol yang belum ready stock. Kami konfirmasi availability, harga, ETA, dan ekspektasi autentikasi sebelum Anda commit."
-                : "Pre-order is for bottles that are not currently ready stock. We confirm availability, price, ETA, and authenticity expectations before you commit."}
+                ? "Untuk parfum yang belum tersedia ready stock, kami akan mengonfirmasi ketersediaan, harga, estimasi kedatangan, dan detail produk sebelum Anda melakukan pemesanan."
+                : "For fragrances that are not available as ready stock, we will confirm availability, price, estimated arrival, and product details before you place an order."}
             </p>
             <a
               href={buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin menanyakan pre-order parfum.")}
@@ -108,21 +193,24 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
                 ))}
               </ol>
             </section>
-            <section id="refund" className="scroll-mt-32 border border-ink/10 bg-paper p-5">
-              <h2 className="font-serif text-2xl text-ink">{isId ? "Kebijakan refund" : "Refund policy"}</h2>
-              <ul className="mt-4 space-y-3">
-                {refundItems.map((item) => (
+            <section id="payment-policy" className="scroll-mt-32 border border-ink/10 bg-paper p-5">
+              <h2 className="font-serif text-2xl text-ink">
+                {isId ? "Kebijakan Pembayaran" : "Payment Policy"}
+              </h2>
+              <ol className="mt-4 space-y-3">
+                {paymentPolicyItems.map((item, index) => (
                   <li key={item} className="text-sm leading-6 text-ink/70">
+                    <span className="font-semibold text-ink">{index + 1}. </span>
                     {item}
                   </li>
                 ))}
-              </ul>
+              </ol>
             </section>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-3 lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 lg:grid-cols-[0.7fr_1.3fr] lg:px-8">
         <section id="shipping" className="scroll-mt-32 border border-ink/10 bg-warm/45 p-5">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
             {isId ? "Pengiriman" : "Shipping"}
@@ -132,35 +220,29 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
           </h2>
           <p className="mt-3 text-sm leading-6 text-ink/70">
             {isId
-              ? "Ready stock dikirim setelah stok dan pembayaran terkonfirmasi. Untuk pre-order, pengiriman dilakukan setelah barang tiba, dicek, dan siap dispatch."
-              : "Ready stock ships after stock and payment are confirmed. For pre-order, dispatch happens after arrival, checking, and final confirmation."}
-          </p>
-        </section>
-        <section id="payment" className="scroll-mt-32 border border-ink/10 bg-warm/45 p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-            {isId ? "Pembayaran" : "Payment"}
-          </p>
-          <h2 className="mt-3 font-serif text-2xl text-ink">
-            {isId ? "Pembayaran fleksibel" : "Flexible payment"}
-          </h2>
-          <p className="mt-3 text-sm leading-6 text-ink/70">
-            {isId
-              ? "Pembayaran bertahap 2-3x tersedia untuk produk tertentu. Detail nominal, deadline, dan pelunasan dikonfirmasi via WhatsApp sebelum order."
-              : "2-3x installment payment is available for selected products. Amounts, deadlines, and settlement details are confirmed through WhatsApp before ordering."}
+              ? "Pesanan ready stock dikirim setelah pembayaran terkonfirmasi. Untuk pre-order, pengiriman dilakukan setelah barang tiba dan siap dikirim kepada Anda."
+              : "Ready-stock orders are shipped after payment is confirmed. Pre-orders are shipped after the item arrives and is ready to be sent to you."}
           </p>
         </section>
         <section id="terms" className="scroll-mt-32 border border-ink/10 bg-warm/45 p-5">
-          <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
+          <h2 className="font-serif text-2xl text-ink">
             {isId ? "Syarat dan Ketentuan" : "Terms and Conditions"}
-          </p>
-          <h2 className="mt-3 font-serif text-2xl text-ink">
-            {isId ? "Konfirmasi sebelum pembayaran" : "Confirm before payment"}
           </h2>
-          <p className="mt-3 text-sm leading-6 text-ink/70">
-            {isId
-              ? "Harga, stok, ETA, opsi cicilan, dan kebijakan refund dikonfirmasi melalui WhatsApp sebelum transaksi dilanjutkan."
-              : "Price, stock, ETA, installment options, and refund terms are confirmed through WhatsApp before the transaction proceeds."}
-          </p>
+          <div className="mt-5 grid gap-5 sm:grid-cols-2">
+            {localizedTermsGroups.map((group) => (
+              <div key={group.title}>
+                <h3 className="text-sm font-semibold text-ink">{group.title}</h3>
+                <ul className="mt-2 space-y-2">
+                  {group.items.map((item) => (
+                    <li key={item} className="flex gap-2 text-sm leading-6 text-ink/70">
+                      <span aria-hidden="true">-</span>
+                      <span>{item}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </section>
       </section>
 

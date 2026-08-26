@@ -191,7 +191,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       requestFragrance: "Request fragrance",
       requestTitle: "Looking for something specific? Contact us now",
       requestBody:
-        "Share the house, size, and preferred timeline. We will confirm availability, estimated landed price, and ordering options through WhatsApp.",
+        "Send the brand, fragrance variant, and desired size. We will confirm availability, the estimated price, and ordering options through WhatsApp.",
       requestViaWhatsApp: "Contact us now"
     },
     trust: {
@@ -325,7 +325,7 @@ export const dictionaries: Record<Locale, Dictionary> = {
       requestFragrance: "Request parfum",
       requestTitle: "Looking for something specific? Contact us now",
       requestBody:
-        "Kirim brand, ukuran, dan timeline yang diinginkan. Kami akan konfirmasi ketersediaan, estimasi harga landed, dan opsi order via WhatsApp.",
+        "Kirim brand, varian parfum, dan ukuran yang diinginkan. Kami akan mengonfirmasi ketersediaan, estimasi harga, dan opsi pemesanan melalui WhatsApp.",
       requestViaWhatsApp: "Contact us now"
     },
     trust: {
