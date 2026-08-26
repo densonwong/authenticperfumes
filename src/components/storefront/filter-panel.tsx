@@ -51,7 +51,7 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
   }, [selected.brand, selected.size]);
 
   return (
-    <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:self-start">
+    <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:max-h-[calc(100dvh-9rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain">
       <div className="mb-5 flex items-center justify-between gap-4 border-b border-ink/10 pb-4">
         <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">{dictionary.refine}</h2>
         <Link href={localizedPath(locale, "/shop")} className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
