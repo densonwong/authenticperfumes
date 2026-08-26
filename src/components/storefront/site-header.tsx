@@ -11,6 +11,7 @@ import {
 import { LanguageToggle } from "@/components/storefront/language-toggle";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
+import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const perfumeItems = [
   { label: "Discover All Fragrances", href: "/shop" },
@@ -30,6 +31,11 @@ export function SiteHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPerfumesOpen, setIsPerfumesOpen] = useState(false);
   const MenuIcon = isMenuOpen ? X : Menu;
+  const requestUrl = buildWhatsAppUrl(
+    locale === "id"
+      ? "Halo Authentic Perfumes 8, saya ingin request fragrance. Mohon bantu cek stok, harga, dan opsi sourcing."
+      : "Hello Authentic Perfumes 8, I would like to request a fragrance. Please help check stock, price, and sourcing options."
+  );
   const perfumeLinks = perfumeItems.map((item) => ({
     ...item,
     href: localizedPath(locale, item.href)
@@ -110,6 +116,16 @@ export function SiteHeader({
             </div>
           </li>
           <li>
+            <a
+              href={requestUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-gold transition duration-300 hover:text-ink"
+            >
+              REQ FRAGRANCE
+            </a>
+          </li>
+          <li>
             <Link
               href={localizedPath(locale, "/testimonials")}
               className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-ink transition duration-300 hover:text-gold"
@@ -170,6 +186,17 @@ export function SiteHeader({
                 ))}
               </div>
             ) : null}
+          </li>
+          <li>
+            <a
+              href={requestUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => setIsMenuOpen(false)}
+              className="flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.18em] text-gold transition hover:text-ink"
+            >
+              REQ FRAGRANCE
+            </a>
           </li>
           <li>
             <Link
