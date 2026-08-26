@@ -3,6 +3,7 @@ import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
 import { getDictionary, normalizeLocale } from "@/lib/i18n";
+import { isReadyStockProduct } from "@/lib/product-availability";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
 import { localizedPageMetadata } from "@/lib/seo";
 import type { Product } from "@/lib/types";
@@ -55,7 +56,7 @@ function filterProducts(products: Product[], selected: ReturnType<typeof selecte
     if (selected.brand && product.brandId !== `brand-${selected.brand}` && product.brandName.toLowerCase() !== selected.brand.replaceAll("-", " ")) return false;
     if (selected.gender && product.gender !== selected.gender) return false;
     if (selected.size && !product.variants.some((variant) => variant.size === selected.size)) return false;
-    if (selected.readyStock === "true" && !product.readyStock) return false;
+    if (selected.readyStock === "true" && !isReadyStockProduct(product)) return false;
     if (selected.preOrder === "true" && !product.preOrder) return false;
     if (selected.bestSeller === "true" && !product.bestSeller) return false;
     if (selected.newArrival === "true" && !product.newArrival) return false;

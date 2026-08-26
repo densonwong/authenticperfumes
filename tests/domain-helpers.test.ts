@@ -10,6 +10,7 @@ import { slugify } from "../src/lib/slugs";
 import { isLocale } from "../src/lib/i18n";
 import { localizedPath, switchLocalePath } from "../src/lib/localized-paths";
 import { changedDetailPaths } from "../src/lib/cache-paths";
+import { isReadyStockProduct } from "../src/lib/product-availability";
 import { buildProductWhatsAppMessage, buildWhatsAppUrl, normalizeWhatsAppPhone } from "../src/lib/whatsapp";
 
 describe("domain helpers", () => {
@@ -88,6 +89,16 @@ describe("catalog detail invalidation paths", () => {
     expect(changedDetailPaths("products", "same-product", "same-product")).toEqual([
       "/products/same-product"
     ]);
+  });
+});
+
+describe("product availability", () => {
+  it("requires a ready flag and a ready-compatible status", () => {
+    expect(isReadyStockProduct({ readyStock: true, status: "ready_stock" })).toBe(true);
+    expect(isReadyStockProduct({ readyStock: true, status: "limited_stock" })).toBe(true);
+    expect(isReadyStockProduct({ readyStock: true, status: "pre_order" })).toBe(false);
+    expect(isReadyStockProduct({ readyStock: true, status: "out_of_stock" })).toBe(false);
+    expect(isReadyStockProduct({ readyStock: false, status: "ready_stock" })).toBe(false);
   });
 });
 

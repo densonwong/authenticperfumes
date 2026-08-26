@@ -8,6 +8,7 @@ import { unstable_cache } from "next/cache";
 import { generatedLogo, LOGO_WALL } from "@/lib/brand-logo-wall";
 import { catalogCacheTags } from "@/lib/catalog-cache";
 import { hasSupabaseConfig } from "@/lib/env";
+import { isReadyStockProduct } from "@/lib/product-availability";
 import { createSupabasePublicClient } from "@/lib/supabase/public";
 import type {
   Banner,
@@ -322,7 +323,7 @@ export async function getBestSellers() {
 }
 
 export async function getReadyStockProducts() {
-  return (await getProducts()).filter((product) => product.readyStock);
+  return (await getProducts()).filter(isReadyStockProduct);
 }
 
 export async function getPreOrderProducts() {
