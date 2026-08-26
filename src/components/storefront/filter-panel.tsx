@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { CustomSelect } from "@/components/admin/custom-select";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
+import { uniqueSortedProductSizes } from "@/lib/product-sizes";
 import type { Brand, Gender, Product } from "@/lib/types";
 
 type FilterPanelProps = {
@@ -37,14 +38,12 @@ const toggles = [
   { name: "newArrival", label: "New arrival" }
 ] as const;
 
-function uniqueSorted(values: string[]) {
-  return [...new Set(values)].sort((a, b) => a.localeCompare(b));
-}
-
 export function FilterPanel({ brands, products, selected, dictionary, locale }: FilterPanelProps) {
   const [brand, setBrand] = useState(selected.brand ?? "");
   const [size, setSize] = useState(selected.size ?? "");
-  const sizes = uniqueSorted(products.flatMap((product) => product.variants.map((variant) => variant.size)));
+  const sizes = uniqueSortedProductSizes(
+    products.flatMap((product) => product.variants.map((variant) => variant.size))
+  );
 
   useEffect(() => {
     setBrand(selected.brand ?? "");
