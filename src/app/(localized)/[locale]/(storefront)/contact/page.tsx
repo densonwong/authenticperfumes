@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Instagram, MapPin, MessageCircle } from "lucide-react";
+import { Instagram, MessageCircle } from "lucide-react";
 import { RequestFragranceForm } from "@/components/storefront/request-fragrance-form";
 import { getDictionary, normalizeLocale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
@@ -22,41 +22,29 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
     ? [
         {
           title: "WhatsApp",
-          body: "Contact Us Through WhatsApp for any inquiries: cek stok, harga, pre-order, dan request brand.",
+          body: "Hubungi kami melalui WhatsApp untuk informasi harga, ketersediaan produk, atau pertanyaan lainnya.",
           icon: MessageCircle,
           href: buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin bertanya tentang parfum.")
         },
         {
           title: "Instagram",
-          body: "Follow us for new arrivals update and any promotion di @authenticperfumes8_.",
+          body: "Ikuti @authenticperfumes8_ untuk mendapatkan informasi terbaru mengenai new arrivals, restock, dan promotion.",
           icon: Instagram,
           href: INSTAGRAM_URL
-        },
-        {
-          title: "Ship to All Indonesia",
-          body: "Pengiriman ke seluruh Indonesia dengan konfirmasi stok dan packing aman.",
-          icon: MapPin,
-          href: "/pre-order#shipping"
         }
       ]
     : [
         {
           title: "WhatsApp",
-          body: "Contact Us Through WhatsApp for any inquiries: stock checks, prices, pre-orders, and brand requests.",
+          body: "Contact us through WhatsApp for pricing, product availability, or any other questions.",
           icon: MessageCircle,
-          href: buildWhatsAppUrl("Halo Authentic Perfumes 8, saya ingin bertanya tentang parfum.")
+          href: buildWhatsAppUrl("Hello Authentic Perfumes 8, I would like to ask about a fragrance.")
         },
         {
           title: "Instagram",
-          body: "Follow us for new arrivals updates and any promotion at @authenticperfumes8_.",
+          body: "Follow @authenticperfumes8_ for the latest information on new arrivals, restocks, and promotions.",
           icon: Instagram,
           href: INSTAGRAM_URL
-        },
-        {
-          title: "Ship to All Indonesia",
-          body: "Nationwide Indonesia shipping with stock confirmation and safe packing.",
-          icon: MapPin,
-          href: "/pre-order#shipping"
         }
       ];
   const jsonLd = {
@@ -84,26 +72,28 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
             {dictionary.nav.contact}
           </p>
           <h1 className="mt-3 max-w-4xl font-serif text-4xl leading-tight text-ink">
-            {isId ? "Tanyakan stok, sourcing, atau shortlist parfum." : "Ask for stock, sourcing, or a fragrance shortlist."}
+            {isId
+              ? "Tanyakan stok, sourcing, atau rekomendasi parfum."
+              : "Ask about stock, sourcing, or fragrance recommendations."}
           </h1>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-ink/68">
             {isId
-              ? "Sertakan nama parfum, ukuran, budget, dan timeline agar kami bisa konfirmasi jalur terbaik dengan cepat."
-              : "Include the fragrance name, preferred size, budget, and timeline so we can confirm the right path quickly."}
+              ? "Sertakan nama parfum, ukuran, dan budget yang diinginkan. Tim kami akan membantu mengecek ketersediaan dan memberikan opsi terbaik untuk Anda."
+              : "Include the fragrance name, preferred size, and budget. Our team will check availability and provide the best options for you."}
           </p>
         </div>
       </section>
 
-      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-3 lg:px-8">
+      <section className="mx-auto grid max-w-7xl gap-4 px-4 py-10 md:grid-cols-2 lg:px-8">
         {contactOptions.map((option) => {
           const Icon = option.icon;
 
           return (
             <a
               key={option.title}
-              href={localizedPath(locale, option.href)}
-              target={option.href.startsWith("http") ? "_blank" : undefined}
-              rel={option.href.startsWith("http") ? "noreferrer" : undefined}
+              href={option.href}
+              target="_blank"
+              rel="noreferrer"
               className="border border-ink/10 bg-warm/45 p-5 transition hover:border-ink/35 hover:bg-white"
             >
               <Icon className="h-5 w-5 text-gold" aria-hidden="true" />
@@ -115,28 +105,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
       </section>
 
       <section className="border-t border-ink/10 px-4 py-10 lg:px-8">
-        <div className="mx-auto grid max-w-7xl gap-5 lg:grid-cols-[0.9fr_1.1fr]">
-          <div className="border border-ink/10 bg-warm/45 p-5">
-            <h2 className="font-serif text-2xl text-ink">{isId ? "Detail request WhatsApp" : "WhatsApp request details"}</h2>
-            <dl className="mt-5 grid gap-4 text-sm sm:grid-cols-2">
-              <div>
-                <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{isId ? "Produk" : "Product"}</dt>
-                <dd className="mt-1 text-ink/70">{isId ? "Brand, parfum, concentration, ukuran." : "Brand, perfume, concentration, size."}</dd>
-              </div>
-              <div>
-                <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">Budget</dt>
-                <dd className="mt-1 text-ink/70">{isId ? "Target landed price atau range harga." : "Target landed price or price band."}</dd>
-              </div>
-              <div>
-                <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">Timeline</dt>
-                <dd className="mt-1 text-ink/70">{isId ? "Ready stock, tanggal event, atau ETA fleksibel." : "Ready stock, event date, or flexible ETA."}</dd>
-              </div>
-              <div>
-                <dt className="font-semibold uppercase tracking-[0.12em] text-ink/45">{isId ? "Selera" : "Taste"}</dt>
-                <dd className="mt-1 text-ink/70">{isId ? "Suka, tidak suka, cuaca, dan occasion." : "Likes, dislikes, weather, and occasion."}</dd>
-              </div>
-            </dl>
-          </div>
+        <div className="mx-auto max-w-4xl">
           <RequestFragranceForm dictionary={dictionary.forms} />
         </div>
       </section>

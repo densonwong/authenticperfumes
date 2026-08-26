@@ -224,13 +224,13 @@ export const dictionaries: Record<Locale, Dictionary> = {
       of: "of"
     },
     forms: {
-      requestEyebrow: "Fragrance request",
-      requestTitle: "Request a perfume",
-      productName: "Product name",
-      brandName: "Brand name",
+      requestEyebrow: "Perfume request",
+      requestTitle: "Perfume Request",
+      productName: "Perfume Name",
+      brandName: "Brand Name",
       size: "Size",
       name: "Name",
-      contact: "WhatsApp number",
+      contact: "WhatsApp Number",
       sendRequest: "Request via WhatsApp",
       submitting: "Opening WhatsApp",
       requestSuccess: "Opening WhatsApp.",
@@ -358,10 +358,10 @@ export const dictionaries: Record<Locale, Dictionary> = {
       of: "dari"
     },
     forms: {
-      requestEyebrow: "Request parfum",
-      requestTitle: "Request parfum",
-      productName: "Nama parfum",
-      brandName: "Nama brand",
+      requestEyebrow: "Permintaan parfum",
+      requestTitle: "Permintaan Parfum",
+      productName: "Nama Parfum",
+      brandName: "Nama Brand",
       size: "Ukuran",
       name: "Nama",
       contact: "Nomor WhatsApp",
