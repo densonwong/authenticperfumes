@@ -28,10 +28,7 @@ export function TestimonialGrid({ testimonials }: { testimonials: Testimonial[] 
                   className="object-cover transition hover:scale-105"
                 />
               </button>
-              <div>
-                <p className="text-sm font-semibold text-ink">{testimonial.customerName}</p>
-                <p className="text-xs text-ink/55">{testimonial.productName}</p>
-              </div>
+              <p className="text-sm font-semibold text-ink">{testimonial.customerName}</p>
             </div>
             <p className="mt-4 text-sm leading-6 text-ink/70">&quot;{testimonial.quote}&quot;</p>
           </blockquote>
@@ -51,10 +48,9 @@ export function TestimonialGrid({ testimonials }: { testimonials: Testimonial[] 
             onClick={(event) => event.stopPropagation()}
           >
             <div className="mb-3 flex items-center justify-between gap-3">
-              <div className="min-w-0">
-                <p className="truncate text-sm font-semibold text-ink">{selected.customerName}</p>
-                <p className="truncate text-xs text-ink/55">{selected.productName}</p>
-              </div>
+              <p className="min-w-0 truncate text-sm font-semibold text-ink">
+                {selected.customerName}
+              </p>
               <button
                 type="button"
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-ink/15 text-ink transition hover:bg-warm focus:outline-none focus:ring-2 focus:ring-gold/60"

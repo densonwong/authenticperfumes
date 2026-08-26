@@ -11,11 +11,9 @@ import {
 import { LanguageToggle } from "@/components/storefront/language-toggle";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
-import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 const perfumeItems = [
   { label: "Discover All Fragrances", href: "/shop" },
-  { label: "REQ PERFUME", href: "request" },
   { label: "Brand A-Z", href: "/brands" },
   { label: "New Arrival", href: "/new-arrivals" },
   { label: "Best Seller", href: "/best-sellers" },
@@ -32,15 +30,9 @@ export function SiteHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPerfumesOpen, setIsPerfumesOpen] = useState(false);
   const MenuIcon = isMenuOpen ? X : Menu;
-  const requestUrl = buildWhatsAppUrl(
-    locale === "id"
-      ? "Halo Authentic Perfumes 8, saya ingin request fragrance. Mohon bantu cek stok, harga, dan opsi sourcing."
-      : "Hello Authentic Perfumes 8, I would like to request a fragrance. Please help check stock, price, and sourcing options."
-  );
   const perfumeLinks = perfumeItems.map((item) => ({
     ...item,
-    href: item.href === "request" ? requestUrl : localizedPath(locale, item.href),
-    external: item.href === "request"
+    href: localizedPath(locale, item.href)
   }));
 
   return (
@@ -106,38 +98,16 @@ export function SiteHeader({
               <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
             <div className="invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 border border-gold/30 bg-paper p-2 opacity-0 shadow-[0_18px_45px_rgba(39,34,28,0.14)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
-              {perfumeLinks.map((item) =>
-                item.external ? (
-                  <a
-                    key={item.label}
-                    href={item.href}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="block px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:bg-warm hover:text-gold"
-                  >
-                    {item.label}
-                  </a>
-                ) : (
-                  <Link
-                    key={item.label}
-                    href={item.href}
-                    className="block px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:bg-warm hover:text-gold"
-                  >
-                    {item.label}
-                  </Link>
-                )
-              )}
+              {perfumeLinks.map((item) => (
+                <Link
+                  key={item.label}
+                  href={item.href}
+                  className="block px-4 py-3 text-xs font-semibold uppercase tracking-[0.14em] text-ink transition hover:bg-warm hover:text-gold"
+                >
+                  {item.label}
+                </Link>
+              ))}
             </div>
-          </li>
-          <li>
-            <a
-              href={requestUrl}
-              target="_blank"
-              rel="noreferrer"
-              className="link-underline flex min-h-12 items-center text-xs font-semibold uppercase tracking-[0.18em] text-gold transition duration-300 hover:text-ink"
-            >
-              REQ FRAGRANCE
-            </a>
           </li>
           <li>
             <Link
@@ -188,42 +158,18 @@ export function SiteHeader({
             </button>
             {isPerfumesOpen ? (
               <div className="mb-3 grid border border-gold/25 bg-warm/45 p-2">
-                {perfumeLinks.map((item) =>
-                  item.external ? (
-                    <a
-                      key={item.label}
-                      href={item.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => setIsMenuOpen(false)}
-                      className="px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink/78 transition hover:text-gold"
-                    >
-                      {item.label}
-                    </a>
-                  ) : (
-                    <Link
-                      key={item.label}
-                      href={item.href}
-                      onClick={() => setIsMenuOpen(false)}
-                      className="px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink/78 transition hover:text-gold"
-                    >
-                      {item.label}
-                    </Link>
-                  )
-                )}
+                {perfumeLinks.map((item) => (
+                  <Link
+                    key={item.label}
+                    href={item.href}
+                    onClick={() => setIsMenuOpen(false)}
+                    className="px-3 py-2.5 text-xs font-semibold uppercase tracking-[0.14em] text-ink/78 transition hover:text-gold"
+                  >
+                    {item.label}
+                  </Link>
+                ))}
               </div>
             ) : null}
-          </li>
-          <li>
-            <a
-              href={requestUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={() => setIsMenuOpen(false)}
-              className="flex min-h-11 items-center text-xs font-semibold uppercase tracking-[0.18em] text-gold transition hover:text-ink"
-            >
-              REQ FRAGRANCE
-            </a>
           </li>
           <li>
             <Link
