@@ -53,6 +53,18 @@ describe("admin bulk product helpers", () => {
     ).toEqual({ ids: [products[0].id], target: "pre_order" });
   });
 
+  it("accepts both supported targets and rejects non-array IDs", () => {
+    expect(
+      parseBulkProductStatusPayload({ ids: [products[0].id], target: "ready_stock" })
+    ).toEqual({ ids: [products[0].id], target: "ready_stock" });
+    expect(
+      parseBulkProductStatusPayload({ ids: [products[1].id], target: "pre_order" })
+    ).toEqual({ ids: [products[1].id], target: "pre_order" });
+    expect(
+      parseBulkProductStatusPayload({ ids: products[0].id, target: "pre_order" })
+    ).toEqual({ error: "Select at least one product." });
+  });
+
   it("rejects invalid, empty, and oversized payloads", () => {
     expect(parseBulkProductStatusPayload({ ids: [], target: "pre_order" })).toEqual({
       error: "Select at least one product."
