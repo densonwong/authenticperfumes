@@ -1,16 +1,23 @@
 import Link from "next/link";
 import { Plus } from "lucide-react";
+import { ProductListManager } from "@/components/admin/product-list-manager";
 import { requireAdmin } from "@/lib/admin-auth";
-import { formatRupiah } from "@/lib/format";
 import { getAdminProducts } from "@/lib/repositories/admin-cms";
-
-function formatAdminPrice(price: number | undefined) {
-  return price && price > 0 ? formatRupiah(price) : "Ask";
-}
+import type { AdminProductListItem } from "@/lib/admin-product-bulk";
 
 export default async function AdminProductsPage() {
   await requireAdmin();
   const products = await getAdminProducts();
+  const items: AdminProductListItem[] = products.map((product) => ({
+    id: product.id,
+    name: product.name,
+    brandName: product.brandName,
+    status: product.status,
+    readyStock: product.readyStock,
+    preOrder: product.preOrder,
+    stock: product.variants.reduce((total, variant) => total + variant.stock, 0),
+    fromPrice: product.variants[0]?.authenticPrice ?? 0
+  }));
 
   return (
     <main className="min-h-screen bg-paper px-4 py-6 text-ink lg:px-8">
@@ -30,42 +37,7 @@ export default async function AdminProductsPage() {
             New
           </Link>
         </div>
-        <div className="overflow-x-auto border border-stone/30 bg-white">
-          <table className="min-w-full divide-y divide-stone/20 text-sm">
-            <thead className="bg-warm/70 text-left text-xs font-semibold uppercase tracking-[0.12em] text-stone">
-              <tr>
-                <th className="px-3 py-3">Product</th>
-                <th className="px-3 py-3">Brand</th>
-                <th className="px-3 py-3">Status</th>
-                <th className="px-3 py-3">Stock</th>
-                <th className="px-3 py-3">From</th>
-                <th className="px-3 py-3">Action</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-stone/20">
-              {products.length > 0 ? products.map((product) => (
-                <tr key={product.id} className="align-top">
-                  <td className="px-3 py-3 font-semibold">{product.name}</td>
-                  <td className="px-3 py-3 text-stone">{product.brandName}</td>
-                  <td className="px-3 py-3">{product.status.replaceAll("_", " ")}</td>
-                  <td className="px-3 py-3">{product.variants.reduce((total, variant) => total + variant.stock, 0)}</td>
-                  <td className="px-3 py-3">{formatAdminPrice(product.variants[0]?.authenticPrice)}</td>
-                  <td className="px-3 py-3">
-                    <Link href={`/admin/products/${product.id}`} className="font-semibold text-ink underline underline-offset-4">
-                      Edit
-                    </Link>
-                  </td>
-                </tr>
-              )) : (
-                <tr>
-                  <td colSpan={6} className="px-3 py-8 text-center text-stone">
-                    No database products yet. Add your first product to manage it from this dashboard.
-                  </td>
-                </tr>
-              )}
-            </tbody>
-          </table>
-        </div>
+        <ProductListManager initialProducts={items} />
       </section>
     </main>
   );
