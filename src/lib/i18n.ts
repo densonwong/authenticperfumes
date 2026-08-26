@@ -358,8 +358,8 @@ export const dictionaries: Record<Locale, Dictionary> = {
       of: "dari"
     },
     forms: {
-      requestEyebrow: "Permintaan parfum",
-      requestTitle: "Permintaan Parfum",
+      requestEyebrow: "Request Parfum",
+      requestTitle: "Request Parfum",
       productName: "Nama Parfum",
       brandName: "Nama Brand",
       size: "Ukuran",
