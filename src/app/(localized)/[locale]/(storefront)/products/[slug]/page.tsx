@@ -117,7 +117,6 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
           <p className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-ink/55">
             {product.concentration} / {product.gender}
           </p>
-          <p className="mt-5 text-sm leading-7 text-ink/70">{product.description}</p>
 
           <Suspense fallback={<div className="mt-6 min-h-80 border-y border-ink/10" />}>
             <ProductPurchasePanel

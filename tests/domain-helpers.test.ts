@@ -60,6 +60,12 @@ describe("domain helpers", () => {
     expect(localizedPath("id", "/")).toBe("/id");
     expect(localizedPath("id", "https://wa.me/1")).toBe("https://wa.me/1");
     expect(localizedPath("en", "#details")).toBe("#details");
+    expect(localizedPath("id", "/shop?readyStock=true")).toBe(
+      "/id/shop?readyStock=true"
+    );
+    expect(localizedPath("en", "/shop?readyStock=true")).toBe(
+      "/en/shop?readyStock=true"
+    );
   });
 
   it("switches locale prefixes while preserving the rest of the URL", () => {
