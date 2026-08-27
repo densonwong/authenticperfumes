@@ -34,7 +34,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { locale: localeParam, slug } = await params;
   const locale = normalizeLocale(localeParam);
   const product = await getProductBySlug(slug);
-  const title = product ? `${product.brandName} ${product.name} Original` : "Product";
+  const title = product
+    ? `${product.brandName} ${product.name} ${locale === "id" ? "Asli" : "Original"}`
+    : locale === "id" ? "Produk" : "Product";
 
   return {
     title,
@@ -59,6 +61,9 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
 
   if (!product) notFound();
 
+  const genderLabel = locale === "id"
+    ? ({ unisex: "Uniseks", women: "Wanita", men: "Pria" } as const)[product.gender]
+    : ({ unisex: "Unisex", women: "Women", men: "Men" } as const)[product.gender];
   const canonicalUrl = siteUrl(localizedPath(locale, `/products/${product.slug}`));
   const jsonLd = [
     {
@@ -68,7 +73,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
       sku: product.id,
       image: [product.imageUrl, ...product.galleryUrls],
       description: product.description,
-      category: "Fragrance",
+      category: locale === "id" ? "Parfum" : "Fragrance",
       brand: {
         "@type": "Brand",
         name: product.brandName
@@ -88,8 +93,8 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
       }))
     },
     breadcrumbJsonLd([
-      { name: "Home", path: "/" },
-      { name: "Shop", path: "/shop" },
+      { name: locale === "id" ? "Beranda" : "Home", path: "/" },
+      { name: locale === "id" ? "Belanja" : "Shop", path: "/shop" },
       { name: product.name, path: `/products/${product.slug}` }
     ], locale)
   ];
@@ -115,7 +120,7 @@ export default async function ProductDetailPage({ params }: { params: Params }) 
           </p>
           <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">{product.name}</h1>
           <p className="mt-2 text-sm font-semibold uppercase tracking-[0.14em] text-ink/55">
-            {product.concentration} / {product.gender}
+            {product.concentration} / {genderLabel}
           </p>
 
           <Suspense fallback={<div className="mt-6 min-h-80 border-y border-ink/10" />}>

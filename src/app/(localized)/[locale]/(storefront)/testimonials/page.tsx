@@ -6,10 +6,15 @@ import { localizedPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/testimonials", {
-    title: "Testimonials",
-    description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers."
-  });
+  return localizedPageMetadata(locale, "/testimonials", locale === "id"
+    ? {
+        title: "Testimoni Pelanggan",
+        description: "Baca ulasan dan pengalaman berbelanja pelanggan Authentic Perfumes 8."
+      }
+    : {
+        title: "Testimonials",
+        description: "Customer reviews and purchase experiences from Authentic Perfumes 8 buyers."
+      });
 }
 
 export const dynamic = "force-static";
@@ -28,11 +33,11 @@ export default async function TestimonialsPage({ params }: { params: Promise<{ l
             {dictionary.nav.testimonials}
           </p>
           <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
-            {isId ? "Pengalaman customer nyata" : "Real customer experiences"}
+            {isId ? "Pengalaman nyata pelanggan" : "Real customer experiences"}
           </h1>
           <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
             {isId
-              ? "Catatan dari customer yang mempercayai Authentic Perfumes 8 untuk parfum niche dan designer original, dari konsultasi sampai pengiriman."
+              ? "Cerita dari pelanggan yang mempercayai Authentic Perfumes 8 untuk parfum niche dan desainer asli, mulai dari konsultasi hingga pengiriman."
               : "Notes from customers who trusted Authentic Perfumes 8 for original niche and designer fragrances, from consultation to delivery."}
           </p>
         </div>

@@ -22,7 +22,15 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/");
+  return localizedPageMetadata(locale, "/", locale === "id"
+    ? {
+        title: "Parfum Asli Niche dan Desainer",
+        description: "Temukan koleksi parfum asli niche dan desainer pilihan Authentic Perfumes 8."
+      }
+    : {
+        title: "Authentic Niche and Designer Fragrances",
+        description: "Discover curated authentic niche and designer fragrances from Authentic Perfumes 8."
+      });
 }
 
 export const dynamic = "force-static";
@@ -65,16 +73,16 @@ function localizeBanner(banner: Banner, locale: string): Banner {
 
   const translations: Record<string, Pick<Banner, "title" | "subtitle">> = {
     "banner-niche-arrivals": {
-      title: "100% original",
-      subtitle: "Bebas request brand parfum niche dan designer original via WhatsApp."
+      title: "100% asli",
+      subtitle: "Temukan parfum niche dan desainer asli pilihan atau minta bantuan pencarian melalui WhatsApp."
     },
     "banner-ready-stock": {
-      title: "Ready stock",
+      title: "Stok tersedia",
       subtitle: "Pengiriman ke seluruh Indonesia dengan konfirmasi stok sebelum pembayaran."
     },
     "banner-consultation": {
-      title: "Discover your scent",
-      subtitle: "Konsultasi aroma, hadiah, dan pilihan personal langsung via WhatsApp."
+      title: "Temukan aroma pilihan Anda",
+      subtitle: "Konsultasi aroma, hadiah, dan pilihan personal langsung melalui WhatsApp."
     }
   };
 
@@ -117,12 +125,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
     normalizedBanners.find((banner) => banner.position === "primary") ?? normalizedBanners[0];
   const consultationUrl = buildWhatsAppUrl(
     locale === "id"
-      ? "Halo Authentic Perfumes 8, saya ingin konsultasi parfum dan request brand."
+      ? "Halo Authentic Perfumes 8, saya ingin berkonsultasi dan mencari parfum."
       : "Hello Authentic Perfumes 8, I would like fragrance consultation and brand request help."
   );
   const requestUrl = buildWhatsAppUrl(
     locale === "id"
-      ? "Halo Authentic Perfumes 8, saya mencari parfum tertentu. Mohon bantu cek stok, harga, dan opsi request."
+      ? "Halo Authentic Perfumes 8, saya mencari parfum tertentu. Mohon bantu periksa stok, harga, dan opsi pemesanan."
       : "Hello Authentic Perfumes 8, I am looking for a specific fragrance. Please help check stock, price, and request options."
   );
 
@@ -192,7 +200,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
               </p>
               <h2 className="mt-3 font-serif text-3xl leading-tight">
                 {locale === "id"
-                  ? "Gratis konsultasi untuk rekomendasi scent, hadiah, dan pilihan personal."
+                  ? "Konsultasi gratis untuk rekomendasi aroma, hadiah, dan pilihan personal."
                   : "Free consultation for scent recommendations, gifts, and personal choices."}
               </h2>
             </div>

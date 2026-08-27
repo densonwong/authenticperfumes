@@ -6,10 +6,15 @@ import { localizedPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/about", {
-    title: "About",
-    description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia."
-  });
+  return localizedPageMetadata(locale, "/about", locale === "id"
+    ? {
+        title: "Tentang Kami",
+        description: "Kenali Authentic Perfumes 8, katalog parfum asli pilihan untuk pelanggan di Indonesia."
+      }
+    : {
+        title: "About",
+        description: "Authentic Perfumes 8 is a boutique catalog for verified authentic fragrances in Indonesia."
+      });
 }
 
 const values = [
@@ -33,9 +38,9 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
   const isId = locale === "id";
   const localizedValues = isId
     ? [
-        ["Sourcing terverifikasi", "Kami sourcing melalui channel terpercaya dan mengecek botol sebelum dikirim."],
-        ["Katalog terkurasi", "Pilihan difokuskan pada signature niche yang wearable, favorit customer, dan brand yang banyak diminta."],
-        ["Concierge support", "Panduan WhatsApp mencakup cek stok, risiko blind-buy, timeline pre-order, dan parfum serupa."]
+        ["Pengadaan terverifikasi", "Kami memperoleh produk melalui jalur tepercaya dan memeriksa setiap botol sebelum dikirim."],
+        ["Katalog pilihan", "Koleksi kami berfokus pada aroma niche yang nyaman dikenakan, favorit pelanggan, dan merek yang banyak dicari."],
+        ["Bantuan personal", "Konsultasi melalui WhatsApp mencakup pemeriksaan stok, pertimbangan sebelum membeli, estimasi pre-order, dan rekomendasi parfum serupa."]
       ]
     : values.map((value) => [value.title, value.body]);
 
@@ -48,12 +53,12 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
           </p>
           <h1 className="mt-3 max-w-4xl font-serif text-4xl leading-tight text-ink">
             {isId
-              ? "Belanja parfum boutique dengan bukti, konteks, dan lebih sedikit noise."
+              ? "Belanja parfum pilihan dengan informasi yang jelas dan tepercaya."
               : "Boutique perfume buying with proof, context, and less noise."}
           </h1>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-ink/68">
             {isId
-              ? "Authentic Perfumes 8 membantu pembeli parfum Indonesia menemukan botol original dari niche, designer, dan house yang sulit dicari. Pengalaman dibuat catalog-first: status jelas, harga realistis, dan konsultasi langsung saat sebuah botol butuh konteks lebih."
+              ? "Authentic Perfumes 8 membantu pencinta parfum di Indonesia menemukan parfum asli dari merek niche, desainer, dan rumah parfum yang sulit dicari. Katalog kami menyajikan status yang jelas, harga yang wajar, dan konsultasi langsung saat Anda membutuhkan informasi tambahan."
               : "Authentic Perfumes 8 helps Indonesian fragrance buyers discover original bottles across niche, designer, and hard-to-source houses. The experience is catalog-first: clear status, realistic pricing, and direct consultation when a bottle needs more context."}
           </p>
         </div>
@@ -74,7 +79,7 @@ export default async function AboutPage({ params }: { params: Promise<{ locale: 
             <h2 className="font-serif text-3xl text-ink">{isId ? "Mencari sesuatu yang spesifik?" : "Looking for something specific?"}</h2>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
               {isId
-                ? "Kirim house, nama parfum, ukuran, dan budget. Kami akan konfirmasi apakah ready stock, pre-order, atau lebih cocok sebagai request parfum serupa."
+                ? "Kirim nama merek, parfum, ukuran, dan anggaran. Kami akan mengonfirmasi apakah produk tersedia, dapat dipesan melalui pre-order, atau lebih cocok diganti dengan parfum serupa."
                 : "Send the house, perfume name, size, and budget. We will confirm whether it is ready stock, pre-order, or better handled as a similar-fragrance request."}
             </p>
           </div>

@@ -8,10 +8,15 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/contact", {
-    title: "Contact",
-    description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation."
-  });
+  return localizedPageMetadata(locale, "/contact", locale === "id"
+    ? {
+        title: "Kontak Kami",
+        description: "Hubungi Authentic Perfumes 8 untuk pemeriksaan stok, pre-order, pencarian parfum, dan konsultasi."
+      }
+    : {
+        title: "Contact",
+        description: "Contact Authentic Perfumes 8 for stock checks, pre-orders, fragrance requests, and consultation."
+      });
 }
 
 export default async function ContactPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -28,7 +33,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
         },
         {
           title: "Instagram",
-          body: "Ikuti @authenticperfumes8_ untuk mendapatkan informasi terbaru mengenai new arrivals, restock, dan promotion.",
+          body: "Ikuti @authenticperfumes8_ untuk mendapatkan informasi terbaru mengenai produk terbaru, stok kembali, dan promosi.",
           icon: Instagram,
           href: INSTAGRAM_URL
         }
@@ -50,7 +55,7 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "ContactPage",
-    name: `${SITE_NAME} Contact`,
+    name: locale === "id" ? `Kontak ${SITE_NAME}` : `${SITE_NAME} Contact`,
     url: siteUrl(localizedPath(locale, "/contact")),
     mainEntity: {
       "@type": "Organization",
@@ -73,12 +78,12 @@ export default async function ContactPage({ params }: { params: Promise<{ locale
           </p>
           <h1 className="mt-3 max-w-4xl font-serif text-4xl leading-tight text-ink">
             {isId
-              ? "Tanyakan stok, sourcing, atau rekomendasi parfum."
+              ? "Tanyakan stok, pencarian produk, atau rekomendasi parfum."
               : "Ask about stock, sourcing, or fragrance recommendations."}
           </h1>
           <p className="mt-5 max-w-3xl text-sm leading-7 text-ink/68">
             {isId
-              ? "Sertakan nama parfum, ukuran, dan budget yang diinginkan. Tim kami akan membantu mengecek ketersediaan dan memberikan opsi terbaik untuk Anda."
+              ? "Sertakan nama parfum, ukuran, dan anggaran yang diinginkan. Tim kami akan membantu memeriksa ketersediaan dan memberikan pilihan terbaik untuk Anda."
               : "Include the fragrance name, preferred size, and budget. Our team will check availability and provide the best options for you."}
           </p>
         </div>

@@ -8,10 +8,15 @@ import { localizedPageMetadata, siteUrl } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/brands", {
-    title: "Brands",
-    description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet."
-  });
+  return localizedPageMetadata(locale, "/brands", locale === "id"
+    ? {
+        title: "Daftar Merek Parfum",
+        description: "Jelajahi daftar merek parfum Authentic Perfumes 8 berdasarkan rumah parfum, negara, dan abjad."
+      }
+    : {
+        title: "Brands",
+        description: "Explore Authentic Perfumes 8 brand directory by fragrance house, country, and alphabet."
+      });
 }
 
 export const dynamic = "force-dynamic";
@@ -46,7 +51,7 @@ export default async function BrandsPage({
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "CollectionPage",
-    name: "Brands",
+    name: locale === "id" ? "Merek Parfum" : "Brands",
     url: siteUrl(localizedPath(locale, "/brands")),
     numberOfItems: filteredBrands.length
   };
@@ -64,11 +69,11 @@ export default async function BrandsPage({
               {dictionary.home.brandUniverse}
             </p>
             <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">
-              {locale === "id" ? "Rumah parfum A-Z" : "A-Z fragrance houses"}
+              {locale === "id" ? "Merek parfum A-Z" : "A-Z fragrance houses"}
             </h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
               {locale === "id"
-                ? "Direktori padat yang siap menampung ratusan brand, dengan logo dan navigasi alfabet yang mudah dipindai."
+                ? "Jelajahi ratusan merek parfum melalui logo dan navigasi abjad yang mudah digunakan."
                 : "A dense directory built to scale across hundreds of houses while keeping featured logos and quick alphabet jumps visible."}
             </p>
           </div>
@@ -77,7 +82,7 @@ export default async function BrandsPage({
               type="search"
               name="q"
               defaultValue={q}
-              placeholder={locale === "id" ? "Cari brand" : "Search brands"}
+              placeholder={locale === "id" ? "Cari merek" : "Search brands"}
               className="min-w-0 flex-1 border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
             />
             <button
@@ -91,7 +96,7 @@ export default async function BrandsPage({
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
-        <nav className="flex flex-wrap gap-2 border-b border-ink/10 pb-6" aria-label="Alphabet">
+        <nav className="flex flex-wrap gap-2 border-b border-ink/10 pb-6" aria-label={locale === "id" ? "Abjad" : "Alphabet"}>
           {letters.map((letter) => (
             <a
               key={letter}
@@ -106,12 +111,12 @@ export default async function BrandsPage({
         <div className="mt-8 grid gap-8 lg:grid-cols-[280px_1fr]">
           <aside className="hidden border border-ink/10 bg-warm/45 p-4 lg:block">
             <p className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">
-              {locale === "id" ? "Jumlah direktori" : "Directory count"}
+              {locale === "id" ? "Jumlah merek" : "Directory count"}
             </p>
             <p className="mt-3 font-serif text-4xl text-ink">{filteredBrands.length}</p>
             <p className="mt-3 text-sm leading-6 text-ink/65">
               {locale === "id"
-                ? "Baris ringkas menjaga katalog tetap mudah dipindai saat daftar brand melewati 300."
+                ? "Tampilan ringkas menjaga katalog tetap mudah ditelusuri meskipun memuat ratusan merek."
                 : "Compact rows keep the list scannable as the catalog grows beyond 300 brands."}
             </p>
           </aside>

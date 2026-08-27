@@ -8,10 +8,15 @@ import { localizedPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/best-sellers", {
-    title: "Best Sellers",
-    description: "Customer favorite authentic perfumes and repeat-request bottles."
-  });
+  return localizedPageMetadata(locale, "/best-sellers", locale === "id"
+    ? {
+        title: "Parfum Terlaris",
+        description: "Jelajahi parfum asli yang paling disukai dan sering dipesan kembali oleh pelanggan."
+      }
+    : {
+        title: "Best Sellers",
+        description: "Customer favorite authentic perfumes and repeat-request bottles."
+      });
 }
 
 export default async function BestSellersPage({ params }: { params: Promise<{ locale: string }> }) {
@@ -31,7 +36,7 @@ export default async function BestSellersPage({ params }: { params: Promise<{ lo
             <h1 className="mt-3 font-serif text-4xl leading-tight text-ink">{dictionary.nav.bestSellers}</h1>
             <p className="mt-3 max-w-2xl text-sm leading-6 text-ink/65">
               {isId
-                ? "Botol yang paling sering ditanyakan, dibeli ulang, dan direkomendasikan customer setelah dipakai di Indonesia."
+                ? "Parfum yang paling sering ditanyakan, dibeli ulang, dan direkomendasikan pelanggan setelah digunakan di Indonesia."
                 : "The bottles customers ask for, reorder, and recommend after wearing in Indonesia."}
             </p>
           </div>
@@ -39,7 +44,7 @@ export default async function BestSellersPage({ params }: { params: Promise<{ lo
             href={localizedPath(locale, "/shop?bestSeller=true")}
             className="text-xs font-semibold uppercase tracking-[0.16em] text-ink hover:text-gold"
           >
-            {isId ? "Filter di toko" : "Filter in shop"}
+            {isId ? "Lihat di katalog" : "Filter in shop"}
           </Link>
         </div>
         <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">

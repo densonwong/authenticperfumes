@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const brand = await getBrandBySlug(slug);
 
   return {
-    title: brand ? brand.name : "Brand",
+    title: brand ? brand.name : locale === "id" ? "Merek" : "Brand",
     description: brand?.description,
     alternates: localizedAlternates(locale, brand ? `/brands/${brand.slug}` : "/brands"),
     openGraph: brand
@@ -57,8 +57,8 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
       description: brand.description
     },
     breadcrumbJsonLd([
-      { name: "Home", path: "/" },
-      { name: "Brands", path: "/brands" },
+      { name: locale === "id" ? "Beranda" : "Home", path: "/" },
+      { name: locale === "id" ? "Merek" : "Brands", path: "/brands" },
       { name: brand.name, path: `/brands/${brand.slug}` }
     ], locale)
   ];
@@ -94,7 +94,9 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
                 <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
                   {locale === "id" ? "Berdiri" : "Founded"}
                 </dt>
-                <dd className="mt-1 text-sm font-semibold text-ink">{brand.foundedYear ?? "N/A"}</dd>
+                <dd className="mt-1 text-sm font-semibold text-ink">
+                  {brand.foundedYear ?? (locale === "id" ? "Tidak tersedia" : "N/A")}
+                </dd>
               </div>
               <div>
                 <dt className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/45">
@@ -110,7 +112,7 @@ export default async function BrandDetailPage({ params }: { params: Params }) {
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <div className="mb-5 border-b border-ink/10 pb-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-            {locale === "id" ? "Pilihan saat ini" : "Current edit"}
+            {locale === "id" ? "Koleksi saat ini" : "Current edit"}
           </p>
           <h2 className="mt-2 font-serif text-3xl text-ink">
             {locale === "id" ? `${brand.name} di Authentic Perfumes 8` : `${brand.name} at Authentic Perfumes 8`}

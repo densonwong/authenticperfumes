@@ -8,10 +8,15 @@ import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/pre-order", {
-    title: "Pre Order",
-    description: "Understand Authentic Perfumes 8 pre-order process, payment policy, shipping, and order terms."
-  });
+  return localizedPageMetadata(locale, "/pre-order", locale === "id"
+    ? {
+        title: "Pre-Order Parfum",
+        description: "Pelajari proses pre-order, kebijakan pembayaran, pengiriman, serta ketentuan pemesanan Authentic Perfumes 8."
+      }
+    : {
+        title: "Pre Order",
+        description: "Understand Authentic Perfumes 8 pre-order process, payment policy, shipping, and order terms."
+      });
 }
 
 const process = [
@@ -24,7 +29,7 @@ const process = [
 const processId = [
   "Kirim nama parfum, varian, dan ukuran yang diinginkan melalui WhatsApp.",
   "Kami akan mengonfirmasi ketersediaan, estimasi harga, dan ketentuan pembayaran sebelum pemesanan.",
-  "Setelah dikonfirmasi, parfum akan diproses dan kami akan memberikan update selama proses berlangsung.",
+  "Setelah dikonfirmasi, parfum akan diproses dan kami akan memberikan kabar terbaru selama proses berlangsung.",
   "Setelah barang tiba, pesanan akan disiapkan dan dikirim kepada Anda."
 ];
 
@@ -38,8 +43,8 @@ const paymentPolicy = [
 const paymentPolicyId = [
   "Pembayaran merupakan tanda persetujuan.",
   "Semua transaksi bersifat final (tidak dapat dibatalkan/ditukar).",
-  "DP maupun pembayaran yang sudah masuk tidak dapat dikembalikan. Jika dibatalkan maka DP/payment hangus.",
-  "Jika barang tidak tersedia, akan dilakukan refund 100%."
+  "DP maupun pembayaran yang sudah masuk tidak dapat dikembalikan. Jika pesanan dibatalkan, DP atau pembayaran akan hangus.",
+  "Jika barang tidak tersedia, pembayaran akan dikembalikan 100%."
 ];
 
 const termsGroups = [
@@ -84,17 +89,17 @@ const termsGroups = [
 
 const termsGroupsId = [
   {
-    title: "Ready Stock",
+    title: "Stok Tersedia",
     items: [
       "Pembayaran penuh diperlukan untuk mengamankan barang.",
-      "Tidak dapat dilakukan reservasi/hold."
+      "Barang tidak dapat dipesan sementara atau ditahan."
     ]
   },
   {
     title: "Pre-Order (PO)",
     items: [
       "Minimal DP 50%.",
-      "Pengecualian untuk DP di bawah 50% hanya berlaku untuk trip tertentu (silakan konfirmasi terlebih dahulu).",
+      "Pengecualian untuk DP di bawah 50% hanya berlaku untuk perjalanan tertentu (silakan konfirmasi terlebih dahulu).",
       "Namun, pesanan >15 juta: DP tetap wajib 50% (tanpa pengecualian)."
     ]
   },
@@ -109,14 +114,14 @@ const termsGroupsId = [
     title: "Estimasi Pre-Order",
     items: [
       "Waktu kedatangan dapat berubah mengikuti proses logistik.",
-      "Keterlambatan di luar kendali kami (pengecualian untuk item handcarry dengan jadwal yang telah diinformasikan)."
+      "Keterlambatan dapat terjadi di luar kendali kami, kecuali untuk barang yang dibawa langsung dengan jadwal yang telah diinformasikan."
     ]
   },
   {
     title: "Pengiriman Pesanan",
     items: [
       "Pesanan akan dikirim setelah pembayaran lunas.",
-      "Komplain dan klaim wajib menyertakan video unboxing tanpa jeda (no cut).",
+      "Komplain dan klaim wajib menyertakan video pembukaan paket tanpa jeda atau potongan.",
       "Komplain tanpa bukti video tidak dapat diproses."
     ]
   }
@@ -171,7 +176,7 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
             </h1>
             <p className="mt-4 text-sm leading-7 text-ink/68">
               {isId
-                ? "Untuk parfum yang belum tersedia ready stock, kami akan mengonfirmasi ketersediaan, harga, estimasi kedatangan, dan detail produk sebelum Anda melakukan pemesanan."
+                ? "Untuk parfum yang belum tersedia, kami akan mengonfirmasi ketersediaan, harga, estimasi kedatangan, dan detail produk sebelum Anda melakukan pemesanan."
                 : "For fragrances that are not available as ready stock, we will confirm availability, price, estimated arrival, and product details before you place an order."}
             </p>
             <a
@@ -220,7 +225,7 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
           </h2>
           <p className="mt-3 text-sm leading-6 text-ink/70">
             {isId
-              ? "Pesanan ready stock dikirim setelah pembayaran terkonfirmasi. Untuk pre-order, pengiriman dilakukan setelah barang tiba dan siap dikirim kepada Anda."
+              ? "Pesanan dengan stok tersedia dikirim setelah pembayaran terkonfirmasi. Untuk pre-order, pengiriman dilakukan setelah barang tiba dan siap dikirim kepada Anda."
               : "Ready-stock orders are shipped after payment is confirmed. Pre-orders are shipped after the item arrives and is ready to be sent to you."}
           </p>
         </section>
@@ -249,7 +254,7 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <div className="mb-5 border-b border-ink/10 pb-4">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-gold">
-            {isId ? "Tersedia untuk request" : "Available to request"}
+            {isId ? "Tersedia untuk dipesan" : "Available to request"}
           </p>
           <h2 className="mt-2 font-serif text-3xl text-ink">{isId ? "Daftar pre-order saat ini" : "Current pre-order list"}</h2>
         </div>

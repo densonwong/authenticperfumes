@@ -10,10 +10,15 @@ import type { Product } from "@/lib/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
-  return localizedPageMetadata(locale, "/shop", {
-    title: "Shop Fragrances",
-    description: "Browse authentic niche and designer perfumes with ready stock and pre-order filters."
-  });
+  return localizedPageMetadata(locale, "/shop", locale === "id"
+    ? {
+        title: "Belanja Parfum",
+        description: "Jelajahi parfum asli niche dan desainer dengan filter stok tersedia dan pre-order."
+      }
+    : {
+        title: "Shop Fragrances",
+        description: "Browse authentic niche and designer perfumes with ready stock and pre-order filters."
+      });
 }
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
