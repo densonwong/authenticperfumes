@@ -5,10 +5,10 @@ import { localizedPath } from "@/lib/localized-paths";
 import { formatRupiah } from "@/lib/format";
 import type { Product, ProductStatus } from "@/lib/types";
 
-function getPriceRange(product: Product, key: "authenticPrice") {
+function getPriceRange(product: Product, key: "authenticPrice", locale: Locale) {
   const prices = product.variants.map((variant) => variant[key]).filter((price) => price > 0);
 
-  if (prices.length === 0) return "Ask";
+  if (prices.length === 0) return locale === "id" ? "Tanya" : "Ask";
 
   const min = Math.min(...prices);
   const max = Math.max(...prices);
@@ -76,7 +76,7 @@ export function ProductCard({
             <span className="text-[11px] uppercase tracking-[0.12em] text-ink/45">
               {dictionary.product.authentic}
             </span>
-            <span>{getPriceRange(product, "authenticPrice")}</span>
+            <span>{getPriceRange(product, "authenticPrice", locale)}</span>
           </div>
         </div>
       </div>

@@ -77,7 +77,7 @@ export function ProductPurchasePanel({
             {dictionary.product.authentic}
           </p>
           <p className="text-xl font-semibold text-ink">
-            {isAskPrice ? "Ask" : formatRupiah(variant.authenticPrice)}
+            {isAskPrice ? (locale === "id" ? "Tanya" : "Ask") : formatRupiah(variant.authenticPrice)}
           </p>
         </div>
         <p className="mt-4 border-t border-ink/10 pt-3 text-sm leading-6 text-ink/68">

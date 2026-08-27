@@ -13,9 +13,9 @@ function TikTokIcon({ className }: { className?: string }) {
 }
 
 export function SiteFooter({ locale, dictionary }: { locale: Locale; dictionary: Dictionary }) {
-  const isId = dictionary.nav.shop === "Belanja";
+  const isId = locale === "id";
   const exploreLinks = [
-    { href: "/", label: "Home" },
+    { href: "/", label: dictionary.nav.home },
     { href: "/shop", label: dictionary.nav.shop },
     { href: "/brands", label: dictionary.nav.brands },
     { href: "/new-arrivals", label: dictionary.nav.newArrivals },
@@ -37,16 +37,19 @@ export function SiteFooter({ locale, dictionary }: { locale: Locale; dictionary:
           </Link>
           <p className="mt-3 text-sm leading-6 text-ink/65">
             {isId
-              ? "Parfum niche dan designer original dengan layanan request brand, pre-order, dan konsultasi via WhatsApp."
+              ? "Parfum niche dan desainer asli dengan layanan pencarian merek, pre-order, dan konsultasi melalui WhatsApp."
               : "Original niche and designer fragrances with brand request, pre-order, and WhatsApp consultation service."}
           </p>
         </div>
 
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">
-            Explore
+            {isId ? "Jelajahi" : "Explore"}
           </h2>
-          <nav className="mt-4 grid gap-2 text-sm text-ink/65" aria-label="Explore footer navigation">
+          <nav
+            className="mt-4 grid gap-2 text-sm text-ink/65"
+            aria-label={isId ? "Navigasi jelajahi di footer" : "Explore footer navigation"}
+          >
             {exploreLinks.map((link) => (
               <Link key={link.href} href={localizedPath(locale, link.href)} className="hover:text-ink">
                 {link.label}
@@ -57,9 +60,12 @@ export function SiteFooter({ locale, dictionary }: { locale: Locale; dictionary:
 
         <div>
           <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">
-            Support
+            {isId ? "Bantuan" : "Support"}
           </h2>
-          <nav className="mt-4 grid gap-2 text-sm text-ink/65" aria-label="Support footer navigation">
+          <nav
+            className="mt-4 grid gap-2 text-sm text-ink/65"
+            aria-label={isId ? "Navigasi bantuan di footer" : "Support footer navigation"}
+          >
             {supportLinks.map((link) => (
               <Link key={link.href} href={localizedPath(locale, link.href)} className="hover:text-ink">
                 {link.label}
@@ -70,7 +76,7 @@ export function SiteFooter({ locale, dictionary }: { locale: Locale; dictionary:
 
         <div className="lg:justify-self-end">
           <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">
-            Follow Us
+            {isId ? "Ikuti Kami" : "Follow Us"}
           </h2>
           <div className="mt-4 flex gap-3">
             <a

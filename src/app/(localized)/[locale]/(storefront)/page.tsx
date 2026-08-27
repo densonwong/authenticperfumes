@@ -141,7 +141,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         </section>
       ) : null}
 
-      <TrustStrip dictionary={dictionary.trust} />
+      <TrustStrip dictionary={dictionary.trust} locale={locale} />
 
       <BrandMarquee brands={logoWallBrands} label={dictionary.home.featuredHouses} locale={locale} />
 

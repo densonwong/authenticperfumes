@@ -16,6 +16,13 @@ describe("SiteHeader", () => {
     expect(requestLinks.every((link) => link.getAttribute("href")?.startsWith("https://wa.me/"))).toBe(
       true
     );
+    expect(decodeURIComponent(requestLinks[0].getAttribute("href") ?? "")).toContain(
+      "Halo Authentic Perfumes 8, saya ingin mencari parfum. Mohon bantu cek stok, harga, dan opsi pemesanan."
+    );
+    expect(screen.getAllByText("Parfum").length).toBeGreaterThan(0);
+    expect(screen.getAllByText("Lihat Semua Parfum").length).toBeGreaterThan(0);
+    expect(screen.queryByText("Discover All Fragrances")).toBeNull();
+    expect(screen.queryByText("New Arrival")).toBeNull();
     expect(screen.queryByText("REQ PERFUME")).toBeNull();
   });
 });

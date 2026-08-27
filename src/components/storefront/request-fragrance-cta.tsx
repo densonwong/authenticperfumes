@@ -10,7 +10,7 @@ export function RequestFragranceCta({
 }) {
   const requestUrl = buildWhatsAppUrl(
     locale === "id"
-      ? `Halo Authentic Perfumes 8, saya ingin request parfum${brandName ? ` ${brandName}` : ""}. Mohon bantu cek stok, harga, dan opsi sourcing.`
+      ? `Halo Authentic Perfumes 8, saya ingin mencari parfum${brandName ? ` dari ${brandName}` : ""}. Mohon bantu cek stok, harga, dan opsi pemesanan.`
       : `Hello Authentic Perfumes 8, I would like to request${brandName ? ` a ${brandName}` : ""} fragrance. Please help check stock, price, and sourcing options.`
   );
 
@@ -43,7 +43,7 @@ export function RequestFragranceCta({
         rel="noreferrer"
         className="mt-5 inline-flex w-full justify-center border border-gold bg-gold px-6 py-4 text-xs font-semibold uppercase tracking-[0.16em] text-paper transition duration-300 hover:border-paper hover:bg-paper hover:text-ink active:scale-[0.98] lg:mt-0 lg:w-auto"
       >
-        Request Fragrance
+        {locale === "id" ? "Minta Bantuan Mencari Parfum" : "Request Fragrance"}
       </a>
     </div>
   );

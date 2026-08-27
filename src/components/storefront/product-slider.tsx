@@ -36,7 +36,7 @@ export function ProductSlider({
           type="button"
           onClick={() => scrollSlider("left")}
           className="inline-flex h-9 w-9 items-center justify-center border border-ink/15 bg-paper text-ink transition hover:border-gold hover:text-gold"
-          aria-label="Scroll left"
+          aria-label={locale === "id" ? "Geser ke kiri" : "Scroll left"}
         >
           <ChevronLeft className="h-4 w-4" />
         </button>
@@ -44,7 +44,7 @@ export function ProductSlider({
           type="button"
           onClick={() => scrollSlider("right")}
           className="inline-flex h-9 w-9 items-center justify-center border border-ink/15 bg-paper text-ink transition hover:border-gold hover:text-gold"
-          aria-label="Scroll right"
+          aria-label={locale === "id" ? "Geser ke kanan" : "Scroll right"}
         >
           <ChevronRight className="h-4 w-4" />
         </button>

@@ -39,7 +39,7 @@ export default async function TestimonialsPage({ params }: { params: Promise<{ l
       </section>
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
-        <TestimonialGrid testimonials={testimonials} />
+        <TestimonialGrid testimonials={testimonials} locale={locale} />
       </section>
     </main>
   );

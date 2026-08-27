@@ -13,14 +13,6 @@ import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
-const perfumeItems = [
-  { label: "Discover All Fragrances", href: "/shop" },
-  { label: "Brand A-Z", href: "/brands" },
-  { label: "New Arrival", href: "/new-arrivals" },
-  { label: "Best Seller", href: "/best-sellers" },
-  { label: "Pre Order", href: "/pre-order" }
-];
-
 export function SiteHeader({
   locale,
   dictionary
@@ -31,9 +23,25 @@ export function SiteHeader({
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const [isPerfumesOpen, setIsPerfumesOpen] = useState(false);
   const MenuIcon = isMenuOpen ? X : Menu;
+  const perfumeItems = locale === "id"
+    ? [
+        { label: "Lihat Semua Parfum", href: "/shop" },
+        { label: "Merek A-Z", href: "/brands" },
+        { label: "Produk Terbaru", href: "/new-arrivals" },
+        { label: "Terlaris", href: "/best-sellers" },
+        { label: "Pre-Order", href: "/pre-order" }
+      ]
+    : [
+        { label: "Discover All Fragrances", href: "/shop" },
+        { label: "Brand A-Z", href: "/brands" },
+        { label: "New Arrival", href: "/new-arrivals" },
+        { label: "Best Seller", href: "/best-sellers" },
+        { label: "Pre Order", href: "/pre-order" }
+      ];
+  const perfumesLabel = locale === "id" ? "Parfum" : "Perfumes";
   const requestUrl = buildWhatsAppUrl(
     locale === "id"
-      ? "Halo Authentic Perfumes 8, saya ingin request fragrance. Mohon bantu cek stok, harga, dan opsi sourcing."
+      ? "Halo Authentic Perfumes 8, saya ingin mencari parfum. Mohon bantu cek stok, harga, dan opsi pemesanan."
       : "Hello Authentic Perfumes 8, I would like to request a fragrance. Please help check stock, price, and sourcing options."
   );
   const perfumeLinks = perfumeItems.map((item) => ({
@@ -84,7 +92,7 @@ export function SiteHeader({
 
       <nav
         className="hidden border-t border-ink/10 bg-paper px-6 lg:block"
-        aria-label="Primary navigation"
+        aria-label={locale === "id" ? "Navigasi utama" : "Primary navigation"}
       >
         <ul className="mx-auto flex max-w-7xl items-center justify-center gap-8">
           <li>
@@ -100,7 +108,7 @@ export function SiteHeader({
               type="button"
               className="link-underline flex min-h-12 items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.18em] text-ink transition duration-300 hover:text-gold focus:outline-none focus:text-gold"
             >
-              Perfumes
+              {perfumesLabel}
               <ChevronDown className="h-3.5 w-3.5" aria-hidden="true" />
             </button>
             <div className="invisible absolute left-1/2 top-full z-50 w-72 -translate-x-1/2 border border-gold/30 bg-paper p-2 opacity-0 shadow-[0_18px_45px_rgba(39,34,28,0.14)] transition group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100">
@@ -147,7 +155,7 @@ export function SiteHeader({
       <nav
         id="mobile-navigation"
         className={`${isMenuOpen ? "block" : "hidden"} border-t border-ink/10 bg-paper px-4 py-3 lg:hidden`}
-        aria-label="Mobile navigation"
+        aria-label={locale === "id" ? "Navigasi seluler" : "Mobile navigation"}
       >
         <ul className="grid divide-y divide-ink/10">
           <li>
@@ -166,7 +174,7 @@ export function SiteHeader({
               aria-expanded={isPerfumesOpen}
               onClick={() => setIsPerfumesOpen((current) => !current)}
             >
-              Perfumes
+              {perfumesLabel}
               <ChevronDown
                 className={`h-4 w-4 transition ${isPerfumesOpen ? "rotate-180" : ""}`}
                 aria-hidden="true"

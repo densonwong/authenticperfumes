@@ -25,25 +25,36 @@ type FilterPanelProps = {
   locale: Locale;
 };
 
-const genders: Array<{ value: Gender; label: string }> = [
-  { value: "unisex", label: "Unisex" },
-  { value: "women", label: "Women" },
-  { value: "men", label: "Men" }
-];
-
-const toggles = [
-  { name: "readyStock", label: "Ready stock" },
-  { name: "preOrder", label: "Pre order" },
-  { name: "bestSeller", label: "Best seller" },
-  { name: "newArrival", label: "New arrival" }
-] as const;
-
 export function FilterPanel({ brands, products, selected, dictionary, locale }: FilterPanelProps) {
   const [brand, setBrand] = useState(selected.brand ?? "");
   const [size, setSize] = useState(selected.size ?? "");
   const sizes = uniqueSortedProductSizes(
     products.flatMap((product) => product.variants.map((variant) => variant.size))
   );
+  const genders: Array<{ value: Gender; label: string }> = locale === "id"
+    ? [
+        { value: "unisex", label: "Uniseks" },
+        { value: "women", label: "Wanita" },
+        { value: "men", label: "Pria" }
+      ]
+    : [
+        { value: "unisex", label: "Unisex" },
+        { value: "women", label: "Women" },
+        { value: "men", label: "Men" }
+      ];
+  const toggles = locale === "id"
+    ? [
+        { name: "readyStock", label: "Stok tersedia" },
+        { name: "preOrder", label: "Pre-order" },
+        { name: "bestSeller", label: "Terlaris" },
+        { name: "newArrival", label: "Produk terbaru" }
+      ] as const
+    : [
+        { name: "readyStock", label: "Ready stock" },
+        { name: "preOrder", label: "Pre order" },
+        { name: "bestSeller", label: "Best seller" },
+        { name: "newArrival", label: "New arrival" }
+      ] as const;
 
   useEffect(() => {
     setBrand(selected.brand ?? "");
@@ -88,7 +99,7 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
                 ...brands.map((item) => ({ value: item.slug, label: item.name }))
               ]}
               searchable
-              searchPlaceholder="Cari brand"
+              searchPlaceholder={locale === "id" ? "Cari merek" : "Search brands"}
               ariaLabel={dictionary.brand}
             />
           </div>

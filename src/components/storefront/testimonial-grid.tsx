@@ -3,9 +3,16 @@
 import { useState } from "react";
 import Image from "next/image";
 import { X } from "lucide-react";
+import type { Locale } from "@/lib/i18n";
 import type { Testimonial } from "@/lib/types";
 
-export function TestimonialGrid({ testimonials }: { testimonials: Testimonial[] }) {
+export function TestimonialGrid({
+  locale,
+  testimonials
+}: {
+  locale: Locale;
+  testimonials: Testimonial[];
+}) {
   const [selected, setSelected] = useState<Testimonial | null>(null);
 
   return (
@@ -17,7 +24,11 @@ export function TestimonialGrid({ testimonials }: { testimonials: Testimonial[] 
               <button
                 type="button"
                 className="relative h-12 w-12 shrink-0 overflow-hidden bg-clay transition focus:outline-none focus:ring-2 focus:ring-gold/60"
-                aria-label={`Open testimonial photo from ${testimonial.customerName}`}
+                aria-label={
+                  locale === "id"
+                    ? `Buka foto testimoni dari ${testimonial.customerName}`
+                    : `Open testimonial photo from ${testimonial.customerName}`
+                }
                 onClick={() => setSelected(testimonial)}
               >
                 <Image
@@ -40,7 +51,11 @@ export function TestimonialGrid({ testimonials }: { testimonials: Testimonial[] 
           className="fixed inset-0 z-50 grid place-items-center bg-ink/82 px-4 py-6"
           role="dialog"
           aria-modal="true"
-          aria-label={`Testimonial photo from ${selected.customerName}`}
+          aria-label={
+            locale === "id"
+              ? `Foto testimoni dari ${selected.customerName}`
+              : `Testimonial photo from ${selected.customerName}`
+          }
           onClick={() => setSelected(null)}
         >
           <div
@@ -54,7 +69,7 @@ export function TestimonialGrid({ testimonials }: { testimonials: Testimonial[] 
               <button
                 type="button"
                 className="inline-flex h-10 w-10 shrink-0 items-center justify-center border border-ink/15 text-ink transition hover:bg-warm focus:outline-none focus:ring-2 focus:ring-gold/60"
-                aria-label="Close testimonial photo"
+                aria-label={locale === "id" ? "Tutup foto testimoni" : "Close testimonial photo"}
                 onClick={() => setSelected(null)}
               >
                 <X className="h-5 w-5" aria-hidden="true" />
