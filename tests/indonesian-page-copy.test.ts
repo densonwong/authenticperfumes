@@ -16,6 +16,8 @@ const testimonials = readFileSync("src/app/(localized)/[locale]/(storefront)/tes
 describe("Indonesian page-owned copy", () => {
   it("contains localized homepage banner copy", () => {
     expect(home).toContain('title: "Temukan aroma pilihan Anda"');
+    expect(home).toContain('title: "Temukan aroma khas Anda"');
+    expect(home).toContain('if (banner.position === "primary")');
     expect(home).not.toContain('title: "Discover your scent"');
   });
 

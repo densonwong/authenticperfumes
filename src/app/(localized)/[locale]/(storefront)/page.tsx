@@ -87,7 +87,20 @@ function localizeBanner(banner: Banner, locale: string): Banner {
     }
   };
 
-  return translations[banner.id] ? { ...banner, ...translations[banner.id] } : banner;
+  if (translations[banner.id]) {
+    return { ...banner, ...translations[banner.id] };
+  }
+
+  if (banner.position === "primary") {
+    return {
+      ...banner,
+      title: "Temukan aroma khas Anda",
+      subtitle:
+        "Parfum niche dan desainer asli, dipilih dengan cermat untuk setiap kepribadian dan suasana."
+    };
+  }
+
+  return banner;
 }
 
 export default async function HomePage({ params }: { params: Promise<{ locale: string }> }) {
