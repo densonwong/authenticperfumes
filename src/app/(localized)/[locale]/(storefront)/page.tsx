@@ -4,6 +4,7 @@ import { Reveal } from "@/components/motion/reveal";
 import { BrandCloud } from "@/components/storefront/brand-cloud";
 import { BrandMarquee } from "@/components/storefront/brand-marquee";
 import { CollectionTile } from "@/components/storefront/collection-tile";
+import { CompleteCollectionCta } from "@/components/storefront/complete-collection-cta";
 import { ProductSlider } from "@/components/storefront/product-slider";
 import { TrustStrip } from "@/components/storefront/trust-strip";
 import {
@@ -152,6 +153,8 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
       <TrustStrip dictionary={dictionary.trust} locale={locale} />
 
       <BrandMarquee brands={logoWallBrands} label={dictionary.home.featuredHouses} locale={locale} />
+
+      <CompleteCollectionCta locale={locale} />
 
       <section className="mx-auto max-w-7xl px-4 py-10 lg:px-8">
         <Reveal>
