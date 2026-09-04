@@ -15,6 +15,9 @@ export default async function AdminProductsPage() {
     status: product.status,
     readyStock: product.readyStock,
     preOrder: product.preOrder,
+    bestSeller: product.bestSeller,
+    newArrival: product.newArrival,
+    variantCount: product.variants.length,
     stock: product.variants.reduce((total, variant) => total + variant.stock, 0),
     fromPrice: product.variants[0]?.authenticPrice ?? 0
   }));

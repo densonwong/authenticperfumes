@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useMemo, useRef, useState, useEffect } from "react";
 import { formatRupiah } from "@/lib/format";
+import { CatalogActionControls } from "@/components/admin/catalog-action-controls";
 import {
   applyBulkAvailability,
   filterAdminProductItems,
@@ -125,7 +126,8 @@ export function ProductListManager({
               type="search"
               aria-label="Search products"
               value={query}
-              onChange={(event) => setQuery(event.target.value)}
+              disabled={isUpdating}
+              onChange={(event) => { setQuery(event.target.value); setSelectedIds(new Set()); }}
               placeholder="Product or brand name"
               className="mt-2 h-10 w-full border-stone/40 bg-paper text-sm focus:border-ink focus:ring-ink"
             />
@@ -138,7 +140,8 @@ export function ProductListManager({
             <select
               aria-label="Availability"
               value={availability}
-              onChange={(event) => setAvailability(event.target.value as AvailabilityFilter)}
+              disabled={isUpdating}
+              onChange={(event) => { setAvailability(event.target.value as AvailabilityFilter); setSelectedIds(new Set()); }}
               className="mt-2 h-10 w-full border-stone/40 bg-paper text-sm focus:border-ink focus:ring-ink"
             >
               <option value="all">All Products</option>
@@ -167,6 +170,18 @@ export function ProductListManager({
           </div>
         </div>
 
+        <div className="mt-3 border-t border-stone/20 pt-3">
+          <CatalogActionControls kind="products" disabled={isUpdating} onBusyChange={setIsUpdating}
+            targets={products.filter(p => selectedIds.has(p.id)).map(p => ({ id: p.id, name: `${p.brandName} — ${p.name}` }))}
+            onSuccess={(action, result) => {
+              const changed = new Set(result.ids);
+              setProducts(current => action === "delete_products" ? current.filter(p => !changed.has(p.id)) :
+                current.map(p => !changed.has(p.id) ? p : { ...p,
+                  bestSeller: action === "set_best_seller" ? true : p.bestSeller,
+                  newArrival: action === "set_new_product" ? true : p.newArrival }));
+              setSelectedIds(new Set()); setNotice(null);
+            }} />
+        </div>
         <div className="mt-3 flex flex-wrap items-center justify-between gap-3 border-t border-stone/20 pt-3 text-sm">
           <p className="text-stone">
             {filteredProducts.length} matching · <span className="font-semibold text-ink">{selectedIds.size} selected</span>
@@ -232,7 +247,13 @@ export function ProductListManager({
                       className="border-stone/40 text-ink focus:ring-ink"
                     />
                   </td>
-                  <td className="px-3 py-3 font-semibold">{product.name}</td>
+                  <td className="px-3 py-3 font-semibold">{product.name}
+                    <div className="mt-1 flex flex-wrap gap-1 text-xs font-normal">
+                      {product.bestSeller && <span className="bg-warm px-2 py-1">Best Seller</span>}
+                      {product.newArrival && <span className="bg-warm px-2 py-1">New Product</span>}
+                      {product.variantCount === 0 && <span className="text-amber-800">Tanpa ukuran — tersembunyi dari katalog</span>}
+                    </div>
+                  </td>
                   <td className="px-3 py-3 text-stone">{product.brandName}</td>
                   <td className="px-3 py-3">{product.status.replaceAll("_", " ")}</td>
                   <td className="px-3 py-3">{product.stock}</td>

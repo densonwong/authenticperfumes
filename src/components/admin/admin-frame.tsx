@@ -17,6 +17,7 @@ import {
 const navItems = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
   { href: "/admin/products", label: "Products", icon: Boxes },
+  { href: "/admin/product-sizes", label: "Ukuran Produk", icon: PackageSearch },
   { href: "/admin/brands", label: "Brands", icon: Building2 },
   { href: "/admin/banners", label: "Banners", icon: Image },
   { href: "/admin/testimonials", label: "Testimonials", icon: MessageSquareText },
@@ -41,14 +42,14 @@ export function AdminFrame({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-paper text-ink">
-      <aside className="fixed inset-y-0 left-0 z-40 flex w-64 flex-col border-r border-ink/10 bg-warm">
+      <aside className="z-40 flex w-full flex-col border-r border-ink/10 bg-warm md:fixed md:inset-y-0 md:left-0 md:w-64">
         <div className="flex h-[72px] items-center border-b border-ink/10 px-6">
           <Link href="/admin" className="font-logo text-2xl text-ink">
             Authentic Perfumes 8
           </Link>
         </div>
 
-        <nav className="flex-1 space-y-1 px-4 py-5" aria-label="Admin navigation">
+        <nav className="grid flex-1 grid-cols-2 gap-1 px-4 py-5 md:block md:space-y-1" aria-label="Admin navigation">
           {navItems.map((item) => {
             const Icon = item.icon;
             const active = isActive(pathname, item.href);
@@ -88,7 +89,7 @@ export function AdminFrame({ children }: { children: React.ReactNode }) {
         </div>
       </aside>
 
-      <div className="pl-64">
+      <div className="md:pl-64">
         {children}
       </div>
     </div>

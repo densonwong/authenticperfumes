@@ -3,10 +3,9 @@ import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
 import { getDictionary, normalizeLocale } from "@/lib/i18n";
-import { isReadyStockProduct } from "@/lib/product-availability";
+import { filterCatalogProducts } from "@/lib/catalog-filters";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
 import { localizedPageMetadata } from "@/lib/seo";
-import type { Product } from "@/lib/types";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
   const locale = normalizeLocale((await params).locale);
@@ -41,35 +40,6 @@ function selectedFrom(searchParams: Awaited<SearchParams>) {
   };
 }
 
-function filterProducts(products: Product[], selected: ReturnType<typeof selectedFrom>) {
-  const q = selected.q?.trim().toLowerCase();
-
-  return products.filter((product) => {
-    const searchable = [
-      product.name,
-      product.brandName,
-      product.concentration,
-      product.description,
-      product.countryOfOrigin,
-      product.gender,
-      ...product.notes
-    ]
-      .join(" ")
-      .toLowerCase();
-
-    if (q && !searchable.includes(q)) return false;
-    if (selected.brand && product.brandId !== `brand-${selected.brand}` && product.brandName.toLowerCase() !== selected.brand.replaceAll("-", " ")) return false;
-    if (selected.gender && product.gender !== selected.gender) return false;
-    if (selected.size && !product.variants.some((variant) => variant.size === selected.size)) return false;
-    if (selected.readyStock === "true" && !isReadyStockProduct(product)) return false;
-    if (selected.preOrder === "true" && !product.preOrder) return false;
-    if (selected.bestSeller === "true" && !product.bestSeller) return false;
-    if (selected.newArrival === "true" && !product.newArrival) return false;
-
-    return true;
-  });
-}
-
 export default async function ShopPage({
   params,
   searchParams
@@ -82,7 +52,7 @@ export default async function ShopPage({
   const resolvedSearchParams = await searchParams;
   const [brands, products] = await Promise.all([getBrands(), getProducts()]);
   const selected = selectedFrom(resolvedSearchParams);
-  const filteredProducts = filterProducts(products, selected);
+  const filteredProducts = filterCatalogProducts(products, brands, selected);
 
   return (
     <main className="bg-paper">

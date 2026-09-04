@@ -15,7 +15,7 @@ const pathsByKey: Record<CatalogCacheKey, { public: string[]; internal: string[]
   brands: { public: ["/", "/brands"], internal: ["/admin/brands"] },
   products: {
     public: ["/", "/shop", "/brands", "/new-arrivals", "/best-sellers", "/pre-order"],
-    internal: ["/admin/products", "/sitemap.xml"]
+    internal: ["/admin/products", "/admin/product-sizes", "/sitemap.xml"]
   },
   banners: { public: ["/"], internal: ["/admin/banners"] },
   testimonials: { public: ["/testimonials"], internal: ["/admin/testimonials"] }
