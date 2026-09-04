@@ -7,8 +7,24 @@ import {
   getProductBySlug,
   getProductsByBrandId
 } from "../src/lib/repositories/catalog";
+import { getProducts, getPreOrderProducts, getReadyStockProducts } from "../src/lib/repositories/catalog";
+import { seedProducts } from "../src/lib/seed-data";
 
 describe("catalog repository", () => {
+  it("hides variantless products from every public collection and restores them when a size returns", async () => {
+    const product = seedProducts[0];
+    const variants = product.variants;
+    product.variants = [];
+    try {
+      expect(await getProductBySlug(product.slug)).toBeNull();
+      for (const collection of [await getProducts(), await getProductsByBrandId(product.brandId),
+        await getNewArrivals(), await getBestSellers(), await getPreOrderProducts(), await getReadyStockProducts()]) {
+        expect(collection.some(p => p.id === product.id)).toBe(false);
+      }
+      expect(seedProducts.find(p => p.id === product.id)).toBe(product);
+    } finally { product.variants = variants; }
+    expect((await getProductBySlug(product.slug))?.id).toBe(product.id);
+  });
   it("returns seed brands", async () => {
     const brands = await getBrands();
     expect(brands.length).toBeGreaterThanOrEqual(12);

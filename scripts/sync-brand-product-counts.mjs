@@ -46,7 +46,7 @@ async function readAllBrands(supabase) {
 async function syncBrand(supabase, brand) {
   const { count, error: countError } = await supabase
     .from("products")
-    .select("id", { count: "exact", head: true })
+    .select("id,product_variants!inner(id)", { count: "exact", head: true })
     .eq("brand_id", brand.id)
     .eq("published", true);
 

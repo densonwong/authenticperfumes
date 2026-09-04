@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { flushSync } from "react-dom";
+import { BrandSearchInput } from "@/components/storefront/brand-search-input";
 import { CustomSelect } from "@/components/admin/custom-select";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
@@ -71,18 +73,15 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
       </div>
 
       <form action={localizedPath(locale, "/shop")} className="space-y-5">
-        <label className="block">
-          <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            {dictionary.search}
-          </span>
-          <input
-            type="search"
-            name="q"
-            defaultValue={selected.q}
-            placeholder={dictionary.searchPlaceholder}
-            className="mt-2 w-full border-ink/15 bg-paper text-sm focus:border-gold focus:ring-gold"
-          />
-        </label>
+        <BrandSearchInput brands={brands} initialQuery={selected.q} placeholder={dictionary.searchPlaceholder}
+          label={dictionary.search} locale={locale} onSelectBrand={(slug, form) => {
+            flushSync(() => setBrand(slug));
+            if (form) {
+              const queryInput = form.elements.namedItem("q") as HTMLInputElement;
+              queryInput.value = "";
+              form.requestSubmit();
+            }
+          }} />
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">

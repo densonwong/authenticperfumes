@@ -10,7 +10,7 @@ export async function syncBrandProductCounts(
     uniqueBrandIds.map(async (brandId) => {
       const { count, error: countError } = await supabase
         .from("products")
-        .select("id", { count: "exact", head: true })
+        .select("id,product_variants!inner(id)", { count: "exact", head: true })
         .eq("brand_id", brandId)
         .eq("published", true);
 

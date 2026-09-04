@@ -13,6 +13,9 @@ export type AdminProductListItem = {
   preOrder: boolean;
   stock: number;
   fromPrice: number;
+  bestSeller?: boolean;
+  newArrival?: boolean;
+  variantCount?: number;
 };
 
 export function filterAdminProductItems(

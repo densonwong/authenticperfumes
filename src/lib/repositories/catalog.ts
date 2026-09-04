@@ -292,26 +292,26 @@ export async function getBrandBySlug(slug: string) {
 }
 
 export async function getProducts() {
-  if (!hasSupabaseConfig()) return seedProducts;
-  return (await readCachedProducts()) ?? seedProducts;
+  const products = hasSupabaseConfig() ? (await readCachedProducts()) ?? seedProducts : seedProducts;
+  return products.filter(product => product.variants.length > 0);
 }
 
 export async function getProductBySlug(slug: string) {
   if (!hasSupabaseConfig()) {
-    return seedProducts.find((product) => product.slug === slug) ?? null;
+    return seedProducts.find((product) => product.slug === slug && product.variants.length > 0) ?? null;
   }
   const liveProduct = await readCachedProductBySlug(slug);
-  if (liveProduct !== null) return liveProduct ?? null;
-  return seedProducts.find((product) => product.slug === slug) ?? null;
+  if (liveProduct !== null) return liveProduct?.variants.length ? liveProduct : null;
+  return seedProducts.find((product) => product.slug === slug && product.variants.length > 0) ?? null;
 }
 
 export async function getProductsByBrandId(brandId: string) {
   if (!hasSupabaseConfig()) {
-    return seedProducts.filter((product) => product.brandId === brandId);
+    return seedProducts.filter((product) => product.brandId === brandId && product.variants.length > 0);
   }
   const liveProducts = await readCachedProductsByBrandId(brandId);
-  if (liveProducts !== null) return liveProducts;
-  return seedProducts.filter((product) => product.brandId === brandId);
+  if (liveProducts !== null) return liveProducts.filter(product => product.variants.length > 0);
+  return seedProducts.filter((product) => product.brandId === brandId && product.variants.length > 0);
 }
 
 export async function getNewArrivals() {
