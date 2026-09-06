@@ -73,12 +73,19 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
       </div>
 
       <form action={localizedPath(locale, "/shop")} className="space-y-5">
-        <BrandSearchInput brands={brands} initialQuery={selected.q} placeholder={dictionary.searchPlaceholder}
+        <BrandSearchInput brands={brands} products={products} initialQuery={selected.q} placeholder={dictionary.searchPlaceholder}
           label={dictionary.search} locale={locale} onSelectBrand={(slug, form) => {
             flushSync(() => setBrand(slug));
             if (form) {
               const queryInput = form.elements.namedItem("q") as HTMLInputElement;
               queryInput.value = "";
+              form.requestSubmit();
+            }
+          }} onSelectProduct={(name, form) => {
+            flushSync(() => setBrand(""));
+            if (form) {
+              const queryInput = form.elements.namedItem("q") as HTMLInputElement;
+              queryInput.value = name;
               form.requestSubmit();
             }
           }} />
