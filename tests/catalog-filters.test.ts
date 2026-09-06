@@ -2,6 +2,10 @@ import { describe, expect, it } from "vitest";
 import { seedBrands, seedProducts } from "../src/lib/seed-data";
 import { filterCatalogProducts } from "../src/lib/catalog-filters";
 describe("catalog brand matching", () => {
+  it("matches a combined brand and product name query", () => {
+    const product = {...seedProducts[0],brandName:"Dior",name:"Sauvage"};
+    expect(filterCatalogProducts([product],seedBrands,{q:"dior sauvage"})).toEqual([product]);
+  });
   it("uses the actual brand ID rather than guessing from a name or slug", () => {
     const brand = {...seedBrands[0],id:"live-brand-uuid",slug:"different-slug",name:"A name with punctuation!"};
     const product = {...seedProducts[0],brandId:brand.id,brandName:brand.name};

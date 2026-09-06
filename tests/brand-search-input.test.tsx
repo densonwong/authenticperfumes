@@ -3,19 +3,21 @@ import { afterEach, describe, expect, it, vi } from "vitest";
 import { BrandSearchInput } from "../src/components/storefront/brand-search-input";
 import { FilterPanel } from "../src/components/storefront/filter-panel";
 import { getDictionary } from "../src/lib/i18n";
-import type { Brand } from "../src/lib/types";
+import type { Brand, Product } from "../src/lib/types";
+import { seedProducts } from "../src/lib/seed-data";
 const brands = ["Creed","Chanel","Amouage"].map((name,i) => ({id:String(i),name,slug:name.toLowerCase(),logoUrl:"",country:"",foundedYear:null,description:"",productCount:1,featured:false})) as Brand[];
+const products: Product[] = [{...seedProducts[0],id:"p1",brandId:"3",brandName:"Dior",slug:"dior-sauvage",name:"Sauvage"}];
 afterEach(() => vi.restoreAllMocks());
 describe("brand search suggestions", () => {
   it("shows alphabetical prefix matches without matching unrelated brands", () => {
-    render(<BrandSearchInput brands={brands} label="Cari" placeholder="Cari" locale="id" onSelectBrand={vi.fn()} />);
+    render(<BrandSearchInput brands={brands} products={products} label="Cari" placeholder="Cari" locale="id" onSelectBrand={vi.fn()} onSelectProduct={vi.fn()} />);
     fireEvent.change(screen.getByRole("combobox"),{target:{value:"C"}});
-    expect(screen.getAllByRole("option").map(e => e.textContent)).toEqual(["Chanel","Creed"]);
+    expect(screen.getAllByRole("option").map(e => e.textContent)).toEqual(["ChanelMerek","CreedMerek"]);
     expect(screen.queryByText("Amouage")).toBeNull();
   });
   it("supports arrows, Enter, Escape and free text", () => {
     const select = vi.fn();
-    render(<BrandSearchInput brands={brands} label="Search" placeholder="Search" locale="en" onSelectBrand={select} />);
+    render(<BrandSearchInput brands={brands} products={products} label="Search" placeholder="Search" locale="en" onSelectBrand={select} onSelectProduct={vi.fn()} />);
     const input = screen.getByRole("combobox");
     fireEvent.change(input,{target:{value:"c"}});
     fireEvent.keyDown(input,{key:"Enter"}); expect(select).not.toHaveBeenCalled();
@@ -26,6 +28,15 @@ describe("brand search suggestions", () => {
     expect(screen.queryByRole("listbox")).toBeNull();
     fireEvent.change(input,{target:{value:"not-a-brand"}});
     expect(screen.getByRole("status").textContent).toContain("Press Enter to search perfumes");
+  });
+  it("suggests full product names and selects the product search", () => {
+    const selectProduct = vi.fn();
+    render(<BrandSearchInput brands={brands} products={products} label="Cari" placeholder="Cari" locale="id"
+      onSelectBrand={vi.fn()} onSelectProduct={selectProduct} />);
+    fireEvent.change(screen.getByRole("combobox"), { target: { value: "dior sau" } });
+    expect(screen.getByRole("option", { name: "Dior Sauvage" })).toBeTruthy();
+    fireEvent.click(screen.getByRole("option", { name: "Dior Sauvage" }));
+    expect(selectProduct).toHaveBeenCalledWith("Dior Sauvage", null);
   });
   it("submits selected brand with a blank query and preserves other form filters", () => {
     let submitted: FormData | undefined;
