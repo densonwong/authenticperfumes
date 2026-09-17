@@ -74,14 +74,14 @@ describe("localized storefront components", () => {
         locale="id"
       />
     );
-    expect(screen.getByText("Uniseks")).toBeTruthy();
-    expect(screen.getByText("Wanita")).toBeTruthy();
-    expect(screen.getByText("Pria")).toBeTruthy();
     expect(screen.getByText("Stok tersedia")).toBeTruthy();
     expect(screen.getByText("Pre-order")).toBeTruthy();
     expect(screen.getByText("Terlaris")).toBeTruthy();
     expect(screen.getByText("Produk terbaru")).toBeTruthy();
     expect(screen.queryByText("Ready stock")).toBeNull();
+    expect(screen.queryByText("Uniseks")).toBeNull();
+    expect(screen.queryByText("Wanita")).toBeNull();
+    expect(screen.queryByText("Pria")).toBeNull();
   });
 
   it("localizes footer headings and links without changing the English footer", () => {

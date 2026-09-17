@@ -42,14 +42,13 @@ describe("brand search suggestions", () => {
     let submitted: FormData | undefined;
     vi.spyOn(HTMLFormElement.prototype,"requestSubmit").mockImplementation(function (this: HTMLFormElement) {submitted = new FormData(this);});
     const dictionary = getDictionary("id");
-    render(<FilterPanel brands={brands} products={[]} selected={{size:"2ml",gender:"women",readyStock:"true"}}
+    render(<FilterPanel brands={brands} products={[]} selected={{size:"2ml",readyStock:"true"}}
       dictionary={{...dictionary.shop,...dictionary.common}} locale="id" />);
     fireEvent.change(screen.getByRole("combobox",{name:"Cari"}),{target:{value:"c"}});
     fireEvent.click(screen.getByRole("option",{name:"Chanel"}));
     expect(submitted?.get("brand")).toBe("chanel");
     expect(submitted?.get("q")).toBe("");
     expect(submitted?.get("size")).toBe("2ml");
-    expect(submitted?.get("gender")).toBe("women");
     expect(submitted?.get("readyStock")).toBe("true");
   });
 });

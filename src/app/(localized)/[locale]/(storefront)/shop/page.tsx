@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
+import { ShopMissingFragranceNotice } from "@/components/storefront/shop-missing-fragrance-notice";
 import { getDictionary, normalizeLocale } from "@/lib/i18n";
 import { filterCatalogProducts } from "@/lib/catalog-filters";
 import { getBrands, getProducts } from "@/lib/repositories/catalog";
@@ -73,6 +74,10 @@ export default async function ShopPage({
             </p>
           </div>
         </div>
+      </section>
+
+      <section className="mx-auto max-w-7xl px-4 pt-8 lg:px-8">
+        <ShopMissingFragranceNotice locale={locale} />
       </section>
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[280px_1fr] lg:px-8">

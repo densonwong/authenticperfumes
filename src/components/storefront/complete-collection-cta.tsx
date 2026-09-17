@@ -9,13 +9,13 @@ export function CompleteCollectionCta({ locale }: { locale: Locale }) {
       ? {
           eyebrow: "KOLEKSI LENGKAP KAMI",
           title: "Jelajahi Seluruh Koleksi Parfum Kami",
-          body: "Temukan seluruh koleksi parfum niche dan desainer dari berbagai merek pilihan dunia.",
+          body: "Tidak semua produk kami ditampilkan di website. Kami hanya mempublikasikan koleksi terkurasi.",
           action: "LIHAT SEMUA PARFUM"
         }
       : {
           eyebrow: "OUR COMPLETE COLLECTION",
           title: "Explore Our Complete Fragrance Collection",
-          body: "Discover our complete niche and designer fragrance collection from selected houses around the world.",
+          body: "Not all of our products are displayed on the website. We only publish a curated selection.",
           action: "DISCOVER ALL FRAGRANCES"
         };
 

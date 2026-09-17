@@ -151,7 +151,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   return (
     <main className="bg-paper">
       {primaryBanner ? (
-        <section className="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+        <section>
           <CollectionTile
             banner={primaryBanner}
             priority

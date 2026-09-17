@@ -8,7 +8,7 @@ import { CustomSelect } from "@/components/admin/custom-select";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
 import { uniqueSortedProductSizes } from "@/lib/product-sizes";
-import type { Brand, Gender, Product } from "@/lib/types";
+import type { Brand, Product } from "@/lib/types";
 
 type FilterPanelProps = {
   brands: Brand[];
@@ -33,17 +33,6 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
   const sizes = uniqueSortedProductSizes(
     products.flatMap((product) => product.variants.map((variant) => variant.size))
   );
-  const genders: Array<{ value: Gender; label: string }> = locale === "id"
-    ? [
-        { value: "unisex", label: "Uniseks" },
-        { value: "women", label: "Wanita" },
-        { value: "men", label: "Pria" }
-      ]
-    : [
-        { value: "unisex", label: "Unisex" },
-        { value: "women", label: "Women" },
-        { value: "men", label: "Men" }
-      ];
   const toggles = locale === "id"
     ? [
         { name: "readyStock", label: "Stok tersedia" },
@@ -110,29 +99,6 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
             />
           </div>
         </label>
-
-        <div>
-          <p className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
-            {dictionary.gender}
-          </p>
-          <div className="mt-2 grid grid-cols-3 gap-2">
-            {genders.map((gender) => (
-              <label
-                key={gender.value}
-                className="flex items-center justify-center border border-ink/10 bg-paper px-2 py-2 text-xs font-semibold uppercase tracking-[0.1em] text-ink"
-              >
-                <input
-                  type="radio"
-                  name="gender"
-                  value={gender.value}
-                  defaultChecked={selected.gender === gender.value}
-                  className="sr-only"
-                />
-                {gender.label}
-              </label>
-            ))}
-          </div>
-        </div>
 
         <label className="block">
           <span className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">
