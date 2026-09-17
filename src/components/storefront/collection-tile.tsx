@@ -27,7 +27,7 @@ export function CollectionTile({
       href={localizedPath(locale, banner.href)}
       className={`group relative flex overflow-hidden bg-ink text-paper focus:outline-none focus:ring-2 focus:ring-gold/70 ${
         full
-          ? "h-[calc(100svh-8rem)] min-h-[420px]"
+          ? "h-[55svh] min-h-[320px] lg:h-[calc(100svh-8rem)] lg:min-h-[420px]"
           : "min-h-[260px] border border-ink/10 sm:min-h-[320px]"
       }`}
     >

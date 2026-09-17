@@ -2,23 +2,9 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Star, X } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import type { Locale } from "@/lib/i18n";
 import type { Testimonial } from "@/lib/types";
-
-function StarRating({ locale }: { locale: Locale }) {
-  return (
-    <div
-      className="flex items-center gap-1"
-      role="img"
-      aria-label={locale === "id" ? "Nilai 5 dari 5 bintang" : "Rated 5 out of 5 stars"}
-    >
-      {Array.from({ length: 5 }).map((_, index) => (
-        <Star key={index} className="h-4 w-4 fill-gold text-gold" aria-hidden="true" />
-      ))}
-    </div>
-  );
-}
 
 export function TestimonialGrid({
   locale,
@@ -92,17 +78,11 @@ export function TestimonialGrid({
               </button>
 
               <figcaption className="flex flex-1 flex-col gap-4 p-6">
-                <StarRating locale={locale} />
                 <blockquote className="text-base leading-7 text-ink/75">
                   &quot;{testimonial.quote}&quot;
                 </blockquote>
                 <div className="mt-auto border-t border-ink/10 pt-4">
                   <p className="text-sm font-semibold text-ink">{testimonial.customerName}</p>
-                  {testimonial.productName ? (
-                    <p className="mt-1 text-xs uppercase tracking-[0.14em] text-gold">
-                      {testimonial.productName}
-                    </p>
-                  ) : null}
                 </div>
               </figcaption>
             </figure>
