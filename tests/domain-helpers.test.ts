@@ -100,6 +100,15 @@ describe("product availability", () => {
     expect(isReadyStockProduct({ readyStock: true, status: "out_of_stock" })).toBe(false);
     expect(isReadyStockProduct({ readyStock: false, status: "ready_stock" })).toBe(false);
   });
+
+  it("counts a pre-order product with a ready variant as ready stock", () => {
+    const variants = [{ status: "pre_order" as const }, { status: "ready_stock" as const }];
+    expect(isReadyStockProduct({ readyStock: true, status: "pre_order", variants })).toBe(true);
+    expect(isReadyStockProduct({ readyStock: false, status: "pre_order", variants })).toBe(false);
+    expect(
+      isReadyStockProduct({ readyStock: true, status: "pre_order", variants: [{ status: "pre_order" }] })
+    ).toBe(false);
+  });
 });
 
 describe("seed data", () => {

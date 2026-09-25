@@ -29,6 +29,7 @@ export function SiteHeader({
         { label: "Merek A-Z", href: "/brands" },
         { label: "Produk Terbaru", href: "/new-arrivals" },
         { label: "Terlaris", href: "/best-sellers" },
+        { label: "Stok Tersedia", href: "/shop?readyStock=true" },
         { label: "Pre-Order", href: "/pre-order" }
       ]
     : [
@@ -36,6 +37,7 @@ export function SiteHeader({
         { label: "Brand A-Z", href: "/brands" },
         { label: "New Arrival", href: "/new-arrivals" },
         { label: "Best Seller", href: "/best-sellers" },
+        { label: "Ready Stock", href: "/shop?readyStock=true" },
         { label: "Pre Order", href: "/pre-order" }
       ];
   const perfumesLabel = locale === "id" ? "Parfum" : "Perfumes";
