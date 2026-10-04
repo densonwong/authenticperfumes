@@ -62,7 +62,41 @@ function buildMessage(intent, values) {
 form.addEventListener('submit', event => {
   event.preventDefault();
   const values = Object.fromEntries(Object.entries(fields).map(([key, input]) => [key, input.value.trim()]));
-  const url = 'https://wa.me/6282310001899?text=' + encodeURIComponent(buildMessage(selectedIntent(), values));
-  window.open(url, '_blank', 'noopener,noreferrer');
+  const message = document.getElementById('prepared-message');
+  message.value = buildMessage(selectedIntent(), values);
+  document.getElementById('message-preview').hidden = false;
+  message.focus();
+  message.select();
 });
 updateMode();
+
+// Keep the content visible when motion is disabled or the observer is unavailable.
+function initLandingMotion() {
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+  if (reducedMotion.matches || !('IntersectionObserver' in window)) return;
+
+  const elements = document.querySelectorAll(
+    '.hero-copy > *, .hero-photo, .service-strip, .section > .eyebrow, ' +
+    '.section > h2, .solution-card, .testimonial-card, .faq-list > details, .closing > :not(details)'
+  );
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (!entry.isIntersecting) return;
+      entry.target.classList.remove('reveal-pending');
+      observer.unobserve(entry.target);
+    });
+  }, { threshold: 0.08 });
+
+  elements.forEach((element, index) => {
+    element.classList.add('scroll-reveal', 'reveal-pending');
+    element.style.setProperty('--reveal-delay', (index % 3) * 70 + 'ms');
+    observer.observe(element);
+  });
+
+  reducedMotion.addEventListener('change', event => {
+    if (!event.matches) return;
+    observer.disconnect();
+    elements.forEach(element => element.classList.remove('reveal-pending'));
+  });
+}
+initLandingMotion();
