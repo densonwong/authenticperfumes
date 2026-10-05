@@ -23,7 +23,7 @@ describe("isolated Meta Ads landing page", () => {
     }
   });
 
-  it("keeps Instagram requests, optional fields and all five stories", () => {
+  it("keeps WhatsApp requests, optional fields and all five stories", () => {
     document.body.innerHTML = landingContent;
     expect(document.querySelectorAll(".solution-card")).toHaveLength(4);
     expect(document.querySelectorAll(".testimonial-card")).toHaveLength(5);
@@ -33,8 +33,8 @@ describe("isolated Meta Ads landing page", () => {
     expect(document.querySelector("[name=budget]")).toBeNull();
     const urls = [...document.querySelectorAll<HTMLAnchorElement>("a")].map((a) => a.getAttribute("href")!);
     expect(urls.filter((url) => url.includes("authenticperfumes8.com"))).toHaveLength(0);
-    expect(urls.filter((url) => url.startsWith("https://wa.me/"))).toHaveLength(0);
-    expect(urls.filter((url) => url === "https://ig.me/m/authenticperfumes8_")).not.toHaveLength(0);
+    expect(urls.filter((url) => url.startsWith("https://wa.me/6282310001899"))).not.toHaveLength(0);
+    expect(urls.filter((url) => url.startsWith("https://ig.me/"))).toHaveLength(0);
     for (const asset of document.querySelectorAll<HTMLImageElement>("img")) {
       expect(readFileSync(path.join(root, "public", asset.getAttribute("src")!))).toBeTruthy();
     }

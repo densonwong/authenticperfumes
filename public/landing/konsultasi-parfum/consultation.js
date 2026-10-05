@@ -56,7 +56,7 @@ function buildMessage(intent, values) {
   if (values.preference) lines.push('Nama parfum: ' + values.preference);
   if (values.occasion) lines.push('Ukuran/varian: ' + values.occasion);
   if (values.notes) lines.push('Catatan: ' + values.notes);
-  lines.push('Saya menghubungi dari /konsultasi-parfum AuthenticPerfumes8.');
+  lines.push('(LG)');
   return lines.join('\n');
 }
 form.addEventListener('submit', event => {
@@ -64,6 +64,7 @@ form.addEventListener('submit', event => {
   const values = Object.fromEntries(Object.entries(fields).map(([key, input]) => [key, input.value.trim()]));
   const message = document.getElementById('prepared-message');
   message.value = buildMessage(selectedIntent(), values);
+  document.querySelector('#message-preview a').href = 'https://wa.me/6282310001899?text=' + encodeURIComponent(message.value);
   document.getElementById('message-preview').hidden = false;
   message.focus();
   message.select();
