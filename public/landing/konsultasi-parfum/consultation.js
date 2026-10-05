@@ -56,7 +56,7 @@ function buildMessage(intent, values) {
   if (values.preference) lines.push('Nama parfum: ' + values.preference);
   if (values.occasion) lines.push('Ukuran/varian: ' + values.occasion);
   if (values.notes) lines.push('Catatan: ' + values.notes);
-  lines.push('Saya menghubungi dari /konsultasi-parfum AuthenticPerfumes8.');
+  lines.push('(LG)');
   return lines.join('\n');
 }
 form.addEventListener('submit', event => {

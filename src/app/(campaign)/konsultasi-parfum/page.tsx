@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Script from "next/script";
 import { landingContent } from "./landing-content";
+import "./landing-fonts.css";
 import "./landing.css";
 
 export const metadata: Metadata = {
