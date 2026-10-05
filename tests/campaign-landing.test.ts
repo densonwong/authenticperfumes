@@ -23,20 +23,43 @@ describe("isolated Meta Ads landing page", () => {
     }
   });
 
-  it("keeps Instagram requests, optional fields and all five stories", () => {
+  it("keeps WhatsApp requests, optional fields and all five stories", () => {
     document.body.innerHTML = landingContent;
-    expect(document.querySelectorAll(".solution-card")).toHaveLength(4);
+    expect(document.querySelectorAll(".solution-card")).toHaveLength(3);
     expect(document.querySelectorAll(".testimonial-card")).toHaveLength(5);
     expect(document.querySelector(".optional-form")?.hasAttribute("open")).toBe(false);
     expect(document.querySelectorAll(".consult-form input[type=text], .consult-form textarea:not([readonly])")).toHaveLength(3);
-    expect(document.querySelector("#message-preview")?.hasAttribute("hidden")).toBe(true);
+    expect(document.querySelector("#message-preview")).toBeNull();
     expect(document.querySelector("[name=budget]")).toBeNull();
     const urls = [...document.querySelectorAll<HTMLAnchorElement>("a")].map((a) => a.getAttribute("href")!);
     expect(urls.filter((url) => url.includes("authenticperfumes8.com"))).toHaveLength(0);
-    expect(urls.filter((url) => url.startsWith("https://wa.me/"))).toHaveLength(0);
-    expect(urls.filter((url) => url === "https://ig.me/m/authenticperfumes8_")).not.toHaveLength(0);
+    expect(urls.filter((url) => url.startsWith("https://wa.me/6282310001899"))).not.toHaveLength(0);
+    expect(urls.filter((url) => url.startsWith("https://ig.me/"))).toHaveLength(0);
     for (const asset of document.querySelectorAll<HTMLImageElement>("img")) {
       expect(readFileSync(path.join(root, "public", asset.getAttribute("src")!))).toBeTruthy();
+    }
+  });
+
+  it("prepares WhatsApp messages that match each consultation request", () => {
+    document.body.innerHTML = landingContent;
+    const expectedMessages = [
+      ["Konsultasikan Pilihan Saya", "konsultasi aroma"],
+      ["Bantu pilih parfum saya", "dibantu memilih"],
+      ["Cari incaran saya", "sulit ditemukan atau rilisan baru"],
+      ["Tanya pilihan cicilan", "pilihan pembayaran atau cicilan"],
+      ["Minta katalog via WhatsApp", "meminta katalog"],
+      ["Tanyakan incaran saya di WhatsApp", "harga dan ketersediaan"],
+      ["Bahas incaran saya di WhatsApp", "harga serta stok"],
+    ];
+    const links = [...document.querySelectorAll<HTMLAnchorElement>('a[href^="https://wa.me/"]')];
+    for (const [label, message] of expectedMessages) {
+      const matchingLinks = links.filter((link) => link.textContent?.trim() === label);
+      expect(matchingLinks.length, label).toBeGreaterThan(0);
+      for (const link of matchingLinks) {
+        const url = new URL(link.href);
+        expect(url.pathname, label).toBe("/6282310001899");
+        expect(url.searchParams.get("text"), label).toContain(message);
+      }
     }
   });
 });

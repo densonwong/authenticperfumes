@@ -62,13 +62,25 @@ function buildMessage(intent, values) {
 form.addEventListener('submit', event => {
   event.preventDefault();
   const values = Object.fromEntries(Object.entries(fields).map(([key, input]) => [key, input.value.trim()]));
-  const message = document.getElementById('prepared-message');
-  message.value = buildMessage(selectedIntent(), values);
-  document.getElementById('message-preview').hidden = false;
-  message.focus();
-  message.select();
+  const url = 'https://wa.me/6282310001899?text=' + encodeURIComponent(buildMessage(selectedIntent(), values));
+  window.open(url, '_blank', 'noopener,noreferrer');
 });
 updateMode();
+
+// On small screens, one visible contact button is enough.
+function initContactVisibility() {
+  if (!('IntersectionObserver' in window)) return;
+  const visibleButtons = new Set();
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) visibleButtons.add(entry.target);
+      else visibleButtons.delete(entry.target);
+    });
+    document.body.classList.toggle('inline-contact-visible', visibleButtons.size > 0);
+  }, { threshold: 0.5 });
+  document.querySelectorAll('.button-wa:not(.floating-whatsapp)').forEach(button => observer.observe(button));
+}
+initContactVisibility();
 
 // Keep the content visible when motion is disabled or the observer is unavailable.
 function initLandingMotion() {

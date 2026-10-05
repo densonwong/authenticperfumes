@@ -4,9 +4,9 @@ import { landingContent } from "./landing-content";
 import "./landing.css";
 
 export const metadata: Metadata = {
-  title: "Konsultasi Parfum Niche & Rare | AuthenticPerfumes8",
+  title: "Konsultasi dan Rekomendasi Parfum | AuthenticPerfumes8",
   description:
-    "Bahas keaslian, aroma sebelum blind buy, parfum rare dan rilisan baru, serta pilihan cicilan bersama AuthenticPerfumes8 melalui DM Instagram.",
+    "Bahas keaslian, aroma sebelum blind buy, parfum rare dan rilisan baru, serta pilihan cicilan bersama AuthenticPerfumes8 melalui WhatsApp.",
   robots: { index: false, follow: false },
 };
 
