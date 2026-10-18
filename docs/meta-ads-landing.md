@@ -5,7 +5,7 @@ Route: `/konsultasi-parfum` (Bahasa Indonesia, sengaja tidak memakai layout kata
 ## Lokasi source
 
 - `src/app/(campaign)/layout.tsx`: root layout halaman kampanye dan Vercel Analytics.
-- `src/app/(campaign)/konsultasi-parfum/page.tsx`: route Next.js, metadata noindex, dan pemuatan script form.
+- `src/app/(campaign)/konsultasi-parfum/page.tsx`: route Next.js, metadata noindex, Meta Pixel, dan pemuatan script form.
 - `src/app/(campaign)/konsultasi-parfum/landing-content.ts`: seluruh copy dan markup versi landing page yang disetujui pemilik.
 - `src/app/(campaign)/konsultasi-parfum/landing.css`: desain landing page.
 - `public/landing/konsultasi-parfum/consultation.js`: form opsional yang menyiapkan pesan WhatsApp.
@@ -35,7 +35,9 @@ Gunakan nama kampanye dan iklan yang konsisten. Vercel Analytics dipasang pada l
 
 Jumlah kunjungan path tidak sama dengan jumlah chat atau pesanan. Tidak adanya internal link tidak menjamin seluruh kunjungan berasal dari iklan (tautan bisa dibagikan, dibuka langsung, atau dibaca bot). Gunakan UTM untuk atribusi dengan alat analitik yang mendukungnya; cek juga landing page views di Meta Ads Manager.
 
-Belum ditambahkan Meta Pixel, CAPI, GA4, atau custom event klik WhatsApp. Form tidak menyimpan isian di server atau mengirimnya ke analytics. Semua tombol WhatsApp hanya menyiapkan percakapan; pelanggan tetap mengirim sendiri.
+Meta Pixel `28899681473026029` memakai kode dasar yang diberikan pemilik dan hanya dipasang pada `/konsultasi-parfum`. Script dimuat setelah halaman interaktif dan mengirim `PageView` sekali saat dokumen dibuka; navigasi anchor seperti `#solusi` tidak mengirim kunjungan tambahan. Beacon `<noscript>` memakai ID dan event yang sama untuk browser tanpa JavaScript. Setelah diterbitkan, pastikan event diterima melalui **Uji peristiwa** di Meta Events Manager; pengiriman ke Meta belum diverifikasi di produksi.
+
+Belum ditambahkan CAPI, GA4, atau custom event klik WhatsApp. Form tidak menyimpan isian di server atau mengirimnya ke analytics. Semua tombol WhatsApp hanya menyiapkan percakapan; pelanggan tetap mengirim sendiri.
 
 ## Persetujuan
 
