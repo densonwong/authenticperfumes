@@ -2,7 +2,7 @@ import { StrictMode } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { render } from "@testing-library/react";
 import { runInNewContext } from "node:vm";
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import FragranceConsultationPage from "../src/app/(campaign)/konsultasi-parfum/page";
 
 describe("consultation Meta Pixel", () => {
@@ -34,11 +34,14 @@ describe("consultation Meta Pixel", () => {
     // A detached document verifies the bootstrap without fetching Meta scripts.
     const pixelDocument = document.implementation.createHTMLDocument();
     pixelDocument.body.appendChild(pixelDocument.createElement("script"));
+    const ready = vi.fn(() => true);
     const sandbox: {
       document: Document;
+      Event: typeof Event;
+      dispatchEvent: typeof ready;
       window?: unknown;
       fbq?: { queue: ArrayLike<unknown>[] };
-    } = { document: pixelDocument };
+    } = { document: pixelDocument, Event, dispatchEvent: ready };
     sandbox.window = sandbox;
     runInNewContext(pixelScript!.textContent!, sandbox);
 
@@ -49,6 +52,9 @@ describe("consultation Meta Pixel", () => {
       ["init", "28899681473026029"],
       ["track", "PageView"],
     ]);
+    expect(ready).toHaveBeenCalledExactlyOnceWith(
+      expect.objectContaining({ type: "consultation-pixel-ready" }),
+    );
 
     first.unmount();
     const second = render(<FragranceConsultationPage />);

@@ -1,5 +1,91 @@
+(function () {
 'use strict';
+function getConsultationTracking() {
+  const key = '__authenticPerfumesConsultationTracking';
+  if (window[key]) return window[key];
+
+  // Only these fixed values may be sent to Meta, never form text or WA URLs.
+  const ctas = {
+    hero_consultation: { placement: 'hero', intent: 'rekomendasi' },
+    hero_catalog: { placement: 'hero', intent: 'katalog' },
+    solution_recommendation: { placement: 'solusi', intent: 'rekomendasi' },
+    solution_rare: { placement: 'solusi', intent: 'rare' },
+    solution_installments: { placement: 'solusi', intent: 'cicilan' },
+    testimonial_availability: { placement: 'testimoni', intent: 'incaran' },
+    faq_catalog: { placement: 'faq', intent: 'katalog' },
+    closing_availability: { placement: 'penutup', intent: 'incaran' },
+    footer_catalog: { placement: 'footer', intent: 'katalog' },
+    footer_whatsapp: { placement: 'footer', intent: 'konsultasi' },
+    floating_whatsapp: { placement: 'floating', intent: 'konsultasi' },
+    consultation_form: { placement: 'form', intent: 'rekomendasi' }
+  };
+  const formIntents = ['rekomendasi', 'incaran', 'rare'];
+  const pending = [];
+
+  function deliver(entry) {
+    try {
+      window.fbq('trackCustom', entry.name, entry.parameters);
+    } catch (_) {
+      // A blocked or failed tracker must never stop a WhatsApp request.
+    }
+  }
+  function flush() {
+    if (typeof window.fbq !== 'function') return;
+    pending.splice(0).forEach(deliver);
+  }
+  function emit(name, parameters) {
+    const entry = { name, parameters: { page: 'konsultasi-parfum', ...parameters } };
+    if (typeof window.fbq !== 'function') {
+      if (pending.length < 20) pending.push(entry);
+      return;
+    }
+    flush();
+    deliver(entry);
+  }
+  function whatsapp(ctaId, intent) {
+    if (!Object.prototype.hasOwnProperty.call(ctas, ctaId)) return;
+    const cta = ctas[ctaId];
+    emit('WhatsAppClick', {
+      cta_id: ctaId,
+      placement: cta.placement,
+      intent: ctaId === 'consultation_form' && formIntents.includes(intent) ? intent : cta.intent,
+      method: ctaId === 'consultation_form' ? 'form' : 'link'
+    });
+  }
+  function formEvent(name, intent) {
+    if (!['ConsultationFormStart', 'ConsultationFormSubmit'].includes(name)) return;
+    emit(name, {
+      cta_id: 'consultation_form',
+      placement: 'form',
+      intent: formIntents.includes(intent) ? intent : 'rekomendasi',
+      method: 'form'
+    });
+  }
+  function trackLink(event) {
+    if (event.defaultPrevented) return;
+    if (event.type === 'auxclick' ? event.button !== 1 : event.button > 0) return;
+    const element = event.target.nodeType === 1 ? event.target : event.target.parentElement;
+    const link = element && element.closest('a[data-wa-cta]');
+    if (!link || link.closest('noscript')) return;
+    let destination;
+    try { destination = new URL(link.href); } catch (_) { return; }
+    if (destination.origin !== 'https://wa.me' || destination.pathname !== '/6282310001899') return;
+    whatsapp(link.dataset.waCta);
+  }
+  document.addEventListener('click', trackLink);
+  document.addEventListener('auxclick', trackLink);
+  window.addEventListener('consultation-pixel-ready', flush);
+  window[key] = { whatsapp, formEvent };
+  return window[key];
+}
+
+function initializeFragranceConsultation() {
 const form = document.getElementById('consult-form');
+if (!form) return;
+const tracking = getConsultationTracking();
+if (form.dataset.consultationReady === 'true') return;
+form.dataset.consultationReady = 'true';
+
 const fields = {
   preference: document.getElementById('preference'),
   occasion: document.getElementById('occasion'),
@@ -31,7 +117,10 @@ const modes = {
     opening: 'Halo AuthenticPerfumes8, saya ingin menanyakan ketersediaan atau pengadaan parfum rare.'
   }
 };
-function selectedIntent() { return form.elements.intent.value; }
+function selectedIntent() {
+  const value = form.elements.intent.value;
+  return Object.prototype.hasOwnProperty.call(modes, value) ? value : 'rekomendasi';
+}
 function updateMode() {
   const mode = modes[selectedIntent()];
   document.getElementById('intent-description').textContent = mode.description;
@@ -41,6 +130,14 @@ function updateMode() {
   fields.occasion.placeholder = mode.occasionPlaceholder;
 }
 form.querySelectorAll('input[name="intent"]').forEach(input => input.addEventListener('change', updateMode));
+let formStarted = false;
+function trackFormStart() {
+  if (formStarted) return;
+  formStarted = true;
+  tracking.formEvent('ConsultationFormStart', selectedIntent());
+}
+form.addEventListener('input', trackFormStart);
+form.addEventListener('change', trackFormStart);
 document.querySelectorAll('[data-select], [data-product]').forEach(link => {
   link.addEventListener('click', () => {
     const intent = link.dataset.product ? 'incaran' : link.dataset.select;
@@ -61,8 +158,12 @@ function buildMessage(intent, values) {
 }
 form.addEventListener('submit', event => {
   event.preventDefault();
+  if (!form.checkValidity()) return;
   const values = Object.fromEntries(Object.entries(fields).map(([key, input]) => [key, input.value.trim()]));
   const url = 'https://wa.me/6282310001899?text=' + encodeURIComponent(buildMessage(selectedIntent(), values));
+  trackFormStart();
+  tracking.formEvent('ConsultationFormSubmit', selectedIntent());
+  tracking.whatsapp('consultation_form', selectedIntent());
   window.open(url, '_blank', 'noopener,noreferrer');
 });
 updateMode();
@@ -112,3 +213,7 @@ function initLandingMotion() {
   });
 }
 initLandingMotion();
+}
+window.initializeFragranceConsultation = initializeFragranceConsultation;
+initializeFragranceConsultation();
+})();

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Script from "next/script";
+import { ConsultationScript } from "./consultation-script";
 import { landingContent } from "./landing-content";
 import "./landing-fonts.css";
 import "./landing.css";
@@ -28,6 +29,7 @@ export default function FragranceConsultationPage() {
           'https://connect.facebook.net/en_US/fbevents.js');
           fbq('init', '28899681473026029');
           fbq('track', 'PageView');
+          window.dispatchEvent(new Event('consultation-pixel-ready'));
         `}
       </Script>
       <noscript>
@@ -39,11 +41,7 @@ export default function FragranceConsultationPage() {
           alt=""
         />
       </noscript>
-      <Script
-        id="fragrance-consultation-form"
-        src="/landing/konsultasi-parfum/consultation.js"
-        strategy="afterInteractive"
-      />
+      <ConsultationScript />
     </>
   );
 }
