@@ -3,9 +3,10 @@ import Link from "next/link";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
 import { formatRupiah } from "@/lib/format";
-import type { Product, ProductStatus } from "@/lib/types";
+import type { CatalogCardProduct } from "@/lib/catalog-pagination";
+import type { ProductStatus } from "@/lib/types";
 
-function getPriceRange(product: Product, key: "authenticPrice", locale: Locale) {
+function getPriceRange(product: CatalogCardProduct, key: "authenticPrice", locale: Locale) {
   const prices = product.variants.map((variant) => variant[key]).filter((price) => price > 0);
 
   if (prices.length === 0) return locale === "id" ? "Tanya" : "Ask";
@@ -22,7 +23,7 @@ export function ProductCard({
   dictionary,
   locale
 }: {
-  product: Product;
+  product: CatalogCardProduct;
   priority?: boolean;
   dictionary: Pick<Dictionary, "status" | "product">;
   locale: Locale;

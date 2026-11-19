@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { FilterPanel } from "@/components/storefront/filter-panel";
 import { ProductCard } from "@/components/storefront/product-card";
+import { InfiniteProductGrid } from "@/components/storefront/infinite-product-grid";
 import { RequestFragranceCta } from "@/components/storefront/request-fragrance-cta";
 import { ShopMissingFragranceNotice } from "@/components/storefront/shop-missing-fragrance-notice";
 import { getDictionary, normalizeLocale } from "@/lib/i18n";
-import { filterCatalogProducts } from "@/lib/catalog-filters";
-import { getBrands, getProducts } from "@/lib/repositories/catalog";
+import { getShopInitial } from "@/lib/catalog-listing";
+import { CatalogRequestError } from "@/lib/catalog-pagination";
 import { localizedPageMetadata } from "@/lib/seo";
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -51,9 +52,20 @@ export default async function ShopPage({
   const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
   const resolvedSearchParams = await searchParams;
-  const [brands, products] = await Promise.all([getBrands(), getProducts()]);
   const selected = selectedFrom(resolvedSearchParams);
-  const filteredProducts = filterCatalogProducts(products, brands, selected);
+  const query = { collection: "shop" as const, ...selected };
+  let initial: Awaited<ReturnType<typeof getShopInitial>>;
+  let invalidFilters = false;
+  try {
+    initial = await getShopInitial(query);
+  } catch (error) {
+    if (!(error instanceof CatalogRequestError)) throw error;
+    // A malformed/shared URL must not crash the whole catalog page.
+    const fallback = await getShopInitial({ collection: "shop" });
+    initial = { metadata: fallback.metadata, page: { products: [], total: 0, nextCursor: null } };
+    invalidFilters = true;
+  }
+  const { page, metadata } = initial;
 
   return (
     <main className="bg-paper">
@@ -70,7 +82,7 @@ export default async function ShopPage({
               </p>
             </div>
             <p className="text-sm font-semibold uppercase tracking-[0.14em] text-ink/55">
-              {filteredProducts.length} {dictionary.shop.of} {products.length} {dictionary.common.bottles}
+              {page.total} {dictionary.shop.of} {metadata.totalProducts} {dictionary.common.bottles}
             </p>
           </div>
         </div>
@@ -82,24 +94,29 @@ export default async function ShopPage({
 
       <section className="mx-auto grid max-w-7xl gap-6 px-4 py-8 lg:grid-cols-[280px_1fr] lg:px-8">
         <FilterPanel
-          brands={brands}
-          products={products}
-          selected={selected}
+          brands={metadata.brands}
+          sizes={metadata.sizes}
+          selected={invalidFilters ? {} : selected}
           dictionary={{ ...dictionary.shop, ...dictionary.common }}
           locale={locale}
         />
         <div>
-          {filteredProducts.length > 0 ? (
+          {page.nextCursor ? (
+            <InfiniteProductGrid initialPage={page} query={query} dictionary={dictionary} locale={locale}
+              gridClassName="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4" />
+          ) : page.products.length > 0 ? (
             <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 xl:grid-cols-4">
-              {filteredProducts.map((product, index) => (
+              {page.products.map((product, index) => (
                 <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} locale={locale} />
               ))}
             </div>
           ) : (
             <div className="border border-ink/10 bg-warm/45 p-8">
               <h2 className="font-serif text-2xl text-ink">{dictionary.shop.noTitle}</h2>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65">
-                {dictionary.shop.noBody}
+              <p className="mt-3 max-w-xl text-sm leading-6 text-ink/65" role={invalidFilters ? "alert" : undefined}>
+                {invalidFilters
+                  ? (locale === "id" ? "Filter pada tautan ini belum sesuai. Silakan pilih ulang filter atau gunakan Hapus filter." : "The filters in this link are invalid. Please select the filters again or clear them.")
+                  : dictionary.shop.noBody}
               </p>
             </div>
           )}

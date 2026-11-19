@@ -1,28 +1,58 @@
 "use client";
 
 import { useEffect, useId, useRef, useState } from "react";
-import type { Brand, Product } from "@/lib/types";
+import type { Brand } from "@/lib/types";
+import type { CatalogSearchOption } from "@/lib/catalog-pagination";
 import type { Locale } from "@/lib/i18n";
 
-export function BrandSearchInput({ brands, products, initialQuery, placeholder, label, locale, onSelectBrand, onSelectProduct }: {
-  brands: Brand[]; products: Product[]; initialQuery?: string; placeholder: string; label: string; locale: Locale;
+export function BrandSearchInput({ brands, initialQuery, placeholder, label, locale, onSelectBrand, onSelectProduct }: {
+  brands: Pick<Brand, "id" | "name" | "slug">[]; initialQuery?: string; placeholder: string; label: string; locale: Locale;
   onSelectBrand: (slug: string, form: HTMLFormElement | null) => void;
   onSelectProduct: (name: string, form: HTMLFormElement | null) => void;
 }) {
   const [query, setQuery] = useState(initialQuery ?? "");
   const [open, setOpen] = useState(false);
   const [active, setActive] = useState(-1);
+  const [suggestions, setSuggestions] = useState<{
+    needle: string; options: CatalogSearchOption[]; status: "loading" | "ready" | "error";
+  } | null>(null);
   const id = useId();
   const ref = useRef<HTMLInputElement>(null);
   const optionsRef = useRef<HTMLUListElement>(null);
   const needle = query.trim().toLocaleLowerCase();
-  const options = [
-    ...brands.filter(brand => needle && brand.name.toLocaleLowerCase().startsWith(needle))
-      .map(brand => ({ key: `brand-${brand.id}`, label: brand.name, type: "brand" as const, value: brand.slug })),
-    ...products.filter(product => needle && `${product.brandName} ${product.name}`.toLocaleLowerCase().includes(needle))
-      .map(product => ({ key: `product-${product.id}`, label: `${product.brandName} ${product.name}`, type: "product" as const, value: `${product.brandName} ${product.name}` }))
-  ].sort((a, b) => a.label.localeCompare(b.label)).slice(0, 30);
+  const localBrands = brands.filter(brand => needle && brand.name.toLocaleLowerCase().startsWith(needle))
+    .map(brand => ({ key: `brand-${brand.id}`, label: brand.name, type: "brand" as const, value: brand.slug }))
+    .sort((a, b) => a.label.localeCompare(b.label)).slice(0, 30);
+  const currentSuggestions = suggestions?.needle === needle ? suggestions : null;
+  const options = currentSuggestions?.status === "ready" ? currentSuggestions.options : localBrands;
   useEffect(() => { setQuery(initialQuery ?? ""); setOpen(false); setActive(-1); }, [initialQuery]);
+  useEffect(() => {
+    if (!needle) { setSuggestions(null); return; }
+    const controller = new AbortController();
+    setSuggestions({ needle, options: [], status: "loading" });
+    const timer = setTimeout(async () => {
+      try {
+        const response = await fetch(`/api/catalog-search?${new URLSearchParams({ q: needle })}`, { signal: controller.signal });
+        if (!response.ok) throw new Error("Unable to load suggestions");
+        const result: { options: CatalogSearchOption[] } = await response.json();
+        if (!Array.isArray(result.options) || result.options.some(option => !option ||
+          typeof option.key !== "string" || typeof option.label !== "string" || typeof option.value !== "string" ||
+          (option.type !== "brand" && option.type !== "product"))) throw new Error("Invalid suggestions");
+        if (controller.signal.aborted) return;
+        const keys = new Set<string>();
+        const nextOptions = result.options.filter(option => {
+          if (keys.has(option.key)) return false;
+          keys.add(option.key);
+          return true;
+        }).sort((a, b) => a.label.localeCompare(b.label)).slice(0, 30);
+        setSuggestions({ needle, options: nextOptions, status: "ready" });
+        setActive(-1);
+      } catch {
+        if (!controller.signal.aborted) setSuggestions({ needle, options: [], status: "error" });
+      }
+    }, 220);
+    return () => { clearTimeout(timer); controller.abort(); };
+  }, [needle]);
   useEffect(() => { optionsRef.current?.children[active]?.scrollIntoView?.({ block: "nearest" }); }, [active]);
   function choose(index: number) {
     const option = options[index];
@@ -34,7 +64,7 @@ export function BrandSearchInput({ brands, products, initialQuery, placeholder, 
   const expanded = open && Boolean(query.trim());
   return <div className="relative" onBlur={event => { if (!event.currentTarget.contains(event.relatedTarget)) setOpen(false); }}>
     <label htmlFor={id} className="text-[11px] font-semibold uppercase tracking-[0.16em] text-ink/60">{label}</label>
-    <input ref={ref} id={id} type="search" role="combobox" aria-autocomplete="list" autoComplete="off" name="q"
+    <input ref={ref} id={id} type="search" role="combobox" aria-autocomplete="list" autoComplete="off" name="q" maxLength={200}
       aria-expanded={expanded} aria-controls={expanded ? `${id}-options` : undefined}
       aria-activedescendant={expanded && active >= 0 && options[active] ? `${id}-option-${active}` : undefined}
       value={query} placeholder={placeholder} onFocus={() => setOpen(true)}
@@ -55,7 +85,13 @@ export function BrandSearchInput({ brands, products, initialQuery, placeholder, 
           {option.label}<span aria-hidden="true" className="ml-2 text-xs text-ink/45">{option.type === "brand" ? (locale === "id" ? "Merek" : "Brand") : (locale === "id" ? "Parfum" : "Fragrance")}</span>
         </li>)}
       </ul>
-      {!options.length && <p role="status" className="p-3 text-sm text-ink/60">{locale === "id" ? "Tidak ada saran. Tekan Enter untuk mencari parfum." : "No suggestions. Press Enter to search perfumes."}</p>}
+      {!options.length && <p role="status" className="p-3 text-sm text-ink/60">
+        {currentSuggestions?.status === "loading"
+          ? (locale === "id" ? "Mencari saran…" : "Loading suggestions…")
+          : currentSuggestions?.status === "error"
+            ? (locale === "id" ? "Saran belum tersedia. Tekan Enter untuk mencari parfum." : "Suggestions are unavailable. Press Enter to search perfumes.")
+            : (locale === "id" ? "Tidak ada saran. Tekan Enter untuk mencari parfum." : "No suggestions. Press Enter to search perfumes.")}
+      </p>}
     </div>}
   </div>;
 }

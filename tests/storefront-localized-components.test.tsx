@@ -68,7 +68,7 @@ describe("localized storefront components", () => {
     render(
       <FilterPanel
         brands={[]}
-        products={[product]}
+        sizes={["50ml"]}
         selected={{}}
         dictionary={{ ...dictionaries.id.shop, ...dictionaries.id.common }}
         locale="id"

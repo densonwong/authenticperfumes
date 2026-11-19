@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import { ProductCard } from "@/components/storefront/product-card";
+import { InfiniteProductGrid } from "@/components/storefront/infinite-product-grid";
 import { getDictionary, normalizeLocale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
-import { getPreOrderProducts } from "@/lib/repositories/catalog";
+import { getCatalogPage } from "@/lib/catalog-listing";
 import { localizedPageMetadata, siteUrl } from "@/lib/seo";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
 
@@ -130,7 +131,8 @@ const termsGroupsId = [
 export default async function PreOrderPage({ params }: { params: Promise<{ locale: string }> }) {
   const locale = normalizeLocale((await params).locale);
   const dictionary = getDictionary(locale);
-  const products = await getPreOrderProducts();
+  const query = { collection: "pre-order" as const };
+  const page = await getCatalogPage(query);
   const isId = locale === "id";
   const processItems = isId ? processId : process;
   const paymentPolicyItems = isId ? paymentPolicyId : paymentPolicy;
@@ -258,11 +260,13 @@ export default async function PreOrderPage({ params }: { params: Promise<{ local
           </p>
           <h2 className="mt-2 font-serif text-3xl text-ink">{isId ? "Daftar pre-order saat ini" : "Current pre-order list"}</h2>
         </div>
-        <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
-          {products.map((product, index) => (
+        {page.nextCursor ? (
+          <InfiniteProductGrid initialPage={page} query={query} dictionary={dictionary} locale={locale} />
+        ) : <div className="grid grid-cols-2 gap-3 sm:gap-4 md:grid-cols-3 lg:grid-cols-4">
+          {page.products.map((product, index) => (
             <ProductCard key={product.id} product={product} priority={index < 4} dictionary={dictionary} locale={locale} />
           ))}
-        </div>
+        </div>}
       </section>
     </main>
   );

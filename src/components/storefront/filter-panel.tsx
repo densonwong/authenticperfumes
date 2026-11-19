@@ -1,18 +1,17 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { flushSync } from "react-dom";
 import { BrandSearchInput } from "@/components/storefront/brand-search-input";
 import { CustomSelect } from "@/components/admin/custom-select";
 import type { Dictionary, Locale } from "@/lib/i18n";
 import { localizedPath } from "@/lib/localized-paths";
-import { uniqueSortedProductSizes } from "@/lib/product-sizes";
-import type { Brand, Product } from "@/lib/types";
+import type { Brand } from "@/lib/types";
 
 type FilterPanelProps = {
-  brands: Brand[];
-  products: Product[];
+  brands: Pick<Brand, "id" | "name" | "slug">[];
+  sizes: string[];
   selected: {
     q?: string;
     brand?: string;
@@ -27,12 +26,20 @@ type FilterPanelProps = {
   locale: Locale;
 };
 
-export function FilterPanel({ brands, products, selected, dictionary, locale }: FilterPanelProps) {
+export function FilterPanel(props: FilterPanelProps) {
+  const [clearCount, setClearCount] = useState(0);
+  const selectedKey = JSON.stringify([
+    props.selected.q ?? "", props.selected.brand ?? "", props.selected.gender ?? "", props.selected.size ?? "",
+    props.selected.readyStock ?? "", props.selected.preOrder ?? "", props.selected.bestSeller ?? "", props.selected.newArrival ?? ""
+  ]);
+  // Recreate the form only when the applied query changes or Clear is chosen.
+  // An ordinary parent render must preserve selections not yet applied.
+  return <FilterPanelForm key={`${selectedKey}:${clearCount}`} {...props} onClear={() => setClearCount(count => count + 1)} />;
+}
+
+function FilterPanelForm({ brands, sizes, selected, dictionary, locale, onClear }: FilterPanelProps & { onClear: () => void }) {
   const [brand, setBrand] = useState(selected.brand ?? "");
   const [size, setSize] = useState(selected.size ?? "");
-  const sizes = uniqueSortedProductSizes(
-    products.flatMap((product) => product.variants.map((variant) => variant.size))
-  );
   const toggles = locale === "id"
     ? [
         { name: "readyStock", label: "Stok tersedia" },
@@ -47,22 +54,17 @@ export function FilterPanel({ brands, products, selected, dictionary, locale }: 
         { name: "newArrival", label: "New arrival" }
       ] as const;
 
-  useEffect(() => {
-    setBrand(selected.brand ?? "");
-    setSize(selected.size ?? "");
-  }, [selected.brand, selected.size]);
-
   return (
     <aside className="border border-ink/10 bg-warm/45 p-4 lg:sticky lg:top-32 lg:max-h-[calc(100dvh-9rem)] lg:self-start lg:overflow-y-auto lg:overscroll-contain">
       <div className="mb-5 flex items-center justify-between gap-4 border-b border-ink/10 pb-4">
         <h2 className="text-xs font-semibold uppercase tracking-[0.18em] text-ink">{dictionary.refine}</h2>
-        <Link href={localizedPath(locale, "/shop")} className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
+        <Link href={localizedPath(locale, "/shop")} onClick={onClear} className="text-xs font-semibold uppercase tracking-[0.14em] text-gold">
           {dictionary.clear}
         </Link>
       </div>
 
       <form action={localizedPath(locale, "/shop")} className="space-y-5">
-        <BrandSearchInput brands={brands} products={products} initialQuery={selected.q} placeholder={dictionary.searchPlaceholder}
+        <BrandSearchInput brands={brands} initialQuery={selected.q} placeholder={dictionary.searchPlaceholder}
           label={dictionary.search} locale={locale} onSelectBrand={(slug, form) => {
             flushSync(() => setBrand(slug));
             if (form) {
